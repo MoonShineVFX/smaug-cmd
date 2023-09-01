@@ -1,11 +1,8 @@
-from typing import List, Dict
+from typing import List, Dict, Optional
 import os
 from pprint import pprint
 from pathlib import Path, PureWindowsPath
 from smaug_cmd.setting import texture_extensions, texture_factors, preview_factors, render_factors, model_extensions
-
-
-i_asset_template = Dict[str, str | List[str]]
 
 
 def _validate_extension(file_path: str):
@@ -95,19 +92,47 @@ def is_model(file_path: str):
     return False
 
 
+def guess_preview_model(file_paths: str) -> str | None:
+    for file_path in file_paths:
+        if file_path.split('.')[-1].lower() == 'glb':
+            return file_path
+    return None
+
+
+i_asset_template = Dict[str, str | List[str]]
+
 def directory_to_json(path: str):
     ''' 將資料夾轉成 json 格式'''
 
-    asset_pathobj = Path(path)
-    pprint(list(asset_pathobj.iterdir()))
+    textures = []
+    previews = []
+    renders = []
+    models = []
+    metadata = {}
+
+    for root, _, filenames in os.walk(path):
+        for filename in filenames:
+            os.path.join(root, filename)
+            file_path = os.path.join(root, filename)
+            if is_texture(file_path):
+                textures.append(file_path)
+            if is_preview(file_path):
+                previews.append(file_path)
+            if is_render_image(file_path):
+                renders.append(file_path)
+            if is_model(file_path):
+                models.append(file_path)
+
+    preview_model = guess_preview_model(models)
 
     asset_template:i_asset_template = {
-        "preview_pic": "",
-        "preview_model": "",
-        "models": [],
-        "textures": [],
-        "meta" :{}
+        "previews": previews,
+        "preview_model": preview_model,
+        "models": models,
+        "textures": textures,
+        "meta" :metadata
     }
+
     return asset_template
 
     # for root, _, filenames in os.walk(path):
@@ -116,4 +141,8 @@ def directory_to_json(path: str):
 
 
 if __name__ == '__main__':
-    directory_to_json('/home/deck/repos/smaug/storage/_source/Tree_A/')
+    if os.name == 'nt':
+        re = directory_to_json('D:/repos/smaug-cmd/_source/Tree_A/')
+    else:
+        re = directory_to_json('/home/deck/repos/smaug/storage/_source/Tree_A/')
+    pprint(re)
