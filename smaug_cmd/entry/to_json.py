@@ -1,7 +1,8 @@
-from typing import List, Dict, Optional
+from typing import List, Dict
 import os
 from pprint import pprint
-from pathlib import Path, PureWindowsPath
+from pathlib import  PureWindowsPath
+import requests
 from smaug_cmd.setting import texture_extensions, texture_factors, preview_factors, render_factors, model_extensions
 
 
@@ -137,12 +138,68 @@ def directory_to_json(path: str):
 
     # for root, _, filenames in os.walk(path):
     #     for filename in filenames:
-    #         print(os.path.join(root, filename))
+    #         print(os.path.join(root, filename))                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         rewq
+
+def to_asset(folder_path: str):
+    ''' 將資料夾轉成 asset json 格式'''
+
+    # 資料夾轉成 json
+    asset_json = directory_to_json(folder_path)
+    # folder 名稱就是 asset 名稱
+    asset_json['name'] = os.path.basename(folder_path)
+
+    return asset_json
+
+
+def to_asset_create_json(asset_json: i_asset_template):
+    ''' 將 asset json 格式 轉成 asset create api 用的 json 格式'''
+
+    # 資料夾轉成 json
+    
+    # folder 名稱就是 asset 名稱
+    asset_json['name'] = asset_json['name']
+    asset_json['categoryId'] = asset_json.get('categoryId', 1)
+
+    
+
+    return asset_json
+
+def upload_asset(asset_json: i_asset_template):
+    ''' 上傳 asset json 到 firebase'''
+    asset_create_api = 'https://smaug-cmd.firebaseio.com' + '/api' + '/assets'
+    representation_create_api = 'https://smaug-cmd.firebaseio.com' + '/api' + '/representations'
+
+    asset_create_data = to_asset_create_json(asset_json)
+    try:
+        asset_create_resp = requests.post(asset_create_api, json=asset_create_data)
+    except Exception as e:
+        print(e)
+        return None
+    asset_data = asset_create_resp.json() 
+    the_asset_id = asset_data['id']
+
+    # 上傳 preview
+    headers = { "content-type": "multipart/form-data" }
+    for preview in asset_json['previews']:
+        upload_preview_data = {
+            "assetId": the_asset_id,
+            "type": "preview"
+        }
+        # 依副檔名判斷是哪種 preview
+        if preview.split('.')[-1].lower() in ['mp4',]:
+
+        try:
+            requests.post(representation_create_api, headers=headers, json=upload_preview_data)
+        except Exception as e:
+            print(e)
+            return None
+
+    # 逼立
 
 
 if __name__ == '__main__':
     if os.name == 'nt':
-        re = directory_to_json('D:/repos/smaug-cmd/_source/Tree_A/')
+        re = to_asset('D:/repos/smaug-cmd/_source/Tree_A/')
     else:
-        re = directory_to_json('/home/deck/repos/smaug/storage/_source/Tree_A/')
+        re = to_asset('/home/deck/repos/smaug/storage/_source/Tree_A/')
     pprint(re)
