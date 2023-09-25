@@ -1,6 +1,6 @@
 import os
 
-db_string = os.environ["DB_URL"]  # 資料庫位置
+api_root = os.environ["API_URL"]  # 資料庫位置
 
 
 model_extensions = [

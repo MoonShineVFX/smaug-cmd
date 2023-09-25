@@ -1,9 +1,9 @@
-from typing import List, Dict
+from typing import List, Dict, Literal
 import os
 from pprint import pprint
 from pathlib import  PureWindowsPath
 import requests
-from smaug_cmd.setting import texture_extensions, texture_factors, preview_factors, render_factors, model_extensions
+from setting import texture_extensions, texture_factors, preview_factors, render_factors, model_extensions
 
 
 def _validate_extension(file_path: str):
@@ -16,7 +16,7 @@ def _validate_extension(file_path: str):
     return False
 
 
-def model_classifier_extension(file_path: str) -> float:
+def model_classifier_extension(file_path: str) -> bool:
     ''' 檢查副檔名是否合法
 
     - 副檔名在 setting 中有列表
@@ -100,7 +100,7 @@ def guess_preview_model(file_paths: str) -> str | None:
     return None
 
 
-i_asset_template = Dict[str, str | List[str]]
+i_asset_template = Dict[Literal['name', 'previews', 'preview_model', 'models', 'textures', 'meta'] , str | List[str]]
 
 def directory_to_json(path: str):
     ''' 將資料夾轉成 json 格式'''
@@ -126,7 +126,9 @@ def directory_to_json(path: str):
 
     preview_model = guess_preview_model(models)
 
+
     asset_template:i_asset_template = {
+        'name': '',
         "previews": previews,
         "preview_model": preview_model,
         "models": models,
@@ -146,8 +148,9 @@ def to_asset(folder_path: str):
     # 資料夾轉成 json
     asset_json = directory_to_json(folder_path)
     # folder 名稱就是 asset 名稱
-    asset_json['name'] = os.path.basename(folder_path)
+    asset_json.update({'name': os.path.basename(folder_path)})
 
+    # 可以下載的 asset represation
     return asset_json
 
 
@@ -165,7 +168,9 @@ def to_asset_create_json(asset_json: i_asset_template):
     return asset_json
 
 def upload_asset(asset_json: i_asset_template):
-    ''' 上傳 asset json 到 firebase'''
+    ''' 上傳 asset
+    先建立 asset, 取得 asset id, 再上傳後續的東西
+    '''
     asset_create_api = 'https://smaug-cmd.firebaseio.com' + '/api' + '/assets'
     representation_create_api = 'https://smaug-cmd.firebaseio.com' + '/api' + '/representations'
 
@@ -186,8 +191,8 @@ def upload_asset(asset_json: i_asset_template):
             "type": "preview"
         }
         # 依副檔名判斷是哪種 preview
-        if preview.split('.')[-1].lower() in ['mp4',]:
-
+        if preview.split('.')[-1].lower() in ['glb',]:
+            
         try:
             requests.post(representation_create_api, headers=headers, json=upload_preview_data)
         except Exception as e:
