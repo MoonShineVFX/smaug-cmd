@@ -11,6 +11,7 @@ python = ">=3.10,<3.11"
 usd-core = "^23.8"
 click = "^8.1.7"
 requests = "^2.31.0"
+pyside6 = "^6.5.2"
 
 [tool.poetry.group.dev.dependencies]
 python-dotenv = "^1.0.0"
@@ -19,6 +20,9 @@ pytest-dotenv = "^0.5.2"
 
 [tool.ruff]
 ignore = ["E501"]
+
+[tool.ruff.per-file-ignores]
+"__init__.py" = ["F401"]
 
 [build-system]
 requires = ["poetry-core"]
