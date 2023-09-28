@@ -1,5 +1,6 @@
 import os
-from PySide6.QtCore import Qt, Signal, Slot, QSize, QModelIndex
+from typing import Optional
+from PySide6.QtCore import Qt, Signal, Slot, QSize, QModelIndex, QSettings
 from PySide6.QtWidgets import (
     QWidget,
     QHBoxLayout,
@@ -14,17 +15,17 @@ from . import AssetsTableView
 from . import AssetRole, UploadModel
 
 
-class BatchUploadWidget(QWidget):
+class UploadWidget(QWidget):
     assets_folder = Signal(str)
     batch_upload_request = Signal(list)
     gen_thumbnail = Signal(str, str)
 
-    def __init__(self, settings=None):
-        super(BatchUploadWidget, self).__init__()
-        self.setObjectName("batch_upload_widget")
+    def __init__(self, settings:QSettings=None):
+        super(UploadWidget, self).__init__()
+        self.setObjectName("upload_widget")
         self._busy = False
         self.__msg_box = QMessageBox(parent=self)
-        self.setWindowTitle(self.tr("Galaxy Uploader"))
+        self.setWindowTitle(self.tr("Smaug Uploader"))
         self.btn_browse_folder = QPushButton(self.tr("Select Folder"))
         self.btn_browse_folder.setObjectName("select_folder_button")
         self.btn_browse_folder.clicked.connect(self.__browse_folder)
@@ -105,7 +106,7 @@ class BatchUploadWidget(QWidget):
     @Slot(dict)
     def set_assets(self, json_paths):
         """設定 assets"""
-        self._model.append_assets(json_paths)
+        self._model.appendAssets(json_paths)
 
     @Slot(dict)
     def append_asset(self, json_path, stat=None):
@@ -114,7 +115,7 @@ class BatchUploadWidget(QWidget):
             json_path: json 檔路徑
             stat: AssetStats 物件屬性，代表該 asset 的異常狀態
         """
-        self._model.append_asset(json_path, stat)
+        self._model.appendAsset(json_path, stat)
 
     @Slot()
     def clear_assets(self):
@@ -146,7 +147,7 @@ class BatchUploadWidget(QWidget):
     @Slot(int)
     def handle_progress1(self, json_path, new_progress):
         """暫時性命名，準備取代原來的, handle_progress"""
-        self._model.set_progressbar(json_path, new_progress)
+        self._model.setProgressbar(json_path, new_progress)
 
     @Slot()
     def handle_complete(self):
@@ -154,7 +155,7 @@ class BatchUploadWidget(QWidget):
         self.bar_progress.reset()
 
     @Slot()
-    def toggle_busy(self, stat=None):
+    def toggle_busy(self, stat:Optional[bool]=None):
         if stat is None:
             self._busy = not self._busy
         else:
@@ -165,7 +166,7 @@ class BatchUploadWidget(QWidget):
             self.setCursor(Qt.CursorShape.ArrowCursor)
 
     @Slot()
-    def _view_assets_gen_thumbnail(self, idx:QModelIndex):
+    def _view_assets_gen_thumbnail(self, idx: QModelIndex):
         model = idx.model()
         if not model:
             return
@@ -180,12 +181,14 @@ class BatchUploadWidget(QWidget):
         self.gen_thumbnail.emit(data["json_path"], thumb_source)
         return True
 
-    def set_preview(self, key, icon_file):
+    def setPreview(self, key, icon_file):
         if not self._model:
             return
-        self._model.set_preview(key, icon_file)
+        self._model.setPreview(key, icon_file)
 
     def updateColumnSize(self):
         horizontalHeader = self.view_assets.horizontalHeader()
         for i in range(self._model.columnCount()):
-            horizontalHeader.setSectionResizeMode(i, horizontalHeader.ResizeMode.ResizeToContents)
+            horizontalHeader.setSectionResizeMode(
+                i, horizontalHeader.ResizeMode.ResizeToContents
+            )

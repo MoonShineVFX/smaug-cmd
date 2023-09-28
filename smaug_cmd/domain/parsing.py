@@ -3,7 +3,8 @@ import os
 from pprint import pprint
 from pathlib import  PureWindowsPath
 import requests
-from setting import texture_extensions, texture_factors, preview_factors, render_factors, model_extensions
+from smaug_cmd.setting import texture_extensions, texture_factors, preview_factors, render_factors, model_extensions
+from smaug_cmd.domain.smaug_types import AssetTemplate
 
 
 def _validate_extension(file_path: str):
@@ -100,8 +101,6 @@ def guess_preview_model(file_paths: str) -> str | None:
     return None
 
 
-i_asset_template = Dict[Literal['name', 'previews', 'preview_model', 'models', 'textures', 'meta'] , str | List[str]]
-
 def directory_to_json(path: str):
     ''' 將資料夾轉成 json 格式'''
 
@@ -127,7 +126,7 @@ def directory_to_json(path: str):
     preview_model = guess_preview_model(models)
 
 
-    asset_template:i_asset_template = {
+    asset_template:AssetTemplate = {
         'name': '',
         "previews": previews,
         "preview_model": preview_model,
@@ -154,7 +153,7 @@ def to_asset(folder_path: str):
     return asset_json
 
 
-def to_asset_create_json(asset_json: i_asset_template):
+def to_asset_create_json(asset_json: AssetTemplate):
     ''' 將 asset json 格式 轉成 asset create api 用的 json 格式'''
 
     # 資料夾轉成 json
@@ -167,7 +166,7 @@ def to_asset_create_json(asset_json: i_asset_template):
 
     return asset_json
 
-def upload_asset(asset_json: i_asset_template):
+def upload_asset(asset_json: AssetTemplate):
     ''' 上傳 asset
     先建立 asset, 取得 asset id, 再上傳後續的東西
     '''

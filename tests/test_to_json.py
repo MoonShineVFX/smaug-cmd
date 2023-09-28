@@ -1,6 +1,6 @@
 import os
 
-from smaug_cmd.entry.to_json import directory_to_json, is_model, is_preview, is_render_image, is_texture
+from smaug_cmd.domain.parsing import directory_to_json, is_model, is_preview, is_render_image, is_texture
 
 mock_assets_path_linux = {
     "/home/deck/repos/smaug/storage/_source/Tree_A/Tree_A_Lowpoly.jpg": {

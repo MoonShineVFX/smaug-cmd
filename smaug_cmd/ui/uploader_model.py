@@ -224,11 +224,11 @@ class UploadModel(QAbstractTableModel):
         self.dataChanged.emit(idx, idx)
         return True
 
-    def append_assets(self, json_paths):
+    def appendAssets(self, json_paths):
         for json_path in json_paths:
-            self.append_asset(json_path)
+            self.appendAsset(json_path)
 
-    def append_asset(self, json_path, stat=None):
+    def appendAsset(self, json_path, stat=None):
         assert json_path
         if stat:
             if stat in self._stat.keys():
@@ -281,7 +281,7 @@ class UploadModel(QAbstractTableModel):
             self._uuids[uuid] = [asset]
             return False
 
-    def clear_assets(self):
+    def clearAssets(self):
         self.beginResetModel()
         self.assets = list()
         self._uuids = dict()
@@ -289,13 +289,13 @@ class UploadModel(QAbstractTableModel):
         self._assets_progress = dict()
         self.endResetModel()
 
-    def set_progressbar(self, json_file, value):
+    def setProgressbar(self, json_file, value):
         jsons = [ast["json_path"] for ast in self.assets]
         the_idx = jsons.index(json_file)
         index = self.createIndex(the_idx, 1)
         self.setData(index, value)
 
-    def set_preview(self, json_file, preview_file):
+    def setPreview(self, json_file, preview_file):
         jsons = [ast["json_path"] for ast in self.assets]
         the_idx = jsons.index(json_file)
         index = self.createIndex(the_idx, 2)
