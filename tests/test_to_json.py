@@ -1,6 +1,6 @@
 import os
 
-from smaug_cmd.domain.parsing import directory_to_json, is_model, is_preview, is_render_image, is_texture
+from smaug_cmd.domain.parsing import folder_asset_template, is_model, is_preview, is_render_image, is_texture
 
 mock_assets_path_linux = {
     "/home/deck/repos/smaug/storage/_source/Tree_A/Tree_A_Lowpoly.jpg": {
@@ -317,7 +317,7 @@ def test_directory_to_json():
         "meta": {},
     }
     excepted_json = excepted_json_win
-    asset_json = directory_to_json("D:/repos/smaug-cmd/_source/Tree_A/")
+    asset_json = folder_asset_template("D:/repos/smaug-cmd/_source/Tree_A/")
     assert asset_json == excepted_json
 
 

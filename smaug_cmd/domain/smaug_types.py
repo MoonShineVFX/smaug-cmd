@@ -18,6 +18,18 @@ class AssetFolderType(Enum):
     ASSET_DEPART = 2
 
 
+class CategoryTree(TypedDict):
+    id: str
+    name: str
+    children: List['CategoryTree']
+
+class MenuTree(TypedDict):
+    id: str
+    name: str
+    iconName: str
+    children: List['CategoryTree']
+
+
 RepresentationType = Literal["MODEL", "PREVIEW", "RENDER", "TEXTURE"]
 RepresentationFormat = Literal["IMG", "FBX", "GLB", "MAX", "MB", "OBJ", "C4D", "UNREAL", "USD"]
 

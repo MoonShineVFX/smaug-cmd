@@ -44,7 +44,7 @@ def is_preview(file_path: str):
     - preview 檔的名字裡有包含完整的目錄名(都先轉成小寫比對)或是 preview 檔的檔名叫做 "preview"
     - preview 檔是合法的圖案，合法圖檔副檔名在 setting 中有列表
     '''
-    
+
     asset_pathobj =  PureWindowsPath(file_path)
 
     if not asset_pathobj.parent.name:
@@ -101,7 +101,7 @@ def guess_preview_model(file_paths: str) -> str | None:
     return None
 
 
-def directory_to_json(path: str):
+def folder_asset_template(path: str)-> AssetTemplate:
     ''' 將資料夾轉成 json 格式'''
 
     textures = []
@@ -145,7 +145,7 @@ def to_asset(folder_path: str):
     ''' 將資料夾轉成 asset json 格式'''
 
     # 資料夾轉成 json
-    asset_json = directory_to_json(folder_path)
+    asset_json = folder_asset_template(folder_path)
     # folder 名稱就是 asset 名稱
     asset_json.update({'name': os.path.basename(folder_path)})
 
@@ -153,7 +153,7 @@ def to_asset(folder_path: str):
     return asset_json
 
 
-def to_asset_create_json(asset_json: AssetTemplate):
+def to_asset_create_paylad(asset_json: AssetTemplate):
     ''' 將 asset json 格式 轉成 asset create api 用的 json 格式'''
 
     # 資料夾轉成 json
@@ -161,8 +161,6 @@ def to_asset_create_json(asset_json: AssetTemplate):
     # folder 名稱就是 asset 名稱
     asset_json['name'] = asset_json['name']
     asset_json['categoryId'] = asset_json.get('categoryId', 1)
-
-    
 
     return asset_json
 
@@ -173,7 +171,7 @@ def upload_asset(asset_json: AssetTemplate):
     asset_create_api = 'https://smaug-cmd.firebaseio.com' + '/api' + '/assets'
     representation_create_api = 'https://smaug-cmd.firebaseio.com' + '/api' + '/representations'
 
-    asset_create_data = to_asset_create_json(asset_json)
+    asset_create_data = to_asset_create_paylad(asset_json)
     try:
         asset_create_resp = requests.post(asset_create_api, json=asset_create_data)
     except Exception as e:

@@ -2,6 +2,8 @@ import os
 from PySide6.QtCore import QObject, Slot
 from smaug_cmd.domain.fs import TaskGroup
 from smaug_cmd.domain.smaug_types import Asset
+from smaug_cmd.model import MenusThread, MenuTreeThread, login_in as dsLogin
+from smaug_cmd.model import data as ds
 
 
 class UploadHandler(QObject):
@@ -9,17 +11,15 @@ class UploadHandler(QObject):
         self._ui = ui_widget
         self.__is_uploading = False
 
-    def to_asset_dict(self, asset_folder):
-        """generate asset dict from asset folder
+    def log_in(self, user_name, password) -> bool:
+        re = dsLogin(user_name, password)
+        if not re:
+            return (500, "登入失敗")
 
-        Args:
-            asset_folder(str):  asset folder
-        """
-        # 轉成 asset template 格式
-        # 處理應該泛生出來的壓縮檔
-        # 轉成 smaug asset dict 格式
-        asset_dict: Asset = {}
-    
+    def get_menus(self):
+        menus = ds.get_menus()
+        return menus
+
 
     # ---------------------------------------------------------------
     @Slot(str)
