@@ -3,7 +3,7 @@ import sys
 from PySide6.QtCore import QObject, QSettings
 from PySide6.QtWidgets import QApplication
 
-from smaug_cmd.ui import LogInDialog, UploadWidget, Ca
+from smaug_cmd.ui import LogInDialog, UploadWidget, CategoryListWidget
 from smaug_cmd.domain.bootstrp import bootstrip
 from smaug_cmd.domain.logic import UploadHandler
 
@@ -14,7 +14,7 @@ class SmaugUploader(QObject):
         self.logic = UploadHandler()
         self.login_ui = LogInDialog()
         self.main_ui = UploadWidget()
-        self.catrgories_ui = CategoriesWidget()
+        self.catrgories_ui = CategoryListWidget(parent=self.main_ui)
         self.settings = settings
         self._connect()
 
@@ -22,8 +22,8 @@ class SmaugUploader(QObject):
         self
 
     def _init_categories(self):
-        self.
-        
+        self.catrgories_ui.set_categories(self.logic.get_menus())
+    
     def run(self):
         self._login
         self.ui = UploadWidget()

@@ -1,5 +1,8 @@
 from enum import Enum
+from PySide6.QtCore import Qt
 from typing import Dict, Literal, TypedDict, List
+
+CategoryRole = Qt.ItemDataRole.UserRole + 1
 
 
 class AssetTemplate(TypedDict):

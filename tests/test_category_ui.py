@@ -1,5 +1,8 @@
+import  logging
 from PySide6.QtWidgets import QApplication
 from smaug_cmd.ui import CategoryListWidget
+
+logging.basicConfig(level=logging.DEBUG)
 
 
 menu_tree_home = {
@@ -223,6 +226,13 @@ menu_tree_home = {
 }
 
 
+menu_tree_favorite = {
+    "id": "clmsnpa8s000bnuxb4zh8xpy0",
+    "name": "Favorite",
+    "iconName": "favorite",
+    "children": []
+}
+
 if __name__ == '__main__':
     app = QApplication.instance()
     if not app:
@@ -231,4 +241,5 @@ if __name__ == '__main__':
     my_widget =CategoryListWidget()
     my_widget.show()
     my_widget.addMenuTree(menu_tree_home)
+    # my_widget.addMenuTree(menu_tree_favorite)
     app.exec()

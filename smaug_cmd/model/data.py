@@ -4,6 +4,8 @@ from requests.auth import HTTPBasicAuth
 from requests.sessions import Session
 import logging
 import smaug_cmd.setting as setting
+from smaug_cmd.domain.smaug_types import MenuTree
+
 
 logger = logging.getLogger('data')
 logger.setLevel(logging.DEBUG)
@@ -44,7 +46,7 @@ def get_menus():
     return categories_data
 
 
-def get_menuTree(menu_id):
+def get_menu_tree(menu_id) -> MenuTree:
     ''' 取得所有的 categories '''
     categories_api = f'{setting.api_root}/categories?={menu_id}'
     try:
@@ -71,4 +73,4 @@ if __name__=='__main__':
     login_in('admin', 'admin')
     menus = get_menus()
     for menu in menus:
-        print(get_menuTree(menu['id']))
+        print(get_menu_tree(menu['id']))
