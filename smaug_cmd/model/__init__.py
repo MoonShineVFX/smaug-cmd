@@ -1,2 +1,2 @@
-from .thread import MenusThread, MenuTreeThread
+from .thread import MenuTreeThread
 from .data import login_in

@@ -1,5 +1,5 @@
 
-from typing import Optional
+from typing import Optional, Tuple, Dict
 from requests.auth import HTTPBasicAuth
 from requests.sessions import Session
 import logging
@@ -22,7 +22,7 @@ def login_in(u: str, w: str) -> Optional[dict]:
     login_api = f'{setting.api_root}/login'
  
     try:
-        login_resp = _session.post(login_api, auth=HTTPBasicAuth(u, w))
+        res = _session.post(login_api, auth=HTTPBasicAuth(u, w))
     except Exception as e:
         logger.warning(e)
         return None
@@ -31,31 +31,31 @@ def login_in(u: str, w: str) -> Optional[dict]:
     if auth_token:
         _session.headers.update({"Authorization": f"Bearer {auth_token}"})
 
-    return login_resp.json()
+    return (res.status_code, res.json())
 
 
 def get_menus():
     ''' 取得所有的 categories '''
     categories_api = f'{setting.api_root}/menus'
     try:
-        categories_resp = _session.get(categories_api)
+        res = _session.get(categories_api)
     except Exception as e:
         logger.warning(e)
         return None
-    categories_data = categories_resp.json()
-    return categories_data
+    categories_data = res.json()
+    return (res.status_code, categories_data)
 
 
-def get_menu_tree(menu_id) -> MenuTree:
+def get_menu_tree(menu_id) -> Tuple[int, MenuTree|Dict[str, str]]:
     ''' 取得所有的 categories '''
-    categories_api = f'{setting.api_root}/categories?={menu_id}'
+    menu_tree_api = f'{setting.api_root}/menuTree?id={menu_id}'
     try:
-        categories_resp = _session.get(categories_api)
+        res = _session.get(menu_tree_api)
     except Exception as e:
         print(e)
-        return None
-    categories_data = categories_resp.json()
-    return categories_data
+        return (500, {'message': str(e)})
+    menu_tree_data = res.json()
+    return (res.status_code, menu_tree_data)
 
 
 def log_out():
