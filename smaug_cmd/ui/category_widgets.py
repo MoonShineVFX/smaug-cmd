@@ -5,7 +5,7 @@ from PySide6.QtGui import QBrush
 from PySide6.QtWidgets import QWidget, QTreeWidget, QTreeWidgetItem, QVBoxLayout
 from smaug_cmd.domain.smaug_types import MenuTree, CategoryTree, CategoryRole
 
-logger = logging.getLogger('ui')
+logger = logging.getLogger('smaug-cmd.ui')
 
 
 class CategoryListWidget(QWidget):
@@ -78,7 +78,6 @@ class CategoryListWidget(QWidget):
             self.selecteCategoryId.emit(cate['id'])
 
     def _animate_select(self, item:QTreeWidgetItem):
-        # preserve original bg color
         original_color = item.background(0)
         item.setBackground(0, QBrush(Qt.GlobalColor.green))
         def restore_color():

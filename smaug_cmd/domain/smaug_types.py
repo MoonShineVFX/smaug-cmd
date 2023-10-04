@@ -26,6 +26,12 @@ class CategoryTree(TypedDict):
     name: str
     children: List['CategoryTree']
 
+
+class Menu(TypedDict):
+    id: str
+    name: str
+
+
 class MenuTree(TypedDict):
     id: str
     name: str

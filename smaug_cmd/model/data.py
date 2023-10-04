@@ -1,4 +1,3 @@
-
 from typing import Optional, Tuple, Dict
 from requests.auth import HTTPBasicAuth
 from requests.sessions import Session
@@ -7,8 +6,7 @@ import smaug_cmd.setting as setting
 from smaug_cmd.domain.smaug_types import MenuTree
 
 
-logger = logging.getLogger('data')
-logger.setLevel(logging.DEBUG)
+logger = logging.getLogger("smaug-cmd.data")
 
 
 _session = Session()
@@ -18,9 +16,9 @@ __data = []
 
 
 def login_in(u: str, w: str) -> Optional[dict]:
-    ''' 登入 '''
-    login_api = f'{setting.api_root}/login'
- 
+    """登入"""
+    login_api = f"{setting.api_root}/login"
+
     try:
         res = _session.post(login_api, auth=HTTPBasicAuth(u, w))
     except Exception as e:
@@ -35,32 +33,33 @@ def login_in(u: str, w: str) -> Optional[dict]:
 
 
 def get_menus():
-    ''' 取得所有的 categories '''
-    categories_api = f'{setting.api_root}/menus'
+    """取得所有的 categories"""
+    minus_api = f"{setting.api_root}/menus"
     try:
-        res = _session.get(categories_api)
+        res = _session.get(minus_api)
     except Exception as e:
         logger.warning(e)
         return None
-    categories_data = res.json()
-    return (res.status_code, categories_data)
+    menus_data = res.json()
+    logger.debug(f"menus_data: {menus_data}")
+    return (res.status_code, menus_data)
 
 
-def get_menu_tree(menu_id) -> Tuple[int, MenuTree|Dict[str, str]]:
-    ''' 取得所有的 categories '''
-    menu_tree_api = f'{setting.api_root}/menuTree?id={menu_id}'
+def get_menu_tree(menu_id) -> Tuple[int, MenuTree | Dict[str, str]]:
+    """取得所有的 categories"""
+    menu_tree_api = f"{setting.api_root}/menuTree?id={menu_id}"
     try:
         res = _session.get(menu_tree_api)
     except Exception as e:
-        print(e)
-        return (500, {'message': str(e)})
+        logger.warning(e)
+        return (500, {"message": str(e)})
     menu_tree_data = res.json()
     return (res.status_code, menu_tree_data)
 
 
 def log_out():
-    ''' 登出 '''
-    logout_api = f'{setting.api_root}/logout'
+    """登出"""
+    logout_api = f"{setting.api_root}/logout"
     try:
         logout_resp = _session.post(logout_api)
     except Exception as e:
@@ -69,8 +68,8 @@ def log_out():
     return logout_resp.json()
 
 
-if __name__=='__main__':
-    login_in('admin', 'admin')
+if __name__ == "__main__":
+    login_in("admin", "admin")
     menus = get_menus()
     for menu in menus:
-        print(get_menu_tree(menu['id']))
+        print(get_menu_tree(menu["id"]))

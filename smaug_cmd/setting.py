@@ -1,4 +1,7 @@
 import os
+from dotenv import load_dotenv
+load_dotenv()
+
 
 api_root = os.environ["API_URL"]  # 資料庫位置
 
