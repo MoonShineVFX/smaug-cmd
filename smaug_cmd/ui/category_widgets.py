@@ -9,10 +9,11 @@ logger = logging.getLogger('smaug-cmd.ui')
 
 
 class CategoryListWidget(QWidget):
-    selecteCategoryId = Signal(int)
+    selectedCategoryId = Signal(int)
 
     def __init__(self, parent=None, categroies=None):
         super(CategoryListWidget, self).__init__(parent)
+        self.setWindowFlags(Qt.WindowType.Dialog)
         self.tw = QTreeWidget()
         self.tw.setColumnCount(2)
         self.tw.setHeaderLabels(['Name', 'Id'])
