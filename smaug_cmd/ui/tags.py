@@ -47,16 +47,21 @@ class TagItem(QWidget):
         self.setLayout(layout)
 
         # 建立標籤
+        font_size = 12
         font = QFont()
-        font.setPointSize(12)
+        font.setPointSize(font_size)
         self.label = QLabel(text, self)
         self.label.setFont(font)
         layout.addWidget(self.label)
 
         # 建立刪除按鈕
         self.remove_btn = QPushButton("X", self)
-        self.setFont(font)
-        # self.remove_btn.setFixedSize(20, 20)  # 設定固定大小
+        self.remove_btn.setFont(font)
+        self.remove_btn.setMinimumWidth(font_size * 2)
+        self.remove_btn.setMaximumWidth(font_size * 2)
+
+        # self.remove_btn.setFixedSize(20, 20) 
+    
         layout.addWidget(self.remove_btn)
 
         # 設定背景色和邊框
@@ -133,6 +138,9 @@ class TagsWidget(QWidget):
                 widget.deleteLater()  # 移除 widget
                 break
         self._updatePlaceholder()
+
+    def tags(self):
+        return list(self.tags_set)
 
 
 # 測試
