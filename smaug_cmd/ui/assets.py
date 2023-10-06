@@ -13,14 +13,14 @@ class AssetListDialog(QDialog, Ui_asset_list_dlg):
         self.setupUi(self)
 
 
-class EmptyWidget(QWidget):
-    def __init__(self, parent=None):
-        super(EmptyWidget, self).__init__(parent)
-        lay = QVBoxLayout(self)
-        lay.addWidget()
-        pixmap = QPixmap(path).scaledToHeight(180)
-        label = QLabel(self.scrollAreaWidgetContents)
-        label.setPixmap(pixmap)
-        self.horizontalLayout.addWidget(label)
+# class EmptyWidget(QWidget):
+#     def __init__(self, parent=None):
+#         super(EmptyWidget, self).__init__(parent)
+#         lay = QVBoxLayout(self)
+#         lay.addWidget()
+#         pixmap = QPixmap(path).scaledToHeight(180)
+#         label = QLabel(self.scrollAreaWidgetContents)
+#         label.setPixmap(pixmap)
+#         self.horizontalLayout.addWidget(label)
 
 
