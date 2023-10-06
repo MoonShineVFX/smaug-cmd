@@ -48,14 +48,15 @@ class TagItem(QWidget):
 
         # 建立標籤
         font = QFont()
-        font.setPointSize(10)
+        font.setPointSize(12)
         self.label = QLabel(text, self)
         self.label.setFont(font)
         layout.addWidget(self.label)
 
         # 建立刪除按鈕
         self.remove_btn = QPushButton("X", self)
-        self.remove_btn.setFixedSize(20, 20)  # 設定固定大小
+        self.setFont(font)
+        # self.remove_btn.setFixedSize(20, 20)  # 設定固定大小
         layout.addWidget(self.remove_btn)
 
         # 設定背景色和邊框
