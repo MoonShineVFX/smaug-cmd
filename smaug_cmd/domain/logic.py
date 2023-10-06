@@ -5,15 +5,15 @@ from PySide6.QtCore import QObject
 from smaug_cmd.domain.smaug_types import Menu, MenuTree
 from smaug_cmd.model import login_in as api_login
 from smaug_cmd.model import data as ds
-from smaug_cmd.ui import UploadWidget
+
 
 logger = logging.getLogger('smaug-cmd.domain')
 
 
 class SmaugCmdHandler(QObject):
     
-    def __init__(self, ui_widget: UploadWidget):
-        pass
+    def __init__(self):
+        super().__init__(None)
 
     def error_handler(self, error_msg, er_cb: Optional[Callable] = None):
         logger.error(error_msg)
@@ -35,6 +35,6 @@ class SmaugCmdHandler(QObject):
             self.error_handler(re[1]["message"], error_cb)
             return None
         return re[1]
-    
+
 
     

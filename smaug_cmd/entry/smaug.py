@@ -4,7 +4,7 @@ import sys
 from PySide6.QtCore import QObject, QSettings
 from PySide6.QtWidgets import QApplication, QMessageBox
 
-from smaug_cmd.ui import LogInDialog, UploadWidget, CategoryListWidget
+from smaug_cmd.ui import LogInDialog, CategoryListWidget, AssetListDialog
 
 # from smaug_cmd.domain.bootstrp import bootstrip
 from smaug_cmd.domain.logic import SmaugCmdHandler
@@ -16,10 +16,10 @@ logging.basicConfig(level=logging.DEBUG)
 class SmaugUploaderApp(QObject):
     def __init__(self, settings: QSettings = None):
         super(SmaugUploaderApp, self).__init__(None)
+        self.current_user = None
         self.login_ui = LogInDialog()
-        self.main_ui = UploadWidget()
-        self.logic = SmaugCmdHandler(ui_widget=self.main_ui)
-        self.catrgories_ui = CategoryListWidget(parent=self.main_ui)
+        self.assets_view_ui = AssetListDialog()
+        self.logic = SmaugCmdHandler()
         self.settings = settings
         self._connect()
 
@@ -31,19 +31,20 @@ class SmaugUploaderApp(QObject):
         if re[0] != 200:
             QMessageBox.critical(self.login_ui, "登入失敗", re[1]["message"])
             return
-        
+        self.current_user = re[1]
         self.login_ui.close()
         self._init()
-        self.main_ui.show()
+        self.assets_view_ui.show()
 
     def _init(self):
-        menus = self.logic.get_menus()
-        for menu in menus:
-            logger.debug(f"menu: {menu}")
-            menu_tree = self.logic.get_menu_tree(menu["id"])
-            if menu_tree is None:
-                continue
-            self.catrgories_ui.addMenuTree(menu_tree)
+        pass
+        # menus = self.logic.get_menus()
+        # for menu in menus:
+        #     logger.debug(f"menu: {menu}")
+        #     menu_tree = self.logic.get_menu_tree(menu["id"])
+        #     if menu_tree is None:
+        #         continue
+        #     self.catrgories_ui.addMenuTree(menu_tree)
 
     def run(self):
         self.login_ui.show()
@@ -55,6 +56,6 @@ if __name__ == "__main__":
         app = QApplication(sys.argv)
     app.setOrganizationName("MoonShine")
     app.setApplicationName("galaxy_uploader")
-    upload_app = SmaugUploaderApp()
-    upload_app.run()
+    smaug_app = SmaugUploaderApp()
+    smaug_app.run()
     app.exec()

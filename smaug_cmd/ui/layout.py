@@ -73,6 +73,7 @@ class FlowLayout(QLayout):
         x = effectiveRect.x()
         y = effectiveRect.y()
         lineHeight = 0
+        # print(effectiveRect.x())
 
         for item in self._items:
             widget = item.widget()
