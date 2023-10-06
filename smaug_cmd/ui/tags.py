@@ -1,6 +1,5 @@
-
-from PySide6.QtCore import  Signal
-from PySide6.QtGui import  QColor, QPalette, QFont
+from PySide6.QtCore import Signal
+from PySide6.QtGui import QFont
 from PySide6.QtWidgets import (
     QHBoxLayout,
     QLabel,
@@ -10,7 +9,29 @@ from PySide6.QtWidgets import (
     QVBoxLayout,
     QWidget,
 )
+
 from smaug_cmd.ui import FlowLayout
+
+tag_item_qss = """
+    QWidget {
+        background-color: #6a0dad;
+        border: 1px solid #9a32cd;
+        border-top-left-radius: 4px;
+        border-bottom-left-radius: 4px;
+    }
+    QLabel {
+        color: #ffffff;
+    }
+    QPushButton {
+        color: #6a0dad;
+        background-color: #ffffff;
+        border: 1px solid #6a0dad;
+        border-top-right-radius: 4px;
+        border-bottom-right-radius: 4px;
+        border-top-left-radius: 0px;
+        border-bottom-left-radius: 0px;
+    }
+"""
 
 
 class TagItem(QWidget):
@@ -39,30 +60,11 @@ class TagItem(QWidget):
 
         # 設定背景色和邊框
         self.setAutoFillBackground(True)
-        self.setStyleSheet("""
-            QWidget {
-                background-color: #6a0dad;
-                border: 1px solid #9a32cd;
-                border-top-left-radius: 4px;
-                border-bottom-left-radius: 4px;
-            }
-            QLabel {
-                color: #ffffff;
-            }
-            QPushButton {
-                color: #6a0dad;
-                background-color: #ffffff;
-                border: 1px solid #6a0dad;
-                border-top-right-radius: 4px;
-                border-bottom-right-radius: 4px;
-                border-top-left-radius: 0px;
-                border-bottom-left-radius: 0px;
-            }
-        """)
+        self.setStyleSheet(tag_item_qss)
 
         self.setSizePolicy(QSizePolicy.Policy.Maximum, QSizePolicy.Policy.Fixed)
         self.remove_btn.clicked.connect(self._onClicked)
-    
+
     def _onClicked(self):
         self.tagRemoved.emit(self.label.text())
 
@@ -94,7 +96,7 @@ class TagsWidget(QWidget):
         # 增加 placeholder 和 tags 到 FlowLayout
         self.placeholder_label = QLabel(" no tags yet")
         self.f_lay.addWidget(self.placeholder_label)
-        
+
         main_layout.addLayout(self.f_lay)
 
     def _onTagEntered(self):
@@ -110,8 +112,10 @@ class TagsWidget(QWidget):
 
         if len(self.tags_set) == 0 and first_widget != self.placeholder_label:
             self.f_lay.addWidget(self.placeholder_label)
+            self.placeholder_label.show()
         elif first_widget == self.placeholder_label:
             self.f_lay.removeWidget(self.placeholder_label)
+            self.placeholder_label.hide()
 
     def addTag(self, tag_text):
         tag_widget = TagItem(tag_text)
@@ -133,6 +137,7 @@ class TagsWidget(QWidget):
 # 測試
 if __name__ == "__main__":
     import sys
+
     from PySide6.QtWidgets import QApplication
 
     app = QApplication(sys.argv)
