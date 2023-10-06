@@ -30,13 +30,22 @@ class ImageDisplayWidget(QWidget):
             if widget is not None:
                 widget.deleteLater()
 
+        total_width = 0 
         for path in image_paths:
             pixmap = QPixmap(path).scaledToHeight(180)
+            total_width += pixmap.width()
             label = QLabel(self.scrollAreaWidgetContents)
             label.setPixmap(pixmap)
             label.setCursor(Qt.CursorShape.PointingHandCursor)  # Change cursor to hand when hovering over image
             label.mousePressEvent = lambda event, path=path: self.displayRawImage(path)
             self.horizontalLayout.addWidget(label)
+        
+        # 考慮到滾動條的高度調整内容的高度
+        scrollbar_height = self.scrollArea.horizontalScrollBar().height()
+        self.scrollAreaWidgetContents.setFixedHeight(180 + scrollbar_height)
+
+        # 調整内容的寬度
+        self.scrollAreaWidgetContents.setFixedWidth(total_width)
 
     def displayRawImage(self, path):
         # If there's an existing dialog, close it before opening a new one
