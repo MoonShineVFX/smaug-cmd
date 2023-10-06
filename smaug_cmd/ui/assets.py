@@ -4,7 +4,7 @@ from PySide6.QtCore import QCoreApplication, QMetaObject, QSize
 from PySide6.QtWidgets import QDialog, QFrame, QHBoxLayout, QPushButton, QVBoxLayout, QWidget
 
 from smaug_cmd.ui import FolderTreeWidget
-from smaug_cmd.designer.asset_list import Ui_asset_list_dlg
+from smaug_cmd.designer.asset_list_ui import Ui_asset_list_dlg
 
 
 class AssetListDialog(QDialog, Ui_asset_list_dlg):
