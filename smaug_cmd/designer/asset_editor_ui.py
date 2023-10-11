@@ -19,16 +19,16 @@ from PySide6.QtWidgets import (QApplication, QFrame, QHBoxLayout, QLabel,
     QPushButton, QSizePolicy, QSpacerItem, QVBoxLayout,
     QWidget)
 
-from smaug_cmd.ui import MoonFrame
+from smaug_cmd.ui import (MoonFrame, TagsWidget)
 
-class Ui_base_frome(object):
-    def setupUi(self, base_frome):
-        if not base_frome.objectName():
-            base_frome.setObjectName(u"base_frome")
-        base_frome.resize(418, 806)
-        self.verticalLayout = QVBoxLayout(base_frome)
+class Ui_asset_editor_wgt(object):
+    def setupUi(self, asset_editor_wgt):
+        if not asset_editor_wgt.objectName():
+            asset_editor_wgt.setObjectName(u"asset_editor_wgt")
+        asset_editor_wgt.resize(418, 816)
+        self.verticalLayout = QVBoxLayout(asset_editor_wgt)
         self.verticalLayout.setObjectName(u"verticalLayout")
-        self.asset_frame = MoonFrame(base_frome)
+        self.asset_frame = MoonFrame(asset_editor_wgt)
         self.asset_frame.setObjectName(u"asset_frame")
         self.asset_frame.setFrameShape(QFrame.StyledPanel)
         self.asset_frame.setFrameShadow(QFrame.Raised)
@@ -119,7 +119,7 @@ class Ui_base_frome(object):
 
         self.verticalLayout_5.addWidget(self.render_widget)
 
-        self.tags_widget = QWidget(self.asset_frame)
+        self.tags_widget = TagsWidget(self.asset_frame)
         self.tags_widget.setObjectName(u"tags_widget")
         self.tags_widget.setMinimumSize(QSize(0, 100))
         self.tags_widget.setBaseSize(QSize(0, 0))
@@ -133,16 +133,16 @@ class Ui_base_frome(object):
         self.verticalLayout.addWidget(self.asset_frame)
 
 
-        self.retranslateUi(base_frome)
+        self.retranslateUi(asset_editor_wgt)
 
-        QMetaObject.connectSlotsByName(base_frome)
+        QMetaObject.connectSlotsByName(asset_editor_wgt)
     # setupUi
 
-    def retranslateUi(self, base_frome):
-        base_frome.setWindowTitle(QCoreApplication.translate("base_frome", u"Form", None))
-        self.asset_name_lbl.setText(QCoreApplication.translate("base_frome", u"Asset Name", None))
-        self.asset_id_lbl.setText(QCoreApplication.translate("base_frome", u"Id: None", None))
-        self.asset_cate_lbl.setText(QCoreApplication.translate("base_frome", u"category: None  ", None))
-        self.catePicker_btn.setText(QCoreApplication.translate("base_frome", u"...", None))
+    def retranslateUi(self, asset_editor_wgt):
+        asset_editor_wgt.setWindowTitle(QCoreApplication.translate("asset_editor_wgt", u"Form", None))
+        self.asset_name_lbl.setText(QCoreApplication.translate("asset_editor_wgt", u"Asset Name", None))
+        self.asset_id_lbl.setText(QCoreApplication.translate("asset_editor_wgt", u"Id: None", None))
+        self.asset_cate_lbl.setText(QCoreApplication.translate("asset_editor_wgt", u"Category: None  ", None))
+        self.catePicker_btn.setText(QCoreApplication.translate("asset_editor_wgt", u"...", None))
     # retranslateUi
 

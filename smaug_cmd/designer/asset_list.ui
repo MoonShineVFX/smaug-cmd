@@ -180,7 +180,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QWidget" name="asset_editor_widget" native="true"/>
+       <widget class="AssetEditorWidget" name="asset_editor_widget" native="true"/>
       </item>
      </layout>
     </widget>
@@ -196,6 +196,12 @@
   </customwidget>
   <customwidget>
    <class>FolderTreeWidget</class>
+   <extends>QWidget</extends>
+   <header>smaug_cmd.ui.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>AssetEditorWidget</class>
    <extends>QWidget</extends>
    <header>smaug_cmd.ui.h</header>
    <container>1</container>

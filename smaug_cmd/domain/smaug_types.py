@@ -1,4 +1,5 @@
 from enum import Enum
+from typing import Optional
 from PySide6.QtCore import Qt
 from typing import Dict, Literal, TypedDict, List
 
@@ -7,6 +8,7 @@ CategoryRole = Qt.ItemDataRole.UserRole + 1
 
 class AssetTemplate(TypedDict):
     name: str
+    categoryId: Optional[int]
     previews: List[str]     # 預覽圖
     preview_model: str      # 預覽模型
     models: List[str]       # 模型

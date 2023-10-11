@@ -1,6 +1,7 @@
 import logging
 from typing import List, Optional, Tuple, Callable
 from PySide6.QtCore import QObject
+from PySide6.QtWidgets import QLabel, QPushButton
 
 from smaug_cmd.domain.smaug_types import Menu, MenuTree
 from smaug_cmd.model import login_in as api_login
@@ -35,6 +36,10 @@ class SmaugCmdHandler(QObject):
             self.error_handler(re[1]["message"], error_cb)
             return None
         return re[1]
+    
+    def _compose_cate_breadcrumb(self, cate: int, cate_lbl: QLabel, cate_picker_btn: QPushButton):
+        '''Compose the category breadcrumb.'''
+        pass
 
 
     

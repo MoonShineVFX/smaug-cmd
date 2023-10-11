@@ -141,6 +141,12 @@ class TagsWidget(QWidget):
 
     def tags(self):
         return list(self.tags_set)
+    
+    def clear(self):
+        for index in range(self.f_lay.count()):
+            widget = self.f_lay.itemAt(index).widget()
+            if widget and isinstance(widget, TagItem):
+                self.tags_set.remove(widget.text())
 
 
 # 測試

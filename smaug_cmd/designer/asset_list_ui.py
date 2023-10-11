@@ -19,7 +19,7 @@ from PySide6.QtWidgets import (QApplication, QDialog, QFrame, QHBoxLayout,
     QProgressBar, QPushButton, QSizePolicy, QVBoxLayout,
     QWidget)
 
-from smaug_cmd.ui import (FolderTreeWidget, MoonFrame)
+from smaug_cmd.ui import (AssetEditorWidget, FolderTreeWidget, MoonFrame)
 
 class Ui_asset_list_dlg(object):
     def setupUi(self, asset_list_dlg):
@@ -103,7 +103,7 @@ class Ui_asset_list_dlg(object):
 
         self.verticalLayout.addWidget(self.function_button_frame)
 
-        self.asset_editor_widget = QWidget(self.item_frame)
+        self.asset_editor_widget = AssetEditorWidget(self.item_frame)
         self.asset_editor_widget.setObjectName(u"asset_editor_widget")
 
         self.verticalLayout.addWidget(self.asset_editor_widget)
