@@ -39,7 +39,10 @@ class SmaugCmdHandler(QObject):
     
     def _compose_cate_breadcrumb(self, cate: int, cate_lbl: QLabel, cate_picker_btn: QPushButton):
         '''Compose the category breadcrumb.'''
-        pass
+        # 取的分類的父分類
+        
+
+        # 組合路徑
 
 
     

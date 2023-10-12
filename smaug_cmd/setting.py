@@ -2,6 +2,7 @@ import os
 from dotenv import load_dotenv
 load_dotenv()
 
+cache_time = 300 # 資料快取時間(秒), 超過這個時間下一次取資料就會自動更新
 
 api_root = os.environ["API_URL"]  # 資料庫位置
 
