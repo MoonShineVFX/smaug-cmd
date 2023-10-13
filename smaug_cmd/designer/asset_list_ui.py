@@ -16,8 +16,8 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QApplication, QDialog, QFrame, QHBoxLayout,
-    QProgressBar, QPushButton, QSizePolicy, QVBoxLayout,
-    QWidget)
+    QProgressBar, QPushButton, QScrollArea, QSizePolicy,
+    QVBoxLayout, QWidget)
 
 from smaug_cmd.ui import (AssetEditorWidget, FolderTreeWidget, MoonFrame)
 
@@ -103,12 +103,25 @@ class Ui_asset_list_dlg(object):
 
         self.verticalLayout.addWidget(self.function_button_frame)
 
-        self.asset_editor_widget = AssetEditorWidget(self.item_frame)
+        self.scrollArea = QScrollArea(self.item_frame)
+        self.scrollArea.setObjectName(u"scrollArea")
+        self.scrollArea.setWidgetResizable(True)
+        self.scrollAreaWidgetContents = QWidget()
+        self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 467, 786))
+        self.verticalLayout_3 = QVBoxLayout(self.scrollAreaWidgetContents)
+        self.verticalLayout_3.setSpacing(0)
+        self.verticalLayout_3.setObjectName(u"verticalLayout_3")
+        self.verticalLayout_3.setContentsMargins(0, 0, 0, 0)
+        self.asset_editor_widget = AssetEditorWidget(self.scrollAreaWidgetContents)
         self.asset_editor_widget.setObjectName(u"asset_editor_widget")
 
-        self.verticalLayout.addWidget(self.asset_editor_widget)
+        self.verticalLayout_3.addWidget(self.asset_editor_widget)
 
-        self.verticalLayout.setStretch(1, 1)
+        self.scrollArea.setWidget(self.scrollAreaWidgetContents)
+
+        self.verticalLayout.addWidget(self.scrollArea)
+
 
         self.horizontalLayout.addWidget(self.item_frame)
 
