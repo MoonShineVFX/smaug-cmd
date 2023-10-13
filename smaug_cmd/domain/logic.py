@@ -37,12 +37,18 @@ class SmaugCmdHandler(QObject):
             return None
         return re[1]
     
-    def _compose_cate_breadcrumb(self, cate: int, cate_lbl: QLabel, cate_picker_btn: QPushButton):
+    def _setup_cate_breadcrumb(self, cate: int, cate_lbl: QLabel, cate_picker_btn: QPushButton):
         '''Compose the category breadcrumb.'''
         # 取的分類的父分類
+        cate_query = ds.get_category(cate)
+        if str(cate_query[0])[0] != 2:
+            self.error_handler(cate_query[1]["message"])
+            return
+        cate_detail = cate_query[1]
         
-
-        # 組合路徑
-
-
+        # 設定 UI
+        cate_lbl.setText(f"category: {cate_detail['breadCrumb']}")
+        cate_picker_btn.setProperty("smaug_cate", True)
+        return
+    
     

@@ -5,7 +5,7 @@ from requests.auth import HTTPBasicAuth
 from requests.sessions import Session
 import logging
 from urllib.parse import quote
-from smaug_cmd.domain.smaug_types import MenuTree
+from smaug_cmd.domain.smaug_types import MenuTree, CategoryDetailTree
 from smaug_cmd import setting
 
 logger = logging.getLogger("smaug-cmd.data")
@@ -140,7 +140,7 @@ def get_menu_tree(menu_id) -> Tuple[int, MenuTree | Dict[str, str]]:
     return the_value
 
 
-def get_category(category_id) -> Tuple[int, Dict[str, str]]:
+def get_category(category_id) -> Tuple[int, CategoryDetailTree]:
     api = f"{setting.api_root}/trpc/category.tree"
     params = {0:{"json":{"categoryId":category_id}}}
     params_str = json.dumps(params)
