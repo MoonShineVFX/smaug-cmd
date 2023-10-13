@@ -12,6 +12,7 @@ usd-core = "^23.8"
 click = "^8.1.7"
 requests = "^2.31.0"
 pyside6 = "^6.5.2"
+qtmodern = "^0.2.0"
 
 [tool.poetry.group.dev.dependencies]
 python-dotenv = "^1.0.0"
@@ -19,11 +20,12 @@ pytest = "^7.4.0"
 pytest-dotenv = "^0.5.2"
 
 [tool.ruff]
+preview = true
 ignore = ["E501"]
 
 [tool.ruff.per-file-ignores]
 "__init__.py" = ["F401"]
-"*_ui.py" = ["F401"]
+"*_ui.py" = ["F401", "E266"]
 
 [build-system]
 requires = ["poetry-core"]
