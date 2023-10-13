@@ -4,7 +4,7 @@ import sys
 from PySide6.QtCore import QObject, QSettings
 from PySide6.QtWidgets import QApplication, QMessageBox
 
-from smaug_cmd.ui import LogInDialog, CategoryListWidget, AssetListDialog
+from smaug_cmd.ui import LogInDialog, AssetListDialog
 
 # from smaug_cmd.domain.bootstrp import bootstrip
 from smaug_cmd.domain.logic import SmaugCmdHandler
@@ -18,7 +18,7 @@ class SmaugUploaderApp(QObject):
         super(SmaugUploaderApp, self).__init__(None)
         self.current_user = None
         self.login_ui = LogInDialog()
-        self.assets_view_ui = AssetListDialog()
+        self.asset_list = AssetListDialog()
         self.logic = SmaugCmdHandler()
         self.settings = settings
         self._connect()
@@ -34,7 +34,7 @@ class SmaugUploaderApp(QObject):
         self.current_user = re[1]
         self.login_ui.close()
         self._init()
-        self.assets_view_ui.show()
+        self.asset_list.show()
 
     def _init(self):
         pass
@@ -55,7 +55,7 @@ if __name__ == "__main__":
     if not app:
         app = QApplication(sys.argv)
     app.setOrganizationName("MoonShine")
-    app.setApplicationName("galaxy_uploader")
+    app.setApplicationName("Smaug-Uploader")
     smaug_app = SmaugUploaderApp()
     smaug_app.run()
     app.exec()

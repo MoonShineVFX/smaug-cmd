@@ -60,8 +60,8 @@ class TagItem(QWidget):
         self.remove_btn.setMinimumWidth(font_size * 2)
         self.remove_btn.setMaximumWidth(font_size * 2)
 
-        # self.remove_btn.setFixedSize(20, 20) 
-    
+        # self.remove_btn.setFixedSize(20, 20)
+
         layout.addWidget(self.remove_btn)
 
         # 設定背景色和邊框
@@ -79,8 +79,8 @@ class TagItem(QWidget):
 
 
 class TagsWidget(QWidget):
-    def __init__(self):
-        super(TagsWidget, self).__init__()
+    def __init__(self, parent=None):
+        super(TagsWidget, self).__init__(parent)
 
         # 建立主要的垂直佈局
         main_layout = QVBoxLayout(self)
@@ -141,7 +141,7 @@ class TagsWidget(QWidget):
 
     def tags(self):
         return list(self.tags_set)
-    
+
     def clear(self):
         for index in range(self.f_lay.count()):
             widget = self.f_lay.itemAt(index).widget()

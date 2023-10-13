@@ -9,8 +9,10 @@ from .category_widgets import CategoryListWidget
 from .folder_widget import FolderTreeWidget
 from .tags import TagsWidget
 from .asset_table_view import AssetsTableView
-from .uploader_widget import UploadWidget
+# from .uploader_widget import UploadWidget
+from .asset_editor import AssetEditorWidget
 from .assets import AssetListDialog
+
 
 
 
