@@ -19,13 +19,13 @@ from PySide6.QtWidgets import (QApplication, QFrame, QGroupBox, QHBoxLayout,
     QLabel, QPushButton, QSizePolicy, QSpacerItem,
     QVBoxLayout, QWidget)
 
-from smaug_cmd.ui import (ImageDisplayWidget, MoonFrame, TagsWidget)
+from smaug_cmd.ui import (FileListWidget, ImageDisplayWidget, MoonFrame, TagsWidget)
 
 class Ui_asset_editor_wgt(object):
     def setupUi(self, asset_editor_wgt):
         if not asset_editor_wgt.objectName():
             asset_editor_wgt.setObjectName(u"asset_editor_wgt")
-        asset_editor_wgt.resize(434, 1088)
+        asset_editor_wgt.resize(434, 1132)
         asset_editor_wgt.setStyleSheet(u"")
         self.verticalLayout = QVBoxLayout(asset_editor_wgt)
         self.verticalLayout.setObjectName(u"verticalLayout")
@@ -142,7 +142,7 @@ class Ui_asset_editor_wgt(object):
         self.verticalLayout_6.setSpacing(6)
         self.verticalLayout_6.setObjectName(u"verticalLayout_6")
         self.verticalLayout_6.setContentsMargins(9, 9, 9, 9)
-        self.model_widget = QWidget(self.model_files_grp)
+        self.model_widget = FileListWidget(self.model_files_grp)
         self.model_widget.setObjectName(u"model_widget")
         self.model_widget.setMinimumSize(QSize(0, 120))
 
@@ -170,7 +170,7 @@ class Ui_asset_editor_wgt(object):
         self.texture_grp.setObjectName(u"texture_grp")
         self.verticalLayout_8 = QVBoxLayout(self.texture_grp)
         self.verticalLayout_8.setObjectName(u"verticalLayout_8")
-        self.textures_widget = QWidget(self.texture_grp)
+        self.textures_widget = FileListWidget(self.texture_grp)
         self.textures_widget.setObjectName(u"textures_widget")
         self.textures_widget.setMinimumSize(QSize(0, 120))
 

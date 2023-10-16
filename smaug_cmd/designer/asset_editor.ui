@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>434</width>
-    <height>1088</height>
+    <height>1132</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -274,7 +274,7 @@ background-color: rgb(0, 109, 18);
           <number>9</number>
          </property>
          <item>
-          <widget class="QWidget" name="model_widget" native="true">
+          <widget class="FileListWidget" name="model_widget" native="true">
            <property name="minimumSize">
             <size>
              <width>0</width>
@@ -327,7 +327,7 @@ background-color: rgb(0, 109, 18);
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_8">
          <item>
-          <widget class="QWidget" name="textures_widget" native="true">
+          <widget class="FileListWidget" name="textures_widget" native="true">
            <property name="minimumSize">
             <size>
              <width>0</width>
@@ -393,6 +393,12 @@ background-color: rgb(0, 109, 18);
   </customwidget>
   <customwidget>
    <class>ImageDisplayWidget</class>
+   <extends>QWidget</extends>
+   <header>smaug_cmd.ui.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>FileListWidget</class>
    <extends>QWidget</extends>
    <header>smaug_cmd.ui.h</header>
    <container>1</container>

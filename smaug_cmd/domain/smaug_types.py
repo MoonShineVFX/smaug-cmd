@@ -73,3 +73,9 @@ class Asset(TypedDict):
     categoryId: int
     representations: List[Representation]
     tags: List[str]
+
+
+class AssetCreateParams(TypedDict):
+    name: str
+    category_id: int
+    tags: List[str]

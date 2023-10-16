@@ -25,6 +25,8 @@ class AssetEditorWidget(QWidget, Ui_asset_editor_wgt):
         self.__update_previews()
         self.__update_renders()
         self.__update_tags()
+        self.__update_model_files()
+        self.__update_texture_files()
         return
 
     def __update_asset_name(self):
@@ -90,6 +92,28 @@ class AssetEditorWidget(QWidget, Ui_asset_editor_wgt):
         self.tags_widget.clear()
         for tag in tags:
             self.tags_widget.addTag(tag)
+        return
+
+    def __update_model_files(self):
+        if self.asset is None:
+            self.model_widget.setEnabled(False)
+            self.model_widget.clear()
+            return
+        self.model_widget.setEnabled(True)
+        files = self.asset["models"]
+        self.model_widget.clear()
+        self.model_widget.setFiles(files)
+        return
+
+    def __update_texture_files(self):
+        if self.asset is None:
+            self.textures_widget.setEnabled(False)
+            self.textures_widget.clear()
+            return
+        self.textures_widget.setEnabled(True)
+        files = self.asset["textures"]
+        self.textures_widget.clear()
+        self.textures_widget.setFiles(files)
         return
 
     def setAsset(self, asset: AssetTemplate):

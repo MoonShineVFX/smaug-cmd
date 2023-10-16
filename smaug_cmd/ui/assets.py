@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
+from PySide6.QtWidgets import QDialog
 
-from PySide6.QtCore import QCoreApplication, QMetaObject, QSize
-from PySide6.QtWidgets import QDialog, QFrame, QHBoxLayout, QPushButton, QVBoxLayout, QWidget
-
-from smaug_cmd.ui import FolderTreeWidget
 from smaug_cmd.designer.asset_list_ui import Ui_asset_list_dlg
 
 
@@ -11,16 +8,14 @@ class AssetListDialog(QDialog, Ui_asset_list_dlg):
     def __init__(self, parent=None):
         super(AssetListDialog, self).__init__(parent)
         self.setupUi(self)
+        self.to_asset_template_cb = None
+        self.folder_tree_widget.selectedFolder.connect(self._on_folder_selected)
+    
+    def _on_folder_selected(self, path):
+        asset_template = self.to_asset_template_cb(path)
+        self.asset_editor_widget.setAsset(asset_template)
+        return
 
-
-# class EmptyWidget(QWidget):
-#     def __init__(self, parent=None):
-#         super(EmptyWidget, self).__init__(parent)
-#         lay = QVBoxLayout(self)
-#         lay.addWidget()
-#         pixmap = QPixmap(path).scaledToHeight(180)
-#         label = QLabel(self.scrollAreaWidgetContents)
-#         label.setPixmap(pixmap)
-#         self.horizontalLayout.addWidget(label)
-
-
+    def setToAssetTemplateCallback(self, cb):
+        self.to_asset_template_cb = cb
+        return

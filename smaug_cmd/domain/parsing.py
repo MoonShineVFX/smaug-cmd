@@ -1,58 +1,117 @@
 from typing import List, Dict, Literal
 import os
 from pprint import pprint
-from pathlib import  PureWindowsPath
-import requests
-from smaug_cmd.setting import texture_extensions, texture_factors, preview_factors, render_factors, model_extensions
-from smaug_cmd.domain.smaug_types import AssetTemplate
+from pathlib import PureWindowsPath
+
+from smaug_cmd.setting import (
+    texture_extensions,
+    texture_factors,
+    preview_factors,
+    render_factors,
+    model_extensions,
+)
+from smaug_cmd.domain.smaug_types import AssetTemplate, AssetFolderType
+
+
+def is_asset_model_folder(path) -> AssetFolderType:
+    """
+    檢查指定的路徑是否為模型資料夾。
+
+    參數:
+        path (str): 要檢查的路徑。
+
+    回傳:
+        bool: 如果路徑是模型資料夾，則回傳 True, 否則回傳 False。
+    """
+    # 判斷是否為資源部資料夾
+    if is_resource_depart_folder(path):
+        return AssetFolderType.RESOURCE_DEPART
+
+    # 判斷是否為資產部資料夾
+    if is_asset_depart_folder(path):
+        return AssetFolderType.ASSET_DEPART
+
+    return AssetFolderType.UNKNOWN
+
+
+def is_asset_depart_folder(path) -> bool:
+    """
+    檢查指定的路徑下是否有 'texture', 'render', 'model' 這三個子目錄。
+
+    參數:
+        path (str): 要檢查的目錄路徑。
+
+    回傳:
+        bool: 如果目錄包含 'texture', 'Render', 'Model' 子目錄，則回傳 True, 否則回傳 False。
+    """
+    # 列出所有子目錄和文件
+    try:
+        dir_contents = os.listdir(path)
+    except FileNotFoundError:
+        print(f"The directory '{path}' does not exist.")
+        return False
+    except PermissionError:
+        print(f"Permission denied for directory '{path}'.")
+        return False
+
+    # 判斷是否包含 'texture', 'render', 'model' 子目錄
+    required_subdirs = {"Texture", "Render", "Model"}
+    actual_subdirs = {
+        item for item in dir_contents if os.path.isdir(os.path.join(path, item))
+    }
+
+    return required_subdirs.issubset(actual_subdirs)
+
+
+def is_resource_depart_folder(path) -> bool:
+    return False
 
 
 def _validate_extension(file_path: str):
-    ''' 檢查副檔名是否合法
+    """檢查副檔名是否合法
 
     - 副檔名在 setting 中有列表
-    '''
-    if file_path.split('.')[-1].lower() in texture_extensions:
+    """
+    if file_path.split(".")[-1].lower() in texture_extensions:
         return True
     return False
 
 
 def model_classifier_extension(file_path: str) -> bool:
-    ''' 檢查副檔名是否合法
+    """檢查副檔名是否合法
 
     - 副檔名在 setting 中有列表
-    '''
-    if file_path.split('.')[-1].lower() in model_extensions:
+    """
+    if file_path.split(".")[-1].lower() in model_extensions:
         return True
-    return False 
+    return False
 
 
 def is_texture(file_path: str):
-
     if not _validate_extension(file_path):
         return False
-    
+
     if any([i in file_path.lower() for i in texture_factors]):
         return True
     return False
 
 
 def is_preview(file_path: str):
-    ''' 是否為預覽圖
+    """是否為預覽圖
 
     - preview 檔所在地至少要有一層目錄
     - preview 檔的名字裡有包含完整的目錄名(都先轉成小寫比對)或是 preview 檔的檔名叫做 "preview"
     - preview 檔是合法的圖案，合法圖檔副檔名在 setting 中有列表
-    '''
+    """
 
-    asset_pathobj =  PureWindowsPath(file_path)
+    asset_pathobj = PureWindowsPath(file_path)
 
     if not asset_pathobj.parent.name:
         return False
 
     if not _validate_extension(file_path):
         return False
-    
+
     path_parts = asset_pathobj.parts
     file_name = path_parts[-1].lower()
     parent_name = path_parts[-2].lower()
@@ -65,20 +124,20 @@ def is_preview(file_path: str):
 
 
 def is_render_image(file_path: str):
-    ''' 是否為渲染圖
+    """是否為渲染圖
 
     - 渲染圖檔的名字裡有包含完整的目錄名(都先轉成小寫比對)或是渲染圖檔的檔名叫做 "render"
     - 渲染圖檔是合法的圖案，合法圖檔副檔名在 setting 中有列表
-    '''
+    """
 
-    asset_pathobj =  PureWindowsPath(file_path)
+    asset_pathobj = PureWindowsPath(file_path)
 
     if not asset_pathobj.parent.name:
         return False
 
     if not _validate_extension(file_path):
         return False
-    
+
     path_parts = asset_pathobj.parts
 
     for render_factor in render_factors:
@@ -89,20 +148,20 @@ def is_render_image(file_path: str):
 
 
 def is_model(file_path: str):
-    if file_path.split('.')[-1].lower() in model_extensions:
+    if file_path.split(".")[-1].lower() in model_extensions:
         return True
     return False
 
 
 def guess_preview_model(file_paths: str) -> str | None:
     for file_path in file_paths:
-        if file_path.split('.')[-1].lower() == 'glb':
+        if file_path.split(".")[-1].lower() == "glb":
             return file_path
     return None
 
 
-def folder_asset_template(path: str)-> AssetTemplate:
-    ''' 將資料夾轉成 json 格式'''
+def folder_asset_template(path: str) -> AssetTemplate:
+    """將資料夾轉成 json 格式"""
 
     textures = []
     previews = []
@@ -125,83 +184,42 @@ def folder_asset_template(path: str)-> AssetTemplate:
 
     preview_model = guess_preview_model(models)
 
-
-    asset_template:AssetTemplate = {
-        'name': '',
+    asset_name = os.path.basename(path)
+    asset_template: AssetTemplate = {
+        "id": None,
+        "name": asset_name,
+        "categoryId": None,
         "previews": previews,
         "preview_model": preview_model,
         "models": models,
         "textures": textures,
-        "meta" :metadata
+        "renders": renders,
+        "meta": metadata,
     }
 
     return asset_template
 
-    # for root, _, filenames in os.walk(path):
-    #     for filename in filenames:
-    #         print(os.path.join(root, filename))                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         rewq
-
-def to_asset(folder_path: str):
-    ''' 將資料夾轉成 asset json 格式'''
-
-    # 資料夾轉成 json
-    asset_json = folder_asset_template(folder_path)
-    # folder 名稱就是 asset 名稱
-    asset_json.update({'name': os.path.basename(folder_path)})
-
-    # 可以下載的 asset represation
-    return asset_json
-
 
 def to_asset_create_paylad(asset_json: AssetTemplate):
-    ''' 將 asset json 格式 轉成 asset create api 用的 json 格式'''
+    """將 asset json 格式 轉成 asset create api 用的 json 格式"""
 
     # 資料夾轉成 json
-    
+
     # folder 名稱就是 asset 名稱
-    asset_json['name'] = asset_json['name']
-    asset_json['categoryId'] = asset_json.get('categoryId', 1)
+    asset_json["name"] = asset_json["name"]
+    asset_json["categoryId"] = asset_json.get("categoryId", 1)
 
     return asset_json
 
-def upload_asset(asset_json: AssetTemplate):
-    ''' 上傳 asset
-    先建立 asset, 取得 asset id, 再上傳後續的東西
-    '''
-    asset_create_api = 'https://smaug-cmd.firebaseio.com' + '/api' + '/assets'
-    representation_create_api = 'https://smaug-cmd.firebaseio.com' + '/api' + '/representations'
 
-    asset_create_data = to_asset_create_paylad(asset_json)
-    try:
-        asset_create_resp = requests.post(asset_create_api, json=asset_create_data)
-    except Exception as e:
-        print(e)
-        return None
-    asset_data = asset_create_resp.json() 
-    the_asset_id = asset_data['id']
-
-    # 上傳 preview
-    headers = { "content-type": "multipart/form-data" }
-    for preview in asset_json['previews']:
-        upload_preview_data = {
-            "assetId": the_asset_id,
-            "type": "preview"
-        }
-        # 依副檔名判斷是哪種 preview
-        if preview.split('.')[-1].lower() in ['glb',]:
-            
-        try:
-            requests.post(representation_create_api, headers=headers, json=upload_preview_data)
-        except Exception as e:
-            print(e)
-            return None
-
-    # 逼立
+def collect_representataion_to_zip(asset_template: AssetTemplate):
+    """將資料夾內的所有資料收集起來，並且壓縮成 zip 檔案"""
+    pass
 
 
-if __name__ == '__main__':
-    if os.name == 'nt':
-        re = to_asset('D:/repos/smaug-cmd/_source/Tree_A/')
+if __name__ == "__main__":
+    if os.name == "nt":
+        re = folder_asset_template("D:/repos/smaug-cmd/_source/Tree_A/")
     else:
-        re = to_asset('/home/deck/repos/smaug/storage/_source/Tree_A/')
+        re = folder_asset_template("/home/deck/repos/smaug/storage/_source/Tree_A/")
     pprint(re)

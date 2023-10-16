@@ -5,7 +5,7 @@ from requests.auth import HTTPBasicAuth
 from requests.sessions import Session
 import logging
 from urllib.parse import quote
-from smaug_cmd.domain.smaug_types import MenuTree, CategoryDetailTree
+from smaug_cmd.domain.smaug_types import MenuTree, CategoryDetailTree, AssetCreateParams
 from smaug_cmd import setting
 
 logger = logging.getLogger("smaug-cmd.data")
@@ -13,12 +13,13 @@ logger = logging.getLogger("smaug-cmd.data")
 
 _session = Session()
 
+
 class NestedDict:
     def __init__(self, value=None):
         self._data = {}
         self._value = value
 
-    def __getitem__(self, key) -> 'NestedDict':
+    def __getitem__(self, key) -> "NestedDict":
         if key not in self._data:
             self._data[key] = NestedDict()
         return self._data[key]
@@ -35,7 +36,7 @@ class NestedDict:
 
 class CachedNestedDict:
     def __init__(self):
-        self._data: Dict[Any, Union['CachedNestedDict', Any]] = {}
+        self._data: Dict[Any, Union["CachedNestedDict", Any]] = {}
         self._timestamp: Dict[Any, float] = {}
 
     def _is_expired(self, key) -> bool:
@@ -61,7 +62,9 @@ class CachedNestedDict:
         current._data[keys[-1]] = NestedDict(value)
         current._timestamp[keys[-1]] = time.time()
 
-    def __getitem__(self, keys: Union[tuple, Any]) -> Union[NestedDict, 'CachedNestedDict']:
+    def __getitem__(
+        self, keys: Union[tuple, Any]
+    ) -> Union[NestedDict, "CachedNestedDict"]:
         current = self
         if not isinstance(keys, tuple):
             keys = (keys,)
@@ -72,8 +75,10 @@ class CachedNestedDict:
 
             if key not in current._data:
                 # 如果是最後一個鍵，則添加一個NestedDict；否則，添加一個CachedNestedDict
-                current._data[key] = NestedDict() if idx == len(keys) - 1 else CachedNestedDict()
-                
+                current._data[key] = (
+                    NestedDict() if idx == len(keys) - 1 else CachedNestedDict()
+                )
+
             current = current._data[key]
 
         return current  # 在此返回當前的對象，它應該是一個NestedDict
@@ -125,10 +130,10 @@ def get_menu_tree(menu_id) -> Tuple[int, MenuTree | Dict[str, str]]:
     menu_tree_api = f"{api}?id={menu_id}"
     cache_key = (api, "id", menu_id)
     cache_value = __data[cache_key].value()
-    
+
     if cache_value:
         return cache_value
-    
+
     try:
         res = _session.get(menu_tree_api)
     except Exception as e:
@@ -142,10 +147,10 @@ def get_menu_tree(menu_id) -> Tuple[int, MenuTree | Dict[str, str]]:
 
 def get_category(category_id) -> Tuple[int, CategoryDetailTree]:
     api = f"{setting.api_root}/trpc/category.tree"
-    params = {0:{"json":{"categoryId":category_id}}}
+    params = {0: {"json": {"categoryId": category_id}}}
     params_str = json.dumps(params)
     encode_params = quote(params_str)
-    category_tree= f"{api}?batch=1&input={encode_params}"
+    category_tree = f"{api}?batch=1&input={encode_params}"
     cache_key = (api, "categoryId", category_id)
     cache_value = __data[cache_key].value()
     if cache_value:
@@ -156,11 +161,37 @@ def get_category(category_id) -> Tuple[int, CategoryDetailTree]:
         logger.warning(e)
         return (500, {"message": str(e)})
     category_data = res.json()[0]
-    the_value = (res.status_code, category_data['result']['data']['json']['detail'])
+    the_value = (res.status_code, category_data["result"]["data"]["json"]["detail"])
     return_value = (res.status_code, the_value)
     __data[cache_key] = return_value
     return return_value
 
+
+def create_asset(payload: AssetCreateParams):
+
+    api = f"{setting.api_root}/trpc/asset.create"
+    payload = {
+        0: {
+            "json": {
+                "categoryId": payload["category_id"],
+                "name": payload["name"],
+                "tags": payload.get("tags", []),
+            }
+        }
+    }
+    asset_create_api = f"{api}?batch=1"
+    try:
+        res = _session.post(asset_create_api, json=payload)
+    except Exception as e:
+        logger.warning(e)
+        return (500, {"message": str(e)})
+    asset_data = res.json()[0]
+    the_value = (res.status_code, asset_data["result"]["data"]["json"]["detail"])
+    return the_value
+
+
+def create_representation(asset_id: int, representation_payload: dict):
+    
 
 def log_out():
     """登出"""

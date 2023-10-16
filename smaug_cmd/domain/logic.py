@@ -1,11 +1,13 @@
 import logging
 from typing import List, Optional, Tuple, Callable
+import os
 from PySide6.QtCore import QObject
 from PySide6.QtWidgets import QLabel, QPushButton
 
-from smaug_cmd.domain.smaug_types import Menu, MenuTree
+from smaug_cmd.domain.smaug_types import Menu, MenuTree, AssetTemplate
 from smaug_cmd.model import login_in as api_login
 from smaug_cmd.model import data as ds
+from smaug_cmd.domain import parsing as ps
 
 
 logger = logging.getLogger('smaug-cmd.domain')
@@ -30,7 +32,7 @@ class SmaugCmdHandler(QObject):
             return None
         return re[1]
 
-    def get_menu_tree(self, menu_id, error_cb: Optional[Callable]=None)-> Optional[MenuTree]:
+    def get_menu_tree(self, menu_id, error_cb: Optional[Callable] = None) -> Optional[MenuTree]:
         re = ds.get_menu_tree(menu_id)
         if str(re[0])[0] != '2':
             self.error_handler(re[1]["message"], error_cb)
@@ -51,4 +53,12 @@ class SmaugCmdHandler(QObject):
         cate_picker_btn.setProperty("smaug_cate", True)
         return
     
-    
+    def asset_template(self, folder_path):
+        # convert folder to asset template
+        asset_template = ps.folder_asset_template(folder_path)
+        return asset_template
+
+    def create_asset(self, asset_template: AssetTemplate):
+        asset_id = ds.create_asset(asset_template)
+
+        

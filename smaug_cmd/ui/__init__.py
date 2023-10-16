@@ -4,7 +4,7 @@ from .layout import FlowLayout
 from .login_dialog import LogInDialog
 from .progress_delegate import ProgressDelegate
 from .uploader_model import AssetRole, UploadModel
-
+from .list_widget import FileListWidget
 from .category_widgets import CategoryListWidget
 from .folder_widget import FolderTreeWidget
 from .tags import TagsWidget

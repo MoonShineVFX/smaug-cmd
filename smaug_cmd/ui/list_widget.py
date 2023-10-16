@@ -5,9 +5,10 @@ from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QListWidget, QListWidgetItem, QWidget, QVBoxLayout, QApplication
 from smaug_cmd.resource import smaug_rc  # noqa: F401
 
+
 class FileListWidget(QWidget):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, parent=None):
+        super().__init__(parent)
         self.layout = QVBoxLayout()
         self.file_list_widget = QListWidget()
 
@@ -36,6 +37,10 @@ class FileListWidget(QWidget):
 
             item.setIcon(QIcon(icon_path))
             self.file_list_widget.addItem(item)
+
+    def clear(self):
+        self.file_list_widget.clear()
+
 
 if __name__ == '__main__':
     app = QApplication([])
