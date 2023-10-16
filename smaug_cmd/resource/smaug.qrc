@@ -1,0 +1,15 @@
+<RCC>
+  <qresource prefix="icon">
+    <file>icon.default.png</file>
+    <file>icon.fbx.png</file>
+    <file>icon.ma.png</file>
+    <file>icon.max.png</file>
+    <file>icon.mb.png</file>
+    <file>icon.obj.png</file>
+    <file>icon.usd.png</file>
+  </qresource>
+  <qresource prefix="ui">
+    <file>no_preview.jpg</file>
+    <file>empty.png</file>
+  </qresource>
+</RCC>

@@ -1,10 +1,9 @@
 from typing import List, Optional
 import sys
 import os
-from PySide6.QtCore import Qt
 from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QListWidget, QListWidgetItem, QWidget, QVBoxLayout, QApplication
-
+from smaug_cmd.resource import smaug_rc  # noqa: F401
 
 class FileListWidget(QWidget):
     def __init__(self):
@@ -24,13 +23,16 @@ class FileListWidget(QWidget):
         
         # 添加新的文件列表項目
         for file in files:
-            item = QListWidgetItem(file)
-            # 獲取文件的副檔名
+            # 獲取文件的副檔名S
+            file_name = os.path.basename(file)
             file_extension = os.path.splitext(file)[-1].lower()
+            
+            item = QListWidgetItem(file_name)
+            item.setToolTip(file)
 
-            icon_path = f"path/to/icon{file_extension}.png"
+            icon_path = f":/icon/icon{file_extension}.png"
             if not os.path.exists(icon_path):
-                icon_path = "path/to/icon.default.png"
+                icon_path = ":/icon/icon.default.png"
 
             item.setIcon(QIcon(icon_path))
             self.file_list_widget.addItem(item)
