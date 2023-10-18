@@ -8,6 +8,7 @@ from smaug_cmd.domain.smaug_types import Menu, MenuTree, AssetTemplate
 from smaug_cmd.model import login_in as api_login
 from smaug_cmd.model import data as ds
 from smaug_cmd.domain import parsing as ps
+from smaug_cmd.adapter import remote_fs as rfs
 
 
 logger = logging.getLogger('smaug-cmd.domain')
@@ -58,7 +59,35 @@ class SmaugCmdHandler(QObject):
         asset_template = ps.folder_asset_template(folder_path)
         return asset_template
 
-    def create_asset(self, asset_template: AssetTemplate):
+    def create_asset_proc(self, asset_template: AssetTemplate):
         asset_id = ds.create_asset(asset_template)
+        asset_name = asset_template["name"]
 
-        
+        # upload preview picture process
+        preview_files = asset_template["previews"]
+        rfs.upload_previews(asset_id, preview_files)
+
+        # splite textures to texture-group, 
+        texture_groups = ps.texture_group(asset_id, asset_template["textures"])
+        # generate texture zip file
+        representation_textures = dict()
+        for key, files in texture_groups.items():    
+            zip_path = ps.generate_zip(asset_name, key, files)
+            representation_textures["key"] = zip_path
+
+        # splite models to model-group,
+        model_groups = ps.model_group(asset_id, asset_template["models"])
+        # generate model zip 
+        representation_models = dict()
+        for key, files in model_groups.items():
+            zip_path = ps.generate_zip(asset_name, key, files)
+            representation_models["key"] = zip_path 
+
+        # upload preview picture process
+
+        # upload preview model process
+        # upload textures process
+        # upload models process
+        # upload renders process
+        # update meta data, find bounding box, find texture size, find model size..., etc.
+        # update tags

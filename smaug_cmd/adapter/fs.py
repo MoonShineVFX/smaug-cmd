@@ -1,6 +1,6 @@
 import zipfile
 import tempfile
-from typing import List
+from typing import List, Dict
 
 
 def create_temp_zip_from_files(file_paths: List[str]) -> str:
@@ -18,3 +18,16 @@ def create_temp_zip_from_files(file_paths: List[str]) -> str:
 
     # 返回暫存 ZIP 檔案的路徑
     return temp_file_name
+
+
+def categorize_files_by_keywords(texture_files: List[str], keywords: List[str]) -> Dict[str, List[str]]:
+    categorized_files = {}
+    
+    for keyword in keywords:
+        # 使用列表推導式過濾出包含特定關鍵字的檔案
+        filtered_files = [f for f in texture_files if keyword in f.split('/')]
+        
+        # 將過濾出的檔案存入字典中
+        categorized_files[keyword] = filtered_files
+    
+    return categorized_files

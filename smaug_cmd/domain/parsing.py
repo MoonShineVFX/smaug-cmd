@@ -3,6 +3,8 @@ import os
 from pprint import pprint
 from pathlib import PureWindowsPath
 
+from smaug_cmd.adapter import fs
+
 from smaug_cmd.setting import (
     texture_extensions,
     texture_factors,
@@ -10,7 +12,12 @@ from smaug_cmd.setting import (
     render_factors,
     model_extensions,
 )
-from smaug_cmd.domain.smaug_types import AssetTemplate, AssetFolderType
+from smaug_cmd.domain.smaug_types import (
+    AssetTemplate,
+    AssetFolderType,
+    TEXTURE_GROUP_KEYWORDS,
+    SOFTWARE_CATEGORIRS
+)
 
 
 def is_asset_model_folder(path) -> AssetFolderType:
@@ -212,8 +219,17 @@ def to_asset_create_paylad(asset_json: AssetTemplate):
     return asset_json
 
 
-def collect_representataion_to_zip(asset_template: AssetTemplate):
-    """將資料夾內的所有資料收集起來，並且壓縮成 zip 檔案"""
+def model_group(model_files: List[str])-> Dict[str, List[str]]:
+    keywords = SOFTWARE_CATEGORIRS.keys()
+    return fs.categorize_files_by_keywords(model_files, keywords)
+
+
+def texture_group(texture_files: List[str]) -> Dict[str, List[str]]:
+    keywords = ["2K, 4K"]
+    return fs.categorize_files_by_keywords(texture_files, keywords)
+
+
+def generate_zip(asset_name, name_key, textures_files: List[str]) -> str:
     pass
 
 

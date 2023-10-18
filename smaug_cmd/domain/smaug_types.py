@@ -4,7 +4,22 @@ from typing import Optional
 from PySide6.QtCore import Qt
 from typing import Dict, Literal, TypedDict, List
 
+
 CategoryRole = Qt.ItemDataRole.UserRole + 1
+
+
+TEXTURE_GROUP_KEYWORDS = Literal["2K", "4K"]
+
+
+SOFTWARE_CATEGORIRS = {
+    "maya": [".mb", ".ma"],
+    "3dsmax": [".max"],
+    "unreal": [".uasset"],
+    "fbx": [".fbx"],
+    "c4d": [".c4d"],
+    "obj": [".obj", ".mtl"],
+    "usd": [".usd"],
+}
 
 
 class AssetTemplate(TypedDict):
