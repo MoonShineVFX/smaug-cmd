@@ -13,6 +13,7 @@ click = "^8.1.7"
 requests = "^2.31.0"
 pyside6 = "^6.5.2"
 qtmodern = "^0.2.0"
+minio = "^7.1.17"
 
 [tool.poetry.group.dev.dependencies]
 python-dotenv = "^1.0.0"
