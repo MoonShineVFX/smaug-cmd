@@ -19,10 +19,13 @@ def init(endpoint, access_key, secret_key):
         secure=False,)
 
 
-def check_client():
-    global client
-    if client is None:
-        raise RuntimeError("remote_fs is not initialized")
+def check_client(func):
+    def wrapper(*args, **kwargs):
+        global client
+        if client is None:
+            raise RuntimeError("remote_fs is not initialized")
+        return func(*args, **kwargs)
+    return wrapper
 
 
 def _makesure_bucket_exist(bucket_name):
@@ -81,9 +84,3 @@ def put_preview(asset_id, asset_name, preview_file) -> str:
 
     return put_representation1(asset_id, asset_name, object_name_format(1, preview_file, "preview"))
 
-
-if __name__ == "__main__":
-    try:
-        main()
-    except S3Error as exc:
-        print("error occurred.", exc)

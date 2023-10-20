@@ -1,6 +1,7 @@
 import logging
+from PySide6.QtGui import QCloseEvent
 from PySide6.QtWidgets import QTreeView, QVBoxLayout, QWidget, QFileSystemModel
-from PySide6.QtCore import QDir, QModelIndex, Signal, QSortFilterProxyModel
+from PySide6.QtCore import QDir, QModelIndex, Signal, QSortFilterProxyModel, QSettings
 
 logger = logging.getLogger("smaug.ui")
 
@@ -21,7 +22,7 @@ class FolderTreeWidget(QWidget):
 
     def __init__(self, parent=None):
         super(FolderTreeWidget, self).__init__(parent)  
-
+        self.settings = QSettings()
         self.setWindowTitle("Directory Tree Browser")
         # self.setGeometry(100, 100, 800, 600)
 
@@ -55,7 +56,8 @@ class FolderTreeWidget(QWidget):
         self.selectedFolder.emit(path)
 
     def currentSelectedPath(self):
-        return self._get_current_directory()
+        proxy_index = self.tree.currentIndex()
+        return self._get_current_directory(proxy_index)
 
     def _get_current_directory(self, proxy_index: QModelIndex):
         # 獲取當前選定的索引
@@ -63,3 +65,12 @@ class FolderTreeWidget(QWidget):
         # 使用模型將索引轉換為路徑
         path = self.model.filePath(source_index)
         return path
+
+    def setRootFolder(self, folder_path: str):
+        self.model.setRootPath(folder_path)
+        proxy_root_index = self.proxy_model.mapFromSource(self.model.index(folder_path))
+        self.tree.setRootIndex(proxy_root_index)
+    
+    def closeEvent(self, event: QCloseEvent) -> None:
+        self.settings.setValue("rootFolder", self.currentSelectedPath())
+        return super().closeEvent(event)
