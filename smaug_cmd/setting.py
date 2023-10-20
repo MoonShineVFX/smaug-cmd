@@ -5,7 +5,9 @@ load_dotenv()
 cache_time = 300 # 資料快取時間(秒), 超過這個時間下一次取資料就會自動更新
 
 api_root = os.environ["API_URL"]  # 資料庫位置
-
+minio_host = os.environ["MINIO_HOST"]  # minio 位置
+minio_root_user = os.environ["MINIO_ROOT_USER"]  # minio 帳號
+minio_root_password = os.environ["MINIO_ROOT_PASSWORD"]  # minio 密碼
 
 model_extensions = [
     "ma",

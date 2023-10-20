@@ -7,5 +7,5 @@ logger = logging.getLogger("smaug-cmd.bootstrap")
 
 def bootstrap(setting):
     logger.info("bootstrap")
-    rfs.init(setting.minio_endpoint, setting.minio_access_key, setting.minio_secret_key)
+    rfs.init(setting.minio_host, setting.minio_root_user, setting.minio_root_password)
     logger.info("bootstrap-Done")
