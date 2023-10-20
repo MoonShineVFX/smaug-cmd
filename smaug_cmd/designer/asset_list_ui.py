@@ -16,17 +16,18 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QApplication, QDialog, QFrame, QHBoxLayout,
-    QProgressBar, QPushButton, QScrollArea, QSizePolicy,
-    QVBoxLayout, QWidget)
+    QPushButton, QScrollArea, QSizePolicy, QVBoxLayout,
+    QWidget)
 
 from smaug_cmd.ui import (AssetEditorWidget, FolderTreeWidget, MoonFrame)
 from smaug_cmd.resource import smaug_rc
+
 
 class Ui_asset_list_dlg(object):
     def setupUi(self, asset_list_dlg):
         if not asset_list_dlg.objectName():
             asset_list_dlg.setObjectName(u"asset_list_dlg")
-        asset_list_dlg.resize(704, 871)
+        asset_list_dlg.resize(704, 859)
         self.horizontalLayout = QHBoxLayout(asset_list_dlg)
         self.horizontalLayout.setObjectName(u"horizontalLayout")
         self.folder_tree_frame = MoonFrame(asset_list_dlg)
@@ -54,14 +55,14 @@ class Ui_asset_list_dlg(object):
         self.verticalLayout = QVBoxLayout(self.item_frame)
         self.verticalLayout.setSpacing(6)
         self.verticalLayout.setObjectName(u"verticalLayout")
-        self.verticalLayout.setContentsMargins(9, 0, 0, 0)
+        self.verticalLayout.setContentsMargins(6, 0, 0, 0)
         self.function_button_frame = MoonFrame(self.item_frame)
         self.function_button_frame.setObjectName(u"function_button_frame")
         self.function_button_frame.setFrameShape(QFrame.StyledPanel)
         self.function_button_frame.setFrameShadow(QFrame.Raised)
         self.verticalLayout_4 = QVBoxLayout(self.function_button_frame)
         self.verticalLayout_4.setObjectName(u"verticalLayout_4")
-        self.verticalLayout_4.setContentsMargins(0, 0, 0, -1)
+        self.verticalLayout_4.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout_2 = QHBoxLayout()
         self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
         self.push_db_btn = QPushButton(self.function_button_frame)
@@ -90,17 +91,6 @@ class Ui_asset_list_dlg(object):
 
         self.verticalLayout_4.addLayout(self.horizontalLayout_2)
 
-        self.uploader_pgbar = QProgressBar(self.function_button_frame)
-        self.uploader_pgbar.setObjectName(u"uploader_pgbar")
-        self.uploader_pgbar.setMaximumSize(QSize(16777215, 6))
-        font = QFont()
-        font.setKerning(True)
-        self.uploader_pgbar.setFont(font)
-        self.uploader_pgbar.setValue(24)
-        self.uploader_pgbar.setTextVisible(False)
-
-        self.verticalLayout_4.addWidget(self.uploader_pgbar)
-
 
         self.verticalLayout.addWidget(self.function_button_frame)
 
@@ -109,7 +99,7 @@ class Ui_asset_list_dlg(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 467, 786))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 470, 795))
         self.verticalLayout_3 = QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_3.setSpacing(0)
         self.verticalLayout_3.setObjectName(u"verticalLayout_3")
@@ -123,6 +113,7 @@ class Ui_asset_list_dlg(object):
 
         self.verticalLayout.addWidget(self.scrollArea)
 
+        self.verticalLayout.setStretch(1, 1)
 
         self.horizontalLayout.addWidget(self.item_frame)
 
