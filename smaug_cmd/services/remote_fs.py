@@ -8,12 +8,21 @@ from functools import partial
 logger = logging.getLogger("smaug-cmd.adapter")
 
 
-client = Minio(
-    os.environ["MINIO_HOST"],
-    access_key=os.environ["MINIO_ROOT_USER"],
-    secret_key=os.environ["MINIO_ROOT_PASSWORD"],
-    secure=False,
-)
+client = None
+
+def init(endpoint, access_key, secret_key):
+    global client
+    client = Minio(
+        endpoint,
+        access_key=access_key,
+        secret_key=secret_key,
+        secure=False,)
+
+
+def check_client():
+    global client
+    if client is None:
+        raise RuntimeError("remote_fs is not initialized")
 
 
 def _makesure_bucket_exist(bucket_name):
@@ -29,6 +38,7 @@ def _makesure_bucket_exist(bucket_name):
 makesure_smaug_bucket_exist = partial(_makesure_bucket_exist, "smaug")
 
 
+@check_client
 def put_file(file_path, object_name) -> str:
     makesure_smaug_bucket_exist()
     result = client.fput_object(
@@ -40,7 +50,18 @@ def put_file(file_path, object_name) -> str:
     return result.object_name
 
 
-def put_representation(asset_id: str, asset_name: str, file_path: str):
+@check_client
+def put_representation(asset_id: str, file_path: str, object_name: str=None):
+    file_name = os.path.basename(file_path)
+    if not object_name:
+        object_name = f"/{asset_id}/{file_name}"
+    uploaded_object_name = put_file(file_path, object_name)
+    logger.debug(f"representation file {uploaded_object_name} is uploaded")
+    return uploaded_object_name
+
+
+@check_client
+def put_representation1(asset_id: str, asset_name: str, file_path: str):
     """Upload representation file to smaug."""
     file_name = os.path.basename(file_path).split(".")[0]
     file_extension = os.path.splitext(file_path)[-1].lower()
@@ -50,6 +71,7 @@ def put_representation(asset_id: str, asset_name: str, file_path: str):
     return uploaded_object_name
 
 
+@check_client
 def put_preview(asset_id, asset_name, preview_file) -> str:
     """Upload preview file to smaug."""
     def object_name_format(idx, file_path, type):
@@ -57,23 +79,7 @@ def put_preview(asset_id, asset_name, preview_file) -> str:
         object_name = f"/{asset_id}/{asset_name}_{type}-{idx}{file_extension}"
         return object_name
 
-    return put_representation(asset_id, asset_name, object_name_format(1, preview_file, "preview"))
-
-def put_previews(asset_id, asset_name, preview_files) -> List[str]:
-    """Upload preview files to smaug."""
-
-
-
-    return [
-        
-        for idx, file_path in enumerate(preview_files)
-    ]
-
-
-def put_textures(asset_id, asset_name, texture_zips):
-    """Upload texture zip files to smaug."""
-
-    return [_upload(file, t_key) for t_key, file in texture_zips.items()]
+    return put_representation1(asset_id, asset_name, object_name_format(1, preview_file, "preview"))
 
 
 if __name__ == "__main__":
