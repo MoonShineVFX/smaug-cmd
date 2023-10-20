@@ -8,10 +8,8 @@ from smaug_cmd.adapter.cmd_handlers import handler
 from smaug_cmd.domain.smaug_types import (
     Menu,
     MenuTree,
-    AssetTemplate,
-    Representation,
-    TEXTURE_GROUP_KEYWORDS,
-    SmaugCommand,
+    AssetFolderType,
+    AssetTemplate
 )
 from smaug_cmd.model import login_in as api_login
 from smaug_cmd.model import data as ds
@@ -69,10 +67,11 @@ class SmaugCmdHandler(QObject):
         cate_picker_btn.setProperty("smaug_cate", True)
         return
 
-    def asset_template(self, folder_path):
+    def asset_template(self, folder_path) -> Optional[AssetTemplate]:
         # convert folder to asset template
-        asset_template = ps.folder_asset_template(folder_path)
-        return asset_template
+        if ps.is_asset_model_folder(folder_path) == AssetFolderType.UNKNOWN:
+            return None
+        return ps.folder_asset_template(folder_path)
 
     def create_asset_proc(self, asset_template: AssetTemplate, ui_cb: Callable = None):
         """在資料庫建立 asset 的流程
@@ -97,7 +96,6 @@ class SmaugCmdHandler(QObject):
         smaug_commands = list()
         # upload preview command
         for idx, preview_file in enumerate(asset_template["previews"]):
-            # file_name = os.path.basename(preview_file).split(".")[0]
             file_extension = os.path.splitext(preview_file)[-1].lower()
             object_name = f"{asset_name}_preview-{idx}{file_extension}"
             smaug_commands.append(
@@ -116,7 +114,7 @@ class SmaugCmdHandler(QObject):
                         os.path.getsize(preview_file),
                         self.current_user["id"],
                     ),
-                    f"Create Rreview Representation {object_name}",
+                    f"Create Preview Representation \"{object_name}\"",
                 )
             )
 

@@ -1,11 +1,12 @@
 import logging
 import sys
 
-from PySide6.QtCore import QObject, QSettings
+from PySide6.QtCore import QObject, QSettings, QDir
 from PySide6.QtWidgets import QApplication, QMessageBox
 
 from smaug_cmd.ui import LogInDialog, AssetListDialog
 
+from smaug_cmd import setting
 from smaug_cmd.bootstrap import bootstrap
 from smaug_cmd.domain.logic import SmaugCmdHandler
 
@@ -14,13 +15,18 @@ logging.basicConfig(level=logging.DEBUG)
 
 
 class SmaugUploaderApp(QObject):
-    def __init__(self, settings: QSettings = None):
+
+    def __init__(self,):
         super(SmaugUploaderApp, self).__init__(None)
         self.current_user = None
         self.login_ui = LogInDialog()
         self.asset_list = AssetListDialog()
         self.logic = SmaugCmdHandler()
-        self.settings = settings
+        self.settings = QSettings()
+        self.asset_list.setToAssetTemplateCallback(self.logic.asset_template)
+        self.asset_list.folder_tree_widget.setRootFolder(
+            self.settings.value("rootFolder", QDir.homePath())
+        )
         self._connect()
 
     def _connect(self):
@@ -47,7 +53,7 @@ class SmaugUploaderApp(QObject):
         #     self.catrgories_ui.addMenuTree(menu_tree)
 
     def run(self):
-        bootstrap()
+        bootstrap(setting)
         self.login_ui.show()
 
 
