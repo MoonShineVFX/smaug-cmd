@@ -160,6 +160,24 @@ def is_model(file_path: str):
     return False
 
 
+def is_usd(file_path: str):
+    """是否為 usd 檔案
+
+    - usd 檔案的副檔名是 usd
+    """
+    if file_path.split(".")[-1].lower() == "usd":
+        return True
+    return False
+
+def us_meta(file_path: str):
+    
+def find_usd(file_paths: List[str]) -> str | None:
+    for file_path in file_paths:
+        if is_usd(file_path):
+            return file_path
+    return None
+
+
 def guess_preview_model(file_paths: str) -> str | None:
     for file_path in file_paths:
         if file_path.split(".")[-1].lower() == "glb":
@@ -207,6 +225,19 @@ def folder_asset_template(path: str) -> AssetTemplate:
     return asset_template
 
 
+def categorize_files_by_keywords(texture_files: List[str], keywords: List[str]) -> Dict[str, List[str]]:
+    categorized_files = {}
+    
+    for keyword in keywords:
+        # 使用列表推導式過濾出包含特定關鍵字的檔案
+        filtered_files = [f for f in texture_files if keyword in f.split('/')]
+        
+        # 將過濾出的檔案存入字典中
+        categorized_files[keyword] = filtered_files
+    
+    return categorized_files
+
+
 def to_asset_create_paylad(asset_json: AssetTemplate):
     """將 asset json 格式 轉成 asset create api 用的 json 格式"""
 
@@ -221,16 +252,20 @@ def to_asset_create_paylad(asset_json: AssetTemplate):
 
 def model_group(model_files: List[str])-> Dict[str, List[str]]:
     keywords = SOFTWARE_CATEGORIRS.keys()
-    return fs.categorize_files_by_keywords(model_files, keywords)
+    return categorize_files_by_keywords(model_files, keywords)
 
 
 def texture_group(texture_files: List[str]) -> Dict[str, List[str]]:
     keywords = ["2K, 4K"]
-    return fs.categorize_files_by_keywords(texture_files, keywords)
+    return categorize_files_by_keywords(texture_files, keywords)
 
 
 def generate_zip(asset_name, name_key, textures_files: List[str]) -> str:
-    pass
+    """將 textures 壓成 zip 檔案"""
+    # 產生 zip 檔名
+    zip_file_name = f"{asset_name}_{name_key}_texture.zip"
+    zipped_file = fs.create_temp_zip_from_files(textures_files, zip_file_name)
+    return zipped_file
 
 
 if __name__ == "__main__":

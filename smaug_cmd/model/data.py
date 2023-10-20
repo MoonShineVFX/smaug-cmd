@@ -190,8 +190,12 @@ def create_asset(payload: AssetCreateParams):
     return the_value
 
 
+def create_previews(asset_id: int, preview_files: list):
+    pass
+
+
 def create_representation(asset_id: int, representation_payload: dict):
-    
+    pass
 
 def log_out():
     """登出"""

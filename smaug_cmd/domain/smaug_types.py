@@ -21,6 +21,11 @@ SOFTWARE_CATEGORIRS = {
     "usd": [".usd"],
 }
 
+REPRESENTATION_TYPE = Literal["MODEL", "PREVIEW", "RENDER", "TEXTURE"]
+
+
+REPRESENTATION_FORMAT = Literal["IMG", "FBX", "GLB", "MAX", "MB", "OBJ", "C4D", "UNREAL", "USD"]
+
 
 class AssetTemplate(TypedDict):
     id: Optional[int]
@@ -77,10 +82,14 @@ RepresentationFormat = Literal["IMG", "FBX", "GLB", "MAX", "MB", "OBJ", "C4D", "
 
 
 class Representation(TypedDict):
+    assetId: str
     name: str
     type: RepresentationType
     format: RepresentationFormat
     path: str
+    fileSize: int
+    uploaderId: str
+
 
 
 class Asset(TypedDict):
