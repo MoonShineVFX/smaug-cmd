@@ -1,6 +1,7 @@
+from dataclasses import dataclass
 from enum import Enum
 from datetime import date
-from typing import Optional
+from typing import Optional, Union
 from PySide6.QtCore import Qt
 from typing import Dict, Literal, TypedDict, List
 
@@ -38,6 +39,16 @@ class AssetTemplate(TypedDict):
     renders: List[str]      # 渲染圖
     meta: Dict[str, str]    # 其他資料(如果有)
     tags: List[str]         # 標籤
+
+
+class AssetCreateResponse(TypedDict):
+    id: str
+    name: str
+    creatorId: str
+    categoryId: int
+    createAt: date
+    updateAt: Optional[date]
+
 
 
 class AssetFolderType(Enum):
@@ -103,3 +114,10 @@ class AssetCreateParams(TypedDict):
     name: str
     category_id: int
     tags: List[str]
+
+
+@dataclass
+class SmaugCommand:
+    command: str
+    payload: Union[List: any, Dict[str, str|int]]
+    description: str = None

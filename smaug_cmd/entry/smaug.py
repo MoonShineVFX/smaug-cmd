@@ -6,7 +6,7 @@ from PySide6.QtWidgets import QApplication, QMessageBox
 
 from smaug_cmd.ui import LogInDialog, AssetListDialog
 
-# from smaug_cmd.domain.bootstrp import bootstrip
+from smaug_cmd.bootstrap import bootstrap
 from smaug_cmd.domain.logic import SmaugCmdHandler
 
 logger = logging.getLogger('smaug-cmd')
@@ -47,6 +47,7 @@ class SmaugUploaderApp(QObject):
         #     self.catrgories_ui.addMenuTree(menu_tree)
 
     def run(self):
+        bootstrap()
         self.login_ui.show()
 
 

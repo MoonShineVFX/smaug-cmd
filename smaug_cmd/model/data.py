@@ -5,7 +5,7 @@ from requests.auth import HTTPBasicAuth
 from requests.sessions import Session
 import logging
 from urllib.parse import quote
-from smaug_cmd.domain.smaug_types import MenuTree, CategoryDetailTree, AssetCreateParams
+from smaug_cmd.domain.smaug_types import MenuTree, CategoryDetailTree, AssetCreateParams, AssetCreateResponse
 from smaug_cmd import setting
 
 logger = logging.getLogger("smaug-cmd.data")
@@ -167,7 +167,7 @@ def get_category(category_id) -> Tuple[int, CategoryDetailTree]:
     return return_value
 
 
-def create_asset(payload: AssetCreateParams):
+def create_asset(payload: AssetCreateParams) -> Tuple[int, AssetCreateResponse]:
 
     api = f"{setting.api_root}/trpc/asset.create"
     payload = {
@@ -196,6 +196,7 @@ def create_previews(asset_id: int, preview_files: list):
 
 def create_representation(asset_id: int, representation_payload: dict):
     pass
+
 
 def log_out():
     """登出"""

@@ -1,7 +1,7 @@
 import os
 import unittest
 
-from smaug_cmd.adapter import remote_fs as rfs
+from smaug_cmd.services import remote_fs as rfs
 
 
 class TestRemoteFS(unittest.TestCase):

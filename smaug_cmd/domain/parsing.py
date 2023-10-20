@@ -169,13 +169,16 @@ def is_usd(file_path: str):
         return True
     return False
 
-def us_meta(file_path: str):
-    
+
 def find_usd(file_paths: List[str]) -> str | None:
     for file_path in file_paths:
         if is_usd(file_path):
             return file_path
     return None
+
+
+def us_meta(file_path: str):
+    return {} # todo: implement polycount, vertex count, face count, bounding box etc.
 
 
 def guess_preview_model(file_paths: str) -> str | None:
@@ -255,7 +258,7 @@ def model_group(model_files: List[str])-> Dict[str, List[str]]:
     return categorize_files_by_keywords(model_files, keywords)
 
 
-def texture_group(texture_files: List[str]) -> Dict[str, List[str]]:
+def texture_group(texture_files: List[str]) -> Dict[TEXTURE_GROUP_KEYWORDS, List[str]]:
     keywords = ["2K, 4K"]
     return categorize_files_by_keywords(texture_files, keywords)
 
