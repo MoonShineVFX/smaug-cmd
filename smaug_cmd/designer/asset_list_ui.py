@@ -22,7 +22,6 @@ from PySide6.QtWidgets import (QApplication, QDialog, QFrame, QHBoxLayout,
 from smaug_cmd.ui import (AssetEditorWidget, FolderTreeWidget, MoonFrame)
 from smaug_cmd.resource import smaug_rc
 
-
 class Ui_asset_list_dlg(object):
     def setupUi(self, asset_list_dlg):
         if not asset_list_dlg.objectName():
