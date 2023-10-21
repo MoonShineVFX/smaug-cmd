@@ -16,10 +16,11 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QApplication, QDialog, QFrame, QHBoxLayout,
-    QPushButton, QScrollArea, QSizePolicy, QVBoxLayout,
-    QWidget)
+    QPushButton, QScrollArea, QSizePolicy, QStackedWidget,
+    QVBoxLayout, QWidget)
 
-from smaug_cmd.ui import (AssetEditorWidget, FolderSelector, FolderTreeWidget, MoonFrame)
+from smaug_cmd.ui import (AssetEditorWidget, EmptyWidget, FolderSelector, FolderTreeWidget,
+    MoonFrame)
 from smaug_cmd.resource import smaug_rc
 
 class Ui_asset_list_dlg(object):
@@ -110,10 +111,16 @@ class Ui_asset_list_dlg(object):
         self.verticalLayout_3.setSpacing(0)
         self.verticalLayout_3.setObjectName(u"verticalLayout_3")
         self.verticalLayout_3.setContentsMargins(0, 0, 0, 0)
-        self.asset_editor_widget = AssetEditorWidget(self.scrollAreaWidgetContents)
-        self.asset_editor_widget.setObjectName(u"asset_editor_widget")
+        self.asset_editor_stackedWidget = QStackedWidget(self.scrollAreaWidgetContents)
+        self.asset_editor_stackedWidget.setObjectName(u"asset_editor_stackedWidget")
+        self.asset_editor_wdt = AssetEditorWidget()
+        self.asset_editor_wdt.setObjectName(u"asset_editor_wdt")
+        self.asset_editor_stackedWidget.addWidget(self.asset_editor_wdt)
+        self.empty_widget = EmptyWidget()
+        self.empty_widget.setObjectName(u"empty_widget")
+        self.asset_editor_stackedWidget.addWidget(self.empty_widget)
 
-        self.verticalLayout_3.addWidget(self.asset_editor_widget)
+        self.verticalLayout_3.addWidget(self.asset_editor_stackedWidget)
 
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
 

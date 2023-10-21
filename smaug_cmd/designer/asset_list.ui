@@ -202,7 +202,10 @@
            <number>0</number>
           </property>
           <item>
-           <widget class="AssetEditorWidget" name="asset_editor_widget" native="true"/>
+           <widget class="QStackedWidget" name="asset_editor_stackedWidget">
+            <widget class="AssetEditorWidget" name="asset_editor_wdt" native="true"/>
+            <widget class="EmptyWidget" name="empty_widget"/>
+           </widget>
           </item>
          </layout>
         </widget>
@@ -234,6 +237,12 @@
   </customwidget>
   <customwidget>
    <class>FolderSelector</class>
+   <extends>QWidget</extends>
+   <header>smaug_cmd.ui.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>EmptyWidget</class>
    <extends>QWidget</extends>
    <header>smaug_cmd.ui.h</header>
    <container>1</container>

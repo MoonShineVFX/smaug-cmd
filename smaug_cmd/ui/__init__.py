@@ -1,4 +1,4 @@
-from .base import MoonFrame
+from .base import MoonFrame, EmptyWidget
 from .folder_pricker import FolderSelector
 from .image import ImageDisplayWidget
 from .layout import FlowLayout
