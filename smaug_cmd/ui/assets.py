@@ -14,10 +14,15 @@ class AssetListDialog(QDialog, Ui_asset_list_dlg):
         self.to_asset_template_cb = to_asset_template_cb
         self.folder_tree_widget.selectedFolder.connect(self._on_folder_selected)
         self.push_db_btn.pressed.connect(self._on_push_db_pressed)
-    
+        self.folder_picker_widget.folderSelected.connect(self._on_root_folder_selected)
+
     def _on_folder_selected(self, path):
         asset_template = self.to_asset_template_cb(path)
         self.asset_editor_widget.setAsset(asset_template)
+        return
+
+    def _on_root_folder_selected(self, path):
+        self.folder_tree_widget.setRootFolder(path)
         return
 
     def setToAssetTemplateCallback(self, cb):

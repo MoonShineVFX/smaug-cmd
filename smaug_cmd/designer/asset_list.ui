@@ -28,9 +28,9 @@
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout_2">
+     <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0,1">
       <property name="spacing">
-       <number>0</number>
+       <number>6</number>
       </property>
       <property name="leftMargin">
        <number>0</number>
@@ -44,6 +44,16 @@
       <property name="bottomMargin">
        <number>0</number>
       </property>
+      <item>
+       <widget class="FolderSelector" name="folder_picker_widget" native="true">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>32</height>
+         </size>
+        </property>
+       </widget>
+      </item>
       <item>
        <widget class="FolderTreeWidget" name="folder_tree_widget" native="true"/>
       </item>
@@ -218,6 +228,12 @@
   </customwidget>
   <customwidget>
    <class>AssetEditorWidget</class>
+   <extends>QWidget</extends>
+   <header>smaug_cmd.ui.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>FolderSelector</class>
    <extends>QWidget</extends>
    <header>smaug_cmd.ui.h</header>
    <container>1</container>

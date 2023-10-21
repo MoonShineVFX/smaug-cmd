@@ -19,7 +19,7 @@ from PySide6.QtWidgets import (QApplication, QDialog, QFrame, QHBoxLayout,
     QPushButton, QScrollArea, QSizePolicy, QVBoxLayout,
     QWidget)
 
-from smaug_cmd.ui import (AssetEditorWidget, FolderTreeWidget, MoonFrame)
+from smaug_cmd.ui import (AssetEditorWidget, FolderSelector, FolderTreeWidget, MoonFrame)
 from smaug_cmd.resource import smaug_rc
 
 class Ui_asset_list_dlg(object):
@@ -35,14 +35,21 @@ class Ui_asset_list_dlg(object):
         self.folder_tree_frame.setFrameShape(QFrame.StyledPanel)
         self.folder_tree_frame.setFrameShadow(QFrame.Raised)
         self.verticalLayout_2 = QVBoxLayout(self.folder_tree_frame)
-        self.verticalLayout_2.setSpacing(0)
+        self.verticalLayout_2.setSpacing(6)
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
         self.verticalLayout_2.setContentsMargins(0, 0, 0, 0)
+        self.folder_picker_widget = FolderSelector(self.folder_tree_frame)
+        self.folder_picker_widget.setObjectName(u"folder_picker_widget")
+        self.folder_picker_widget.setMinimumSize(QSize(0, 32))
+
+        self.verticalLayout_2.addWidget(self.folder_picker_widget)
+
         self.folder_tree_widget = FolderTreeWidget(self.folder_tree_frame)
         self.folder_tree_widget.setObjectName(u"folder_tree_widget")
 
         self.verticalLayout_2.addWidget(self.folder_tree_widget)
 
+        self.verticalLayout_2.setStretch(1, 1)
 
         self.horizontalLayout.addWidget(self.folder_tree_frame)
 
