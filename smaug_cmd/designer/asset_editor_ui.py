@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'asset_editor.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.5.2
+## Created by: Qt User Interface Compiler version 6.6.0
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -25,14 +25,12 @@ class Ui_asset_editor_wgt(object):
     def setupUi(self, asset_editor_wgt):
         if not asset_editor_wgt.objectName():
             asset_editor_wgt.setObjectName(u"asset_editor_wgt")
-        asset_editor_wgt.resize(434, 1132)
+        asset_editor_wgt.resize(430, 1077)
         asset_editor_wgt.setStyleSheet(u"")
         self.verticalLayout = QVBoxLayout(asset_editor_wgt)
         self.verticalLayout.setObjectName(u"verticalLayout")
-        self.asset_frame = MoonFrame(asset_editor_wgt)
+        self.asset_frame = QWidget(asset_editor_wgt)
         self.asset_frame.setObjectName(u"asset_frame")
-        self.asset_frame.setFrameShape(QFrame.StyledPanel)
-        self.asset_frame.setFrameShadow(QFrame.Raised)
         self.verticalLayout_5 = QVBoxLayout(self.asset_frame)
         self.verticalLayout_5.setSpacing(12)
         self.verticalLayout_5.setObjectName(u"verticalLayout_5")
@@ -46,51 +44,41 @@ class Ui_asset_editor_wgt(object):
         self.verticalLayout_3.setSpacing(0)
         self.verticalLayout_3.setObjectName(u"verticalLayout_3")
         self.verticalLayout_3.setContentsMargins(0, 0, 0, 0)
-        self.asset_info_grp = QGroupBox(self.asset_into_frame)
-        self.asset_info_grp.setObjectName(u"asset_info_grp")
-        self.asset_info_grp.setEnabled(True)
-        self.asset_info_grp.setMinimumSize(QSize(0, 0))
+        self.asset_name_lbl = QLabel(self.asset_into_frame)
+        self.asset_name_lbl.setObjectName(u"asset_name_lbl")
         font = QFont()
-        font.setBold(False)
+        font.setPointSize(24)
+        font.setBold(True)
         font.setItalic(False)
         font.setUnderline(False)
-        self.asset_info_grp.setFont(font)
-        self.asset_info_grp.setFlat(True)
-        self.verticalLayout_2 = QVBoxLayout(self.asset_info_grp)
-        self.verticalLayout_2.setSpacing(2)
-        self.verticalLayout_2.setObjectName(u"verticalLayout_2")
-        self.verticalLayout_2.setContentsMargins(9, 9, 9, 9)
-        self.asset_name_lbl = QLabel(self.asset_info_grp)
-        self.asset_name_lbl.setObjectName(u"asset_name_lbl")
-        font1 = QFont()
-        font1.setPointSize(24)
-        font1.setBold(True)
-        font1.setItalic(False)
-        font1.setUnderline(False)
-        self.asset_name_lbl.setFont(font1)
+        self.asset_name_lbl.setFont(font)
         self.asset_name_lbl.setMargin(0)
 
-        self.verticalLayout_2.addWidget(self.asset_name_lbl)
+        self.verticalLayout_3.addWidget(self.asset_name_lbl)
 
-        self.verticalSpacer = QSpacerItem(20, 4, QSizePolicy.Minimum, QSizePolicy.Fixed)
+        self.verticalSpacer = QSpacerItem(20, 4, QSizePolicy.Minimum, QSizePolicy.Minimum)
 
-        self.verticalLayout_2.addItem(self.verticalSpacer)
+        self.verticalLayout_3.addItem(self.verticalSpacer)
 
-        self.asset_id_lbl = QLabel(self.asset_info_grp)
+        self.asset_id_lbl = QLabel(self.asset_into_frame)
         self.asset_id_lbl.setObjectName(u"asset_id_lbl")
         self.asset_id_lbl.setMargin(0)
 
-        self.verticalLayout_2.addWidget(self.asset_id_lbl)
+        self.verticalLayout_3.addWidget(self.asset_id_lbl)
 
         self.horizontalLayout_3 = QHBoxLayout()
         self.horizontalLayout_3.setSpacing(12)
         self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
-        self.asset_cate_lbl = QLabel(self.asset_info_grp)
+        self.asset_cate_lbl = QLabel(self.asset_into_frame)
         self.asset_cate_lbl.setObjectName(u"asset_cate_lbl")
 
         self.horizontalLayout_3.addWidget(self.asset_cate_lbl)
 
-        self.cate_picker_btn = QPushButton(self.asset_info_grp)
+        self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.horizontalLayout_3.addItem(self.horizontalSpacer)
+
+        self.cate_picker_btn = QPushButton(self.asset_into_frame)
         self.cate_picker_btn.setObjectName(u"cate_picker_btn")
         self.cate_picker_btn.setMaximumSize(QSize(24, 20))
         self.cate_picker_btn.setStyleSheet(u"QPushButton#catePicker_btn[smaug_cate=\"false\"]{\n"
@@ -103,15 +91,8 @@ class Ui_asset_editor_wgt(object):
 
         self.horizontalLayout_3.addWidget(self.cate_picker_btn)
 
-        self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
-        self.horizontalLayout_3.addItem(self.horizontalSpacer)
-
-
-        self.verticalLayout_2.addLayout(self.horizontalLayout_3)
-
-
-        self.verticalLayout_3.addWidget(self.asset_info_grp)
+        self.verticalLayout_3.addLayout(self.horizontalLayout_3)
 
 
         self.verticalLayout_5.addWidget(self.asset_into_frame)
@@ -126,10 +107,10 @@ class Ui_asset_editor_wgt(object):
         self.preview_widget.setObjectName(u"preview_widget")
         self.preview_widget.setMinimumSize(QSize(0, 220))
         self.preview_widget.setMaximumSize(QSize(16777215, 220))
-        font2 = QFont()
-        font2.setUnderline(False)
-        font2.setStrikeOut(False)
-        self.preview_widget.setFont(font2)
+        font1 = QFont()
+        font1.setUnderline(False)
+        font1.setStrikeOut(False)
+        self.preview_widget.setFont(font1)
 
         self.verticalLayout_4.addWidget(self.preview_widget)
 
@@ -194,6 +175,7 @@ class Ui_asset_editor_wgt(object):
 
         self.verticalLayout_5.addWidget(self.tags_grp)
 
+        self.verticalLayout_5.setStretch(5, 1)
 
         self.verticalLayout.addWidget(self.asset_frame)
 
@@ -205,7 +187,6 @@ class Ui_asset_editor_wgt(object):
 
     def retranslateUi(self, asset_editor_wgt):
         asset_editor_wgt.setWindowTitle(QCoreApplication.translate("asset_editor_wgt", u"Form", None))
-        self.asset_info_grp.setTitle(QCoreApplication.translate("asset_editor_wgt", u"Asset Info", None))
         self.asset_name_lbl.setText(QCoreApplication.translate("asset_editor_wgt", u"Asset Name", None))
         self.asset_id_lbl.setText(QCoreApplication.translate("asset_editor_wgt", u"Id: None", None))
         self.asset_cate_lbl.setText(QCoreApplication.translate("asset_editor_wgt", u"Category: None  ", None))

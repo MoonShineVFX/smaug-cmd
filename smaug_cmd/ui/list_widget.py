@@ -9,14 +9,15 @@ from smaug_cmd.resource import smaug_rc  # noqa: F401
 class FileListWidget(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.layout = QVBoxLayout()
+        self._layout = QVBoxLayout()
+        self._layout.setContentsMargins(0, 0, 0, 0)
         self.file_list_widget = QListWidget()
 
         # 設置為圖標模式
         self.file_list_widget.setViewMode(QListWidget.ViewMode.IconMode)
-
-        self.layout.addWidget(self.file_list_widget)
-        self.setLayout(self.layout)
+        self.file_list_widget.setContentsMargins(2,2,2,2)
+        self._layout.addWidget(self.file_list_widget)
+        self.setLayout(self._layout)
 
     def setFiles(self, files: Optional[List[str]]):
         # 先清空現有的列表項目

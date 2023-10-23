@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>asset_widget</class>
+ <widget class="QStackedWidget" name="asset_widget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>420</width>
+    <height>1077</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>StackedWidget</string>
+  </property>
+  <property name="currentIndex">
+   <number>0</number>
+  </property>
+  <widget class="AssetEditorWidget" name="asset_page">
+   <layout class="QVBoxLayout" name="verticalLayout"/>
+  </widget>
+  <widget class="EmptyWidget" name="empty_page">
+   <layout class="QVBoxLayout" name="verticalLayout_2"/>
+  </widget>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>AssetEditorWidget</class>
+   <extends>QWidget</extends>
+   <header>smaug_cmd.ui.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>EmptyWidget</class>
+   <extends>QWidget</extends>
+   <header>smaug_cmd.ui.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

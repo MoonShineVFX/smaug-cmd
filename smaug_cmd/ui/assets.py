@@ -18,7 +18,7 @@ class AssetListDialog(QDialog, Ui_asset_list_dlg):
 
     def _on_folder_selected(self, path):
         asset_template = self.to_asset_template_cb(path)
-        self.asset_editor_widget.setAsset(asset_template)
+        self.asset_widget.setAsset(asset_template)
         return
 
     def _on_root_folder_selected(self, path):
