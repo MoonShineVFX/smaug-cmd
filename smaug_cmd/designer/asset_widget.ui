@@ -7,14 +7,14 @@
     <x>0</x>
     <y>0</y>
     <width>420</width>
-    <height>1077</height>
+    <height>766</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>StackedWidget</string>
   </property>
   <property name="currentIndex">
-   <number>0</number>
+   <number>1</number>
   </property>
   <widget class="AssetEditorWidget" name="asset_page">
    <layout class="QVBoxLayout" name="verticalLayout"/>

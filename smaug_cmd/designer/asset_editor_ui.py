@@ -16,19 +16,22 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QApplication, QFrame, QGroupBox, QHBoxLayout,
-    QLabel, QPushButton, QSizePolicy, QSpacerItem,
-    QVBoxLayout, QWidget)
+    QLabel, QPushButton, QScrollArea, QSizePolicy,
+    QSpacerItem, QVBoxLayout, QWidget)
 
 from smaug_cmd.ui import (FileListWidget, ImageDisplayWidget, MoonFrame, TagsWidget)
+import smaug_rc
 
 class Ui_asset_editor_wgt(object):
     def setupUi(self, asset_editor_wgt):
         if not asset_editor_wgt.objectName():
             asset_editor_wgt.setObjectName(u"asset_editor_wgt")
-        asset_editor_wgt.resize(430, 1077)
+        asset_editor_wgt.resize(420, 917)
+        asset_editor_wgt.setMaximumSize(QSize(420, 16777215))
         asset_editor_wgt.setStyleSheet(u"")
         self.verticalLayout = QVBoxLayout(asset_editor_wgt)
         self.verticalLayout.setObjectName(u"verticalLayout")
+        self.verticalLayout.setContentsMargins(0, 0, 0, 0)
         self.asset_frame = QWidget(asset_editor_wgt)
         self.asset_frame.setObjectName(u"asset_frame")
         self.verticalLayout_5 = QVBoxLayout(self.asset_frame)
@@ -38,12 +41,17 @@ class Ui_asset_editor_wgt(object):
         self.asset_into_frame = MoonFrame(self.asset_frame)
         self.asset_into_frame.setObjectName(u"asset_into_frame")
         self.asset_into_frame.setMaximumSize(QSize(16777215, 16777215))
+        self.asset_into_frame.setStyleSheet(u"#asset_into_frame {\n"
+"    background-image: url(:/ui/no_preview.jpg);\n"
+"    background-color: rgba(0, 0, 0, 0.5);\n"
+"    background-position: center center;\n"
+"    background-repeat: no-repeat;}")
         self.asset_into_frame.setFrameShape(QFrame.StyledPanel)
         self.asset_into_frame.setFrameShadow(QFrame.Raised)
         self.verticalLayout_3 = QVBoxLayout(self.asset_into_frame)
         self.verticalLayout_3.setSpacing(0)
         self.verticalLayout_3.setObjectName(u"verticalLayout_3")
-        self.verticalLayout_3.setContentsMargins(0, 0, 0, 0)
+        self.verticalLayout_3.setContentsMargins(9, 9, 9, 9)
         self.asset_name_lbl = QLabel(self.asset_into_frame)
         self.asset_name_lbl.setObjectName(u"asset_name_lbl")
         font = QFont()
@@ -56,7 +64,7 @@ class Ui_asset_editor_wgt(object):
 
         self.verticalLayout_3.addWidget(self.asset_name_lbl)
 
-        self.verticalSpacer = QSpacerItem(20, 4, QSizePolicy.Minimum, QSizePolicy.Minimum)
+        self.verticalSpacer = QSpacerItem(20, 80, QSizePolicy.Minimum, QSizePolicy.Minimum)
 
         self.verticalLayout_3.addItem(self.verticalSpacer)
 
@@ -87,6 +95,7 @@ class Ui_asset_editor_wgt(object):
 "QPushButton#catePicker_btn[smaug_cate=\"true\"]{\n"
 "background-color: rgb(0, 109, 18);\n"
 "}")
+        self.cate_picker_btn.setFlat(False)
         self.cate_picker_btn.setProperty("smaug_cate", False)
 
         self.horizontalLayout_3.addWidget(self.cate_picker_btn)
@@ -97,16 +106,52 @@ class Ui_asset_editor_wgt(object):
 
         self.verticalLayout_5.addWidget(self.asset_into_frame)
 
-        self.preview_grp = QGroupBox(self.asset_frame)
+        self.tag_frame = QFrame(self.asset_frame)
+        self.tag_frame.setObjectName(u"tag_frame")
+        self.tag_frame.setFrameShape(QFrame.StyledPanel)
+        self.tag_frame.setFrameShadow(QFrame.Raised)
+        self.verticalLayout_10 = QVBoxLayout(self.tag_frame)
+        self.verticalLayout_10.setObjectName(u"verticalLayout_10")
+        self.verticalLayout_10.setContentsMargins(-1, 0, -1, 0)
+        self.tags_grp = QGroupBox(self.tag_frame)
+        self.tags_grp.setObjectName(u"tags_grp")
+        self.verticalLayout_9 = QVBoxLayout(self.tags_grp)
+        self.verticalLayout_9.setObjectName(u"verticalLayout_9")
+        self.verticalLayout_9.setContentsMargins(0, 0, 0, 0)
+        self.tags_widget = TagsWidget(self.tags_grp)
+        self.tags_widget.setObjectName(u"tags_widget")
+        self.tags_widget.setMinimumSize(QSize(0, 100))
+        self.tags_widget.setBaseSize(QSize(0, 0))
+
+        self.verticalLayout_9.addWidget(self.tags_widget)
+
+
+        self.verticalLayout_10.addWidget(self.tags_grp)
+
+
+        self.verticalLayout_5.addWidget(self.tag_frame)
+
+
+        self.verticalLayout.addWidget(self.asset_frame)
+
+        self.scrollArea = QScrollArea(asset_editor_wgt)
+        self.scrollArea.setObjectName(u"scrollArea")
+        self.scrollArea.setWidgetResizable(True)
+        self.scrollAreaWidgetContents = QWidget()
+        self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 404, 594))
+        self.verticalLayout_2 = QVBoxLayout(self.scrollAreaWidgetContents)
+        self.verticalLayout_2.setObjectName(u"verticalLayout_2")
+        self.preview_grp = QGroupBox(self.scrollAreaWidgetContents)
         self.preview_grp.setObjectName(u"preview_grp")
-        self.preview_grp.setMinimumSize(QSize(0, 260))
+        self.preview_grp.setMinimumSize(QSize(0, 0))
         self.preview_grp.setCheckable(False)
         self.verticalLayout_4 = QVBoxLayout(self.preview_grp)
         self.verticalLayout_4.setObjectName(u"verticalLayout_4")
         self.preview_widget = ImageDisplayWidget(self.preview_grp)
         self.preview_widget.setObjectName(u"preview_widget")
-        self.preview_widget.setMinimumSize(QSize(0, 220))
-        self.preview_widget.setMaximumSize(QSize(16777215, 220))
+        self.preview_widget.setMinimumSize(QSize(0, 0))
+        self.preview_widget.setMaximumSize(QSize(16777215, 180))
         font1 = QFont()
         font1.setUnderline(False)
         font1.setStrikeOut(False)
@@ -115,9 +160,9 @@ class Ui_asset_editor_wgt(object):
         self.verticalLayout_4.addWidget(self.preview_widget)
 
 
-        self.verticalLayout_5.addWidget(self.preview_grp)
+        self.verticalLayout_2.addWidget(self.preview_grp)
 
-        self.model_files_grp = QGroupBox(self.asset_frame)
+        self.model_files_grp = QGroupBox(self.scrollAreaWidgetContents)
         self.model_files_grp.setObjectName(u"model_files_grp")
         self.verticalLayout_6 = QVBoxLayout(self.model_files_grp)
         self.verticalLayout_6.setSpacing(6)
@@ -130,9 +175,22 @@ class Ui_asset_editor_wgt(object):
         self.verticalLayout_6.addWidget(self.model_widget)
 
 
-        self.verticalLayout_5.addWidget(self.model_files_grp)
+        self.verticalLayout_2.addWidget(self.model_files_grp)
 
-        self.render_grp = QGroupBox(self.asset_frame)
+        self.texture_grp = QGroupBox(self.scrollAreaWidgetContents)
+        self.texture_grp.setObjectName(u"texture_grp")
+        self.verticalLayout_8 = QVBoxLayout(self.texture_grp)
+        self.verticalLayout_8.setObjectName(u"verticalLayout_8")
+        self.textures_widget = FileListWidget(self.texture_grp)
+        self.textures_widget.setObjectName(u"textures_widget")
+        self.textures_widget.setMinimumSize(QSize(0, 120))
+
+        self.verticalLayout_8.addWidget(self.textures_widget)
+
+
+        self.verticalLayout_2.addWidget(self.texture_grp)
+
+        self.render_grp = QGroupBox(self.scrollAreaWidgetContents)
         self.render_grp.setObjectName(u"render_grp")
         self.verticalLayout_7 = QVBoxLayout(self.render_grp)
         self.verticalLayout_7.setSpacing(6)
@@ -145,40 +203,13 @@ class Ui_asset_editor_wgt(object):
         self.verticalLayout_7.addWidget(self.render_widget)
 
 
-        self.verticalLayout_5.addWidget(self.render_grp)
+        self.verticalLayout_2.addWidget(self.render_grp)
 
-        self.texture_grp = QGroupBox(self.asset_frame)
-        self.texture_grp.setObjectName(u"texture_grp")
-        self.verticalLayout_8 = QVBoxLayout(self.texture_grp)
-        self.verticalLayout_8.setObjectName(u"verticalLayout_8")
-        self.textures_widget = FileListWidget(self.texture_grp)
-        self.textures_widget.setObjectName(u"textures_widget")
-        self.textures_widget.setMinimumSize(QSize(0, 120))
+        self.scrollArea.setWidget(self.scrollAreaWidgetContents)
 
-        self.verticalLayout_8.addWidget(self.textures_widget)
+        self.verticalLayout.addWidget(self.scrollArea)
 
-
-        self.verticalLayout_5.addWidget(self.texture_grp)
-
-        self.tags_grp = QGroupBox(self.asset_frame)
-        self.tags_grp.setObjectName(u"tags_grp")
-        self.verticalLayout_9 = QVBoxLayout(self.tags_grp)
-        self.verticalLayout_9.setObjectName(u"verticalLayout_9")
-        self.verticalLayout_9.setContentsMargins(0, 6, 0, -1)
-        self.tags_widget = TagsWidget(self.tags_grp)
-        self.tags_widget.setObjectName(u"tags_widget")
-        self.tags_widget.setMinimumSize(QSize(0, 100))
-        self.tags_widget.setBaseSize(QSize(0, 0))
-
-        self.verticalLayout_9.addWidget(self.tags_widget)
-
-
-        self.verticalLayout_5.addWidget(self.tags_grp)
-
-        self.verticalLayout_5.setStretch(5, 1)
-
-        self.verticalLayout.addWidget(self.asset_frame)
-
+        self.verticalLayout.setStretch(1, 1)
 
         self.retranslateUi(asset_editor_wgt)
 
@@ -191,10 +222,10 @@ class Ui_asset_editor_wgt(object):
         self.asset_id_lbl.setText(QCoreApplication.translate("asset_editor_wgt", u"Id: None", None))
         self.asset_cate_lbl.setText(QCoreApplication.translate("asset_editor_wgt", u"Category: None  ", None))
         self.cate_picker_btn.setText(QCoreApplication.translate("asset_editor_wgt", u"...", None))
+        self.tags_grp.setTitle(QCoreApplication.translate("asset_editor_wgt", u"Tags Editor", None))
         self.preview_grp.setTitle(QCoreApplication.translate("asset_editor_wgt", u"Preview Picture", None))
         self.model_files_grp.setTitle(QCoreApplication.translate("asset_editor_wgt", u"Model Files", None))
-        self.render_grp.setTitle(QCoreApplication.translate("asset_editor_wgt", u"Render Pictures", None))
         self.texture_grp.setTitle(QCoreApplication.translate("asset_editor_wgt", u"Texture Files", None))
-        self.tags_grp.setTitle(QCoreApplication.translate("asset_editor_wgt", u"Tags Editor", None))
+        self.render_grp.setTitle(QCoreApplication.translate("asset_editor_wgt", u"Render Pictures", None))
     # retranslateUi
 

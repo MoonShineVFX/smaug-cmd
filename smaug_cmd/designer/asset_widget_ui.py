@@ -24,7 +24,7 @@ class Ui_asset_widget(object):
     def setupUi(self, asset_widget):
         if not asset_widget.objectName():
             asset_widget.setObjectName(u"asset_widget")
-        asset_widget.resize(420, 1077)
+        asset_widget.resize(420, 766)
         self.asset_page = AssetEditorWidget()
         self.asset_page.setObjectName(u"asset_page")
         self.verticalLayout = QVBoxLayout(self.asset_page)
@@ -38,7 +38,7 @@ class Ui_asset_widget(object):
 
         self.retranslateUi(asset_widget)
 
-        asset_widget.setCurrentIndex(0)
+        asset_widget.setCurrentIndex(1)
 
 
         QMetaObject.connectSlotsByName(asset_widget)
