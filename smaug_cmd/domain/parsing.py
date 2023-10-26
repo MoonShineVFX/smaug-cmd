@@ -196,6 +196,7 @@ def folder_asset_template(path: str) -> AssetTemplate:
     renders = []
     models = []
     metadata = {}
+    tags = []
 
     for root, _, filenames in os.walk(path):
         for filename in filenames:
@@ -223,6 +224,7 @@ def folder_asset_template(path: str) -> AssetTemplate:
         "textures": textures,
         "renders": renders,
         "meta": metadata,
+        "tags": tags
     }
 
     return asset_template

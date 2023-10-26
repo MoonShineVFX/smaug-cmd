@@ -202,7 +202,7 @@
            <number>0</number>
           </property>
           <item>
-           <widget class="AssetEditorWidget" name="asset_editor_widget" native="true"/>
+           <widget class="AssetWidget" name="asset_widget"/>
           </item>
          </layout>
         </widget>
@@ -227,14 +227,14 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>AssetEditorWidget</class>
+   <class>FolderSelector</class>
    <extends>QWidget</extends>
    <header>smaug_cmd.ui.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>FolderSelector</class>
-   <extends>QWidget</extends>
+   <class>AssetWidget</class>
+   <extends>QStackedWidget</extends>
    <header>smaug_cmd.ui.h</header>
    <container>1</container>
   </customwidget>

@@ -2,7 +2,7 @@ import logging
 from typing import Dict, List, Optional, Tuple, Callable
 import os
 from PySide6.QtCore import QObject
-from PySide6.QtWidgets import QLabel, QPushButton
+from PySide6.QtWidgets import QMessageBox, QLabel, QPushButton
 
 from smaug_cmd.adapter.cmd_handlers import handler
 from smaug_cmd.domain.smaug_types import (
@@ -29,11 +29,17 @@ class SmaugCmdHandler(QObject):
         logger.error(error_msg)
         er_cb if er_cb(error_msg) else None
 
-    def log_in(self, user_name, password) -> Tuple[int, dict]:
+    def log_in(self, user_name, password) -> Optional[Tuple[int, dict]]:
         re = api_login(user_name, password)
+        if re is None:
+            self.error_handler("Login error, server not response.", lambda x: QMessageBox.critical(None, "Error", x))
+            return re
         if str(re[0])[0] == "2":
             self.current_user = re[1]
-        return re
+            return re
+        else:
+            self.error_handler(re[1]["message"], )
+            return re
 
     def get_menus(self, error_cb: Optional[Callable]) -> Optional[List[Menu]]:
         re = ds.get_menus()

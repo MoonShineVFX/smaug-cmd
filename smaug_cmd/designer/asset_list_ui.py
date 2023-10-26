@@ -19,8 +19,8 @@ from PySide6.QtWidgets import (QApplication, QDialog, QFrame, QHBoxLayout,
     QPushButton, QScrollArea, QSizePolicy, QVBoxLayout,
     QWidget)
 
-from smaug_cmd.ui import (AssetEditorWidget, FolderSelector, FolderTreeWidget, MoonFrame)
-from smaug_cmd.resource import smaug_rc
+from smaug_cmd.ui import (AssetWidget, FolderSelector, FolderTreeWidget, MoonFrame)
+import smaug_cmd_rc
 
 class Ui_asset_list_dlg(object):
     def setupUi(self, asset_list_dlg):
@@ -110,10 +110,10 @@ class Ui_asset_list_dlg(object):
         self.verticalLayout_3.setSpacing(0)
         self.verticalLayout_3.setObjectName(u"verticalLayout_3")
         self.verticalLayout_3.setContentsMargins(0, 0, 0, 0)
-        self.asset_editor_widget = AssetEditorWidget(self.scrollAreaWidgetContents)
-        self.asset_editor_widget.setObjectName(u"asset_editor_widget")
+        self.asset_widget = AssetWidget(self.scrollAreaWidgetContents)
+        self.asset_widget.setObjectName(u"asset_widget")
 
-        self.verticalLayout_3.addWidget(self.asset_editor_widget)
+        self.verticalLayout_3.addWidget(self.asset_widget)
 
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
 

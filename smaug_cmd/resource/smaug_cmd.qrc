@@ -9,7 +9,7 @@
     <file>icon.usd.png</file>
   </qresource>
   <qresource prefix="ui">
-    <file>no_preview.jpg</file>
-    <file>empty.png</file>
+    <file>no_data.png</file>
+    <file>no_preview.png</file>
   </qresource>
 </RCC>

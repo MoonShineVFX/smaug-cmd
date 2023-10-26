@@ -19,14 +19,17 @@ class SmaugUploaderApp(QObject):
     def __init__(self,):
         super(SmaugUploaderApp, self).__init__(None)
         self.current_user = None
-        self.login_ui = LogInDialog()
-        self.asset_list = AssetListDialog()
         self.logic = SmaugCmdHandler()
         self.settings = QSettings()
+
+        self.login_ui = LogInDialog()
+
+        self.asset_list = AssetListDialog()
         self.asset_list.setToAssetTemplateCallback(self.logic.asset_template)
         self.asset_list.folder_tree_widget.setRootFolder(
             self.settings.value("rootFolder", QDir.homePath())
         )
+        
         self._connect()
 
     def _connect(self):
@@ -61,6 +64,8 @@ if __name__ == "__main__":
     app = QApplication.instance()
     if not app:
         app = QApplication(sys.argv)
+    if sys.platform == "win32":
+        app.setStyle("Fusion")
     app.setOrganizationName("MoonShine")
     app.setApplicationName("Smaug-Uploader")
     smaug_app = SmaugUploaderApp()
