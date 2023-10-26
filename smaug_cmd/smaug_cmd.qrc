@@ -1,15 +1,15 @@
 <RCC>
   <qresource prefix="icon">
-    <file>icon.default.png</file>
-    <file>icon.fbx.png</file>
-    <file>icon.ma.png</file>
-    <file>icon.max.png</file>
-    <file>icon.mb.png</file>
-    <file>icon.obj.png</file>
-    <file>icon.usd.png</file>
+    <file>resource/icon.default.png</file>
+    <file>resource/icon.fbx.png</file>
+    <file>resource/icon.ma.png</file>
+    <file>resource/icon.max.png</file>
+    <file>resource/icon.mb.png</file>
+    <file>resource/icon.obj.png</file>
+    <file>resource/icon.usd.png</file>
   </qresource>
   <qresource prefix="ui">
-    <file>no_preview.png</file>
-    <file>no_data.png</file>
+    <file>resource/no_data.png</file>
+    <file>resource/no_preview.png</file>
   </qresource>
 </RCC>
