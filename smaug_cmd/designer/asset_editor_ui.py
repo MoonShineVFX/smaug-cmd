@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'asset_editor.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.6.0
+## Created by: Qt User Interface Compiler version 6.5.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -20,14 +20,14 @@ from PySide6.QtWidgets import (QApplication, QFrame, QGroupBox, QHBoxLayout,
     QSpacerItem, QVBoxLayout, QWidget)
 
 from smaug_cmd.ui import (FileListWidget, ImageDisplayWidget, MoonFrame, TagsWidget)
-import smaug_rc
+import smaug_cmd_rc
 
 class Ui_asset_editor_wgt(object):
     def setupUi(self, asset_editor_wgt):
         if not asset_editor_wgt.objectName():
             asset_editor_wgt.setObjectName(u"asset_editor_wgt")
-        asset_editor_wgt.resize(420, 917)
-        asset_editor_wgt.setMaximumSize(QSize(420, 16777215))
+        asset_editor_wgt.resize(480, 917)
+        asset_editor_wgt.setMaximumSize(QSize(480, 16777215))
         asset_editor_wgt.setStyleSheet(u"")
         self.verticalLayout = QVBoxLayout(asset_editor_wgt)
         self.verticalLayout.setObjectName(u"verticalLayout")
@@ -40,9 +40,10 @@ class Ui_asset_editor_wgt(object):
         self.verticalLayout_5.setContentsMargins(0, 0, 0, 0)
         self.asset_into_frame = MoonFrame(self.asset_frame)
         self.asset_into_frame.setObjectName(u"asset_into_frame")
-        self.asset_into_frame.setMaximumSize(QSize(16777215, 16777215))
+        self.asset_into_frame.setMinimumSize(QSize(0, 270))
+        self.asset_into_frame.setMaximumSize(QSize(16777215, 270))
         self.asset_into_frame.setStyleSheet(u"#asset_into_frame {\n"
-"    background-image: url(:/ui/no_preview.jpg);\n"
+"    background-image: url(:/ui/no_preview.png);\n"
 "    background-color: rgba(0, 0, 0, 0.5);\n"
 "    background-position: center center;\n"
 "    background-repeat: no-repeat;}")
@@ -64,7 +65,7 @@ class Ui_asset_editor_wgt(object):
 
         self.verticalLayout_3.addWidget(self.asset_name_lbl)
 
-        self.verticalSpacer = QSpacerItem(20, 80, QSizePolicy.Minimum, QSizePolicy.Minimum)
+        self.verticalSpacer = QSpacerItem(20, 300, QSizePolicy.Minimum, QSizePolicy.Minimum)
 
         self.verticalLayout_3.addItem(self.verticalSpacer)
 
@@ -106,7 +107,7 @@ class Ui_asset_editor_wgt(object):
 
         self.verticalLayout_5.addWidget(self.asset_into_frame)
 
-        self.tag_frame = QFrame(self.asset_frame)
+        self.tag_frame = MoonFrame(self.asset_frame)
         self.tag_frame.setObjectName(u"tag_frame")
         self.tag_frame.setFrameShape(QFrame.StyledPanel)
         self.tag_frame.setFrameShadow(QFrame.Raised)
@@ -139,7 +140,7 @@ class Ui_asset_editor_wgt(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 404, 594))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 461, 656))
         self.verticalLayout_2 = QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
         self.preview_grp = QGroupBox(self.scrollAreaWidgetContents)
@@ -150,7 +151,7 @@ class Ui_asset_editor_wgt(object):
         self.verticalLayout_4.setObjectName(u"verticalLayout_4")
         self.preview_widget = ImageDisplayWidget(self.preview_grp)
         self.preview_widget.setObjectName(u"preview_widget")
-        self.preview_widget.setMinimumSize(QSize(0, 0))
+        self.preview_widget.setMinimumSize(QSize(0, 120))
         self.preview_widget.setMaximumSize(QSize(16777215, 180))
         font1 = QFont()
         font1.setUnderline(False)

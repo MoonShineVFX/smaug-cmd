@@ -1,4 +1,5 @@
-from .base import MoonFrame, EmptyWidget
+from .base import MoonFrame
+from .empty_widget import EmptyWidget
 from .folder_pricker import FolderSelector
 from .image import ImageDisplayWidget
 from .layout import FlowLayout
@@ -13,10 +14,3 @@ from .asset_table_view import AssetsTableView
 from .asset_editor import AssetEditorWidget
 from .asset_widget import AssetWidget
 from .assets import AssetListDialog
-
-
-
-
-
-
-

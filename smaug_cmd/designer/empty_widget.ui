@@ -6,13 +6,13 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>420</width>
-    <height>567</height>
+    <width>480</width>
+    <height>422</height>
    </rect>
   </property>
   <property name="maximumSize">
    <size>
-    <width>420</width>
+    <width>480</width>
     <height>16777215</height>
    </size>
   </property>
@@ -49,7 +49,7 @@
     </spacer>
    </item>
    <item>
-    <widget class="QFrame" name="empty_pic_frame">
+    <widget class="MoonFrame" name="empty_pic_frame">
      <property name="minimumSize">
       <size>
        <width>0</width>
@@ -64,7 +64,7 @@
      </property>
      <property name="styleSheet">
       <string notr="true">#empty_pic_frame{
-    background-image: url(:/ui/empty.png);
+    background-image: url(:/ui/no_data.png);
     background-position: center center;
     background-repeat: no-repeat;
 }</string>
@@ -92,8 +92,16 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>MoonFrame</class>
+   <extends>QFrame</extends>
+   <header>smaug_cmd.ui.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources>
-  <include location="../resource/smaug.qrc"/>
+  <include location="../resource/smaug_cmd.qrc"/>
  </resources>
  <connections/>
 </ui>

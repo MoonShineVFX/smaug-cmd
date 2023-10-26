@@ -39,4 +39,8 @@
  </customwidgets>
  <resources/>
  <connections/>
+ <slots>
+  <signal>asset()</signal>
+  <slot>setAsset(asset)</slot>
+ </slots>
 </ui>

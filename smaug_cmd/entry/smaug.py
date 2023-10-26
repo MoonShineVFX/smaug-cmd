@@ -64,6 +64,8 @@ if __name__ == "__main__":
     app = QApplication.instance()
     if not app:
         app = QApplication(sys.argv)
+    if sys.platform == "win32":
+        app.setStyle("Fusion")
     app.setOrganizationName("MoonShine")
     app.setApplicationName("Smaug-Uploader")
     smaug_app = SmaugUploaderApp()

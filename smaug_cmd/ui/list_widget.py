@@ -3,7 +3,7 @@ import sys
 import os
 from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QListWidget, QListWidgetItem, QWidget, QVBoxLayout, QApplication
-from smaug_cmd.resource import smaug_rc  # noqa: F401
+import smaug_cmd_rc  # noqa: F401
 
 
 class FileListWidget(QWidget):

@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'asset_list.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.6.0
+## Created by: Qt User Interface Compiler version 6.5.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -20,7 +20,7 @@ from PySide6.QtWidgets import (QApplication, QDialog, QFrame, QHBoxLayout,
     QWidget)
 
 from smaug_cmd.ui import (AssetWidget, FolderSelector, FolderTreeWidget, MoonFrame)
-from smaug_cmd.resource import smaug_rc
+import smaug_cmd_rc
 
 class Ui_asset_list_dlg(object):
     def setupUi(self, asset_list_dlg):
