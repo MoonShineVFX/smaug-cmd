@@ -224,7 +224,8 @@ def folder_asset_template(path: str) -> AssetTemplate:
         "textures": textures,
         "renders": renders,
         "meta": metadata,
-        "tags": tags
+        "tags": tags,
+        "basedir": path
     }
 
     return asset_template

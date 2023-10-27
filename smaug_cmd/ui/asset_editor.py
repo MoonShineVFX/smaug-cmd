@@ -1,6 +1,8 @@
 from typing import Optional, Callable
 import os
 from PySide6.QtWidgets import QWidget
+from PySide6.QtGui import QPixmap
+from PySide6.QtCore import Qt
 from smaug_cmd.designer.asset_editor_ui import Ui_asset_editor_wgt
 from smaug_cmd.domain.smaug_types import AssetTemplate
 
@@ -67,8 +69,17 @@ class AssetEditorWidget(QWidget, Ui_asset_editor_wgt):
             self.preview_widget.setPictures(no_picture)
             self.preview_widget.setEnabled(False)
             return
+        
         self.setEnabled(True)
         self.preview_widget.setPictures(self.asset["previews"])
+        
+        cached_preview = self.cachePreview()
+        if cached_preview != '':
+            self.asset_info_frame.setStyleSheet(
+                f"#asset_info_frame {{ background-image: url(\"{cached_preview}\");"
+                "background-repeat: no-repeat;"
+                "background-position: center;}}"
+            )
         return
 
     def __update_renders(self):
@@ -120,3 +131,20 @@ class AssetEditorWidget(QWidget, Ui_asset_editor_wgt):
         self.asset = asset
         self._update_ui()
         return
+
+    def cachePreview(self):
+        preview = self.asset["previews"][0]
+        pixmap = QPixmap(preview)
+        if pixmap.isNull():
+            return ''
+        dir_base = self.asset["basedir"]
+        cache_dir = dir_base + "/" + ".smaug"
+        if not os.path.exists(cache_dir):
+            os.mkdir(cache_dir)
+        cache_file = cache_dir+ "/" +"preview.png"
+        pixmap_scaled = pixmap.scaled(420, 270, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
+        pixmap_scaled.save(cache_file)
+        return cache_file
+
+    def _cachePictureSize(self, pixmap: QPixmap):
+        width 
