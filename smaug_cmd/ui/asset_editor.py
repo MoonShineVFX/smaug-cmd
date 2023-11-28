@@ -1,11 +1,9 @@
 from typing import Optional, Callable
 import os
 from PySide6.QtWidgets import QWidget
-from PySide6.QtGui import QPixmap
-from PySide6.QtCore import Qt
 from smaug_cmd.designer.asset_editor_ui import Ui_asset_editor_wgt
 from smaug_cmd.domain.smaug_types import AssetTemplate
-
+from smaug_cmd.adapter.images import ImageHandler
 
 class AssetEditorWidget(QWidget, Ui_asset_editor_wgt):
     def __init__(
@@ -73,12 +71,16 @@ class AssetEditorWidget(QWidget, Ui_asset_editor_wgt):
         self.setEnabled(True)
         self.preview_widget.setPictures(self.asset["previews"])
         
-        cached_preview = self.cachePreview()
+        cached_preview = self.__make_preview()
         if cached_preview != '':
             self.asset_info_frame.setStyleSheet(
                 f"#asset_info_frame {{ background-image: url(\"{cached_preview}\");"
                 "background-repeat: no-repeat;"
                 "background-position: center;}}"
+            )
+        else:
+            self.asset_info_frame.setStyleSheet(
+                "#asset_info_frame { background-image: none;}"
             )
         return
 
@@ -132,19 +134,10 @@ class AssetEditorWidget(QWidget, Ui_asset_editor_wgt):
         self._update_ui()
         return
 
-    def cachePreview(self):
-        preview = self.asset["previews"][0]
-        pixmap = QPixmap(preview)
-        if pixmap.isNull():
+    def __make_preview(self):
+        preview_filepath = self.asset["previews"][0] if self.asset["previews"] else None
+        if preview_filepath is None:
             return ''
-        dir_base = self.asset["basedir"]
-        cache_dir = dir_base + "/" + ".smaug"
-        if not os.path.exists(cache_dir):
-            os.mkdir(cache_dir)
-        cache_file = cache_dir+ "/" +"preview.png"
-        pixmap_scaled = pixmap.scaled(420, 270, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
-        pixmap_scaled.save(cache_file)
-        return cache_file
-
-    def _cachePictureSize(self, pixmap: QPixmap):
-        width 
+        asset_dir = os.path.dirname(preview_filepath)
+        cached_preview = ImageHandler.make_thumbnail(asset_dir, preview_filepath)
+        return cached_preview
