@@ -28,7 +28,16 @@ class Ui_asset_editor_wgt(object):
             asset_editor_wgt.setObjectName(u"asset_editor_wgt")
         asset_editor_wgt.resize(480, 917)
         asset_editor_wgt.setMaximumSize(QSize(480, 16777215))
-        asset_editor_wgt.setStyleSheet(u"")
+        asset_editor_wgt.setStyleSheet(u"#asset_name_lbl, #asset_id_lbl, #asset_cate_lbl{\n"
+"	color: rgb(255, 255, 255);\n"
+"}\n"
+"\n"
+"#asset_into_frame {\n"
+"    background-image: url(:/ui/no_preview.png);\n"
+"    background-color: rgba(0, 0, 0, 0.5);\n"
+"    background-position: center center;\n"
+"    background-repeat: no-repeat;\n"
+"}")
         self.verticalLayout = QVBoxLayout(asset_editor_wgt)
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.verticalLayout.setContentsMargins(0, 0, 0, 0)
@@ -38,22 +47,18 @@ class Ui_asset_editor_wgt(object):
         self.verticalLayout_5.setSpacing(12)
         self.verticalLayout_5.setObjectName(u"verticalLayout_5")
         self.verticalLayout_5.setContentsMargins(0, 0, 0, 0)
-        self.asset_into_frame = MoonFrame(self.asset_frame)
-        self.asset_into_frame.setObjectName(u"asset_into_frame")
-        self.asset_into_frame.setMinimumSize(QSize(0, 270))
-        self.asset_into_frame.setMaximumSize(QSize(16777215, 270))
-        self.asset_into_frame.setStyleSheet(u"#asset_into_frame {\n"
-"    background-image: url(:/ui/no_preview.png);\n"
-"    background-color: rgba(0, 0, 0, 0.5);\n"
-"    background-position: center center;\n"
-"    background-repeat: no-repeat;}")
-        self.asset_into_frame.setFrameShape(QFrame.StyledPanel)
-        self.asset_into_frame.setFrameShadow(QFrame.Raised)
-        self.verticalLayout_3 = QVBoxLayout(self.asset_into_frame)
+        self.asset_info_frame = MoonFrame(self.asset_frame)
+        self.asset_info_frame.setObjectName(u"asset_info_frame")
+        self.asset_info_frame.setMinimumSize(QSize(0, 270))
+        self.asset_info_frame.setMaximumSize(QSize(16777215, 270))
+        self.asset_info_frame.setStyleSheet(u"")
+        self.asset_info_frame.setFrameShape(QFrame.StyledPanel)
+        self.asset_info_frame.setFrameShadow(QFrame.Raised)
+        self.verticalLayout_3 = QVBoxLayout(self.asset_info_frame)
         self.verticalLayout_3.setSpacing(0)
         self.verticalLayout_3.setObjectName(u"verticalLayout_3")
         self.verticalLayout_3.setContentsMargins(9, 9, 9, 9)
-        self.asset_name_lbl = QLabel(self.asset_into_frame)
+        self.asset_name_lbl = QLabel(self.asset_info_frame)
         self.asset_name_lbl.setObjectName(u"asset_name_lbl")
         font = QFont()
         font.setPointSize(24)
@@ -61,6 +66,7 @@ class Ui_asset_editor_wgt(object):
         font.setItalic(False)
         font.setUnderline(False)
         self.asset_name_lbl.setFont(font)
+        self.asset_name_lbl.setStyleSheet(u"")
         self.asset_name_lbl.setMargin(0)
 
         self.verticalLayout_3.addWidget(self.asset_name_lbl)
@@ -69,7 +75,7 @@ class Ui_asset_editor_wgt(object):
 
         self.verticalLayout_3.addItem(self.verticalSpacer)
 
-        self.asset_id_lbl = QLabel(self.asset_into_frame)
+        self.asset_id_lbl = QLabel(self.asset_info_frame)
         self.asset_id_lbl.setObjectName(u"asset_id_lbl")
         self.asset_id_lbl.setMargin(0)
 
@@ -78,7 +84,7 @@ class Ui_asset_editor_wgt(object):
         self.horizontalLayout_3 = QHBoxLayout()
         self.horizontalLayout_3.setSpacing(12)
         self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
-        self.asset_cate_lbl = QLabel(self.asset_into_frame)
+        self.asset_cate_lbl = QLabel(self.asset_info_frame)
         self.asset_cate_lbl.setObjectName(u"asset_cate_lbl")
 
         self.horizontalLayout_3.addWidget(self.asset_cate_lbl)
@@ -87,7 +93,7 @@ class Ui_asset_editor_wgt(object):
 
         self.horizontalLayout_3.addItem(self.horizontalSpacer)
 
-        self.cate_picker_btn = QPushButton(self.asset_into_frame)
+        self.cate_picker_btn = QPushButton(self.asset_info_frame)
         self.cate_picker_btn.setObjectName(u"cate_picker_btn")
         self.cate_picker_btn.setMaximumSize(QSize(24, 20))
         self.cate_picker_btn.setStyleSheet(u"QPushButton#catePicker_btn[smaug_cate=\"false\"]{\n"
@@ -105,7 +111,7 @@ class Ui_asset_editor_wgt(object):
         self.verticalLayout_3.addLayout(self.horizontalLayout_3)
 
 
-        self.verticalLayout_5.addWidget(self.asset_into_frame)
+        self.verticalLayout_5.addWidget(self.asset_info_frame)
 
         self.tag_frame = MoonFrame(self.asset_frame)
         self.tag_frame.setObjectName(u"tag_frame")

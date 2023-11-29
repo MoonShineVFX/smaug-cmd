@@ -3,7 +3,7 @@ import os
 from PySide6.QtWidgets import QWidget
 from smaug_cmd.designer.asset_editor_ui import Ui_asset_editor_wgt
 from smaug_cmd.domain.smaug_types import AssetTemplate
-
+from smaug_cmd.adapter.images import ImageHandler
 
 class AssetEditorWidget(QWidget, Ui_asset_editor_wgt):
     def __init__(
@@ -67,8 +67,21 @@ class AssetEditorWidget(QWidget, Ui_asset_editor_wgt):
             self.preview_widget.setPictures(no_picture)
             self.preview_widget.setEnabled(False)
             return
+        
         self.setEnabled(True)
         self.preview_widget.setPictures(self.asset["previews"])
+        
+        cached_preview = self.__make_preview()
+        if cached_preview != '':
+            self.asset_info_frame.setStyleSheet(
+                f"#asset_info_frame {{ background-image: url(\"{cached_preview}\");"
+                "background-repeat: no-repeat;"
+                "background-position: center;}}"
+            )
+        else:
+            self.asset_info_frame.setStyleSheet(
+                "#asset_info_frame { background-image: none;}"
+            )
         return
 
     def __update_renders(self):
@@ -120,3 +133,13 @@ class AssetEditorWidget(QWidget, Ui_asset_editor_wgt):
         self.asset = asset
         self._update_ui()
         return
+
+    def __make_preview(self):
+        preview_filepath = self.asset["previews"][0] if self.asset["previews"] else None
+        if preview_filepath is None:
+            return ''
+        asset_dir = self.asset['basedir']
+        cached_preview = ImageHandler.make_thumbnail(asset_dir, preview_filepath)
+        cached_preview_filepath = asset_dir + "/.smaug/preview.png"
+        cached_preview.save(cached_preview_filepath)
+        return cached_preview_filepath

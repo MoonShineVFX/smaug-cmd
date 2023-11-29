@@ -37,6 +37,7 @@ class AssetTemplate(TypedDict):
     renders: List[str]  # 渲染圖
     meta: Dict[str, str]  # 其他資料(如果有)
     tags: List[str]  # 標籤
+    basedir: str  # 資料夾路徑
 
 
 class AssetCreateResponse(TypedDict):
