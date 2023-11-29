@@ -240,7 +240,7 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../resource/smaug.qrc"/>
+  <include location="../resource/smaug_cmd.qrc"/>
  </resources>
  <connections/>
 </ui>
