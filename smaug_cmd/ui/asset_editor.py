@@ -1,21 +1,27 @@
 from typing import Optional, Callable
-import os
+import logging
 from PySide6.QtWidgets import QWidget
 from smaug_cmd.designer.asset_editor_ui import Ui_asset_editor_wgt
+from smaug_cmd.ui.category_widgets import CategoryListWidget
 from smaug_cmd.domain.smaug_types import AssetTemplate
 from smaug_cmd.adapter.images import ImageHandler
 
+logger = logging.getLogger("smaug-cmd.ui.asset_editor")
+
+
 class AssetEditorWidget(QWidget, Ui_asset_editor_wgt):
+    
     def __init__(
         self,
         parent=None,
         asset: Optional[AssetTemplate] = None,
-        breadcrumb_cb: Optional[Callable] = None,
+        breadcrumb_cb: Optional[Callable] = None, # 這是組合 breadcrumb 的函式，由外部傳入
     ):
         super(AssetEditorWidget, self).__init__(parent)
         self.setupUi(self)
         self.asset = asset
         self.breadcrumb_cb = breadcrumb_cb
+        self.cate_picker_btn.clicked.connect(self._on_cate_picker_btn_clicked)
         self._update_ui()
 
     def _update_ui(self):
@@ -62,9 +68,9 @@ class AssetEditorWidget(QWidget, Ui_asset_editor_wgt):
 
     def __update_previews(self):
         if self.asset is None:
-            dir_base = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-            no_picture = os.path.join(dir_base, "resource", "no_picture.png")
-            self.preview_widget.setPictures(no_picture)
+            # dir_base = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+            # no_picture = os.path.join(dir_base, "resource", "no_picture.png")
+            self.preview_widget.clear()
             self.preview_widget.setEnabled(False)
             return
         
@@ -86,9 +92,9 @@ class AssetEditorWidget(QWidget, Ui_asset_editor_wgt):
 
     def __update_renders(self):
         if self.asset is None:
-            dir_base = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-            no_picture = os.path.join(dir_base, "resource", "no_picture.png")
-            self.render_widget.setPictures(no_picture)
+            # dir_base = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+            # no_picture = os.path.join(dir_base, "resource", "no_picture.png")
+            self.render_widget.clear()
             self.setEnabled(False)
             return
         self.preview_widget.setEnabled(True)
@@ -143,3 +149,23 @@ class AssetEditorWidget(QWidget, Ui_asset_editor_wgt):
         cached_preview_filepath = asset_dir + "/.smaug/preview.png"
         cached_preview.save(cached_preview_filepath)
         return cached_preview_filepath
+
+    def setCategory(self, cate_id: int):
+        if self.asset is None:
+            logger.warning("Asset is None")
+            return
+        self.asset["categoryId"] = cate_id
+        self.__update_breadcrumb()
+        return
+    
+    def _on_cate_picker_btn_clicked(self):
+        # 從 api 取得 category 的資料
+        
+        # 顯示 CategoryListWidget
+        
+        win = CategoryListWidget()
+        if self.breadcrumb_cb is None:
+            logger.warning("Breadcrumb callback is None")
+        else:
+            self.breadcrumb_cb(self.asset["categoryId"], self.asset_cate_lbl, self.cate_picker_btn)
+        return

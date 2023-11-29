@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 import logging
 from PySide6.QtWidgets import QDialog
-
 from smaug_cmd.designer.asset_list_ui import Ui_asset_list_dlg
 
-
 logger = logging.getLogger("smaug-cmd.ui.asset_list")
+
 
 class AssetListDialog(QDialog, Ui_asset_list_dlg):
     def __init__(self, parent=None, to_asset_template_cb=None):

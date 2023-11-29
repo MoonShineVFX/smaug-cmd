@@ -27,7 +27,7 @@ class SmaugCmdHandler(QObject):
 
     def error_handler(self, error_msg, er_cb: Optional[Callable] = None):
         logger.error(error_msg)
-        er_cb if er_cb(error_msg) else None
+        er_cb(error_msg) if er_cb else None
 
     def log_in(self, user_name, password) -> Optional[Tuple[int, dict]]:
         re = api_login(user_name, password)
@@ -79,24 +79,26 @@ class SmaugCmdHandler(QObject):
             return None
         return ps.folder_asset_template(folder_path)
 
-    def create_asset_proc(self, asset_template: AssetTemplate, ui_cb: Callable = None):
+    def create_asset_proc(self, asset_template: AssetTemplate, ui_cb: Optional[Callable] = None):
         """在資料庫建立 asset 的流程
         建立 asset 以取得 asset id 後
         會處理模型檔跟貼圖檔的分類之後壓縮成 zip 檔案
         各別上傳完 zip 檔之後再去資料庫建立 representation
         """
 
-        create_payload = cmd.CreateAsset(
-            asset_template["category_id"],
+        create_cmd = cmd.CreateAsset(
             asset_template["name"],
+            asset_template["categoryId"],
+            asset_template['meta'],
             asset_template["tags"],
         )
+
         # 建立 asset 以取得 asset id
-        asset_id = handler(create_payload)["id"]
+        asset_id = handler(create_cmd)["id"]
         asset_name = asset_template["name"]
 
         logger.debug("Asset(%s) Created", asset_id)
-        if ui_cb:
+        if ui_cb is not None:
             ui_cb(f"Asset({asset_id}) Created")
 
         smaug_commands = list()
@@ -110,6 +112,7 @@ class SmaugCmdHandler(QObject):
                     f"Upload {preview_file} as {object_name}",
                 )
             )
+            handler(create_cmd)
             smaug_commands.append(
                 (
                     cmd.CreateRepresentation(
@@ -123,7 +126,7 @@ class SmaugCmdHandler(QObject):
                     f"Create Preview Representation \"{object_name}\"",
                 )
             )
-
+ 
         # upload render command
         for idx, render_file in enumerate(asset_template["renders"]):
             file_extension = os.path.splitext(preview_file)[-1].lower()
@@ -148,8 +151,6 @@ class SmaugCmdHandler(QObject):
                     
                 )
             )
-
-
 
         zip_process_cmds = list()
         # splite textures to texture-group,

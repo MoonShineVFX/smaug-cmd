@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 import logging
 from PySide6.QtCore import Signal, Qt, QTimer
 from PySide6.QtGui import QBrush
@@ -32,7 +32,7 @@ class CategoryListWidget(QWidget):
             self._menu_trees = sorted(self._menu_trees, key=lambda x: x['name'])
         
         for menu_tree in self._menu_trees:
-            item_list = list()
+            item_list: List[QTreeWidgetItem] = list()
             menu_item = QTreeWidgetItem([menu_tree['name']])
             if menu_tree['children'] is not []:
                 categort_tree = menu_tree['children']
@@ -63,7 +63,7 @@ class CategoryListWidget(QWidget):
             if cate['children'] is not []:
                 self._add_cate_r(cate['children'], cate_item, item_list)
 
-    def addMenuTree(self, menu_tree:MenuTree=None):
+    def addMenuTree(self, menu_tree:Optional[MenuTree]=None):
         print('addMenuTree')
         if not menu_tree:
             return
@@ -76,7 +76,7 @@ class CategoryListWidget(QWidget):
         if cate:
             self._animate_select(item)
             logger.debug(f'emit selecteCategoryId: {cate["id"]}')
-            self.selecteCategoryId.emit(cate['id'])
+            self.selectedCategoryId.emit(cate['id'])
 
     def _animate_select(self, item:QTreeWidgetItem):
         original_color = item.background(0)

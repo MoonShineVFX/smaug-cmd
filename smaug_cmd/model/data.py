@@ -167,7 +167,7 @@ def get_category(category_id) -> Tuple[int, CategoryDetailTree]:
     return return_value
 
 
-def create_asset(payload: AssetCreateParams) -> Tuple[int, AssetCreateResponse]:
+def create_asset(payload: AssetCreateParams) -> Tuple[int, AssetCreateResponse|Dict[str, str]]:
 
     api = f"{setting.api_root}/trpc/asset.create"
     payload = {

@@ -27,7 +27,7 @@ class SmaugUploaderApp(QObject):
         self.asset_list = AssetListDialog()
         self.asset_list.setToAssetTemplateCallback(self.logic.asset_template)
         self.asset_list.folder_tree_widget.setRootFolder(
-            self.settings.value("rootFolder", QDir.homePath())
+            str(self.settings.value("rootFolder", QDir.homePath()))
         )
         
         self._connect()
@@ -47,13 +47,6 @@ class SmaugUploaderApp(QObject):
 
     def _init(self):
         pass
-        # menus = self.logic.get_menus()
-        # for menu in menus:
-        #     logger.debug(f"menu: {menu}")
-        #     menu_tree = self.logic.get_menu_tree(menu["id"])
-        #     if menu_tree is None:
-        #         continue
-        #     self.catrgories_ui.addMenuTree(menu_tree)
 
     def run(self):
         bootstrap(setting)
