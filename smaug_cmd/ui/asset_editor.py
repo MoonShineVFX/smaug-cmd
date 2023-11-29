@@ -138,6 +138,8 @@ class AssetEditorWidget(QWidget, Ui_asset_editor_wgt):
         preview_filepath = self.asset["previews"][0] if self.asset["previews"] else None
         if preview_filepath is None:
             return ''
-        asset_dir = os.path.dirname(preview_filepath)
+        asset_dir = self.asset['basedir']
         cached_preview = ImageHandler.make_thumbnail(asset_dir, preview_filepath)
-        return cached_preview
+        cached_preview_filepath = asset_dir + "/.smaug/preview.png"
+        cached_preview.save(cached_preview_filepath)
+        return cached_preview_filepath
