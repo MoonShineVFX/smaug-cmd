@@ -5,6 +5,7 @@ from smaug_cmd.designer.asset_editor_ui import Ui_asset_editor_wgt
 from smaug_cmd.ui.category_widgets import CategoryListWidget
 from smaug_cmd.domain.smaug_types import AssetTemplate
 from smaug_cmd.adapter.images import ImageHandler
+from smaug_cmd.adapter.smaug import SmaugJson
 from smaug_cmd.adapter.cmd_handlers.asset import asset_categories
 
 logger = logging.getLogger("smaug-cmd.ui.asset_editor")
@@ -20,6 +21,7 @@ class AssetEditorWidget(QWidget, Ui_asset_editor_wgt):
         super(AssetEditorWidget, self).__init__(parent)
         self.setupUi(self)
         self.asset = asset
+        self._sjson = SmaugJson(self.asset["basedir"]) if self.asset is not None else None
         self.breadcrumb_cb = breadcrumb_cb
         self.cate_picker_btn.clicked.connect(self._on_cate_picker_btn_clicked)
         self._update_ui()
@@ -86,7 +88,7 @@ class AssetEditorWidget(QWidget, Ui_asset_editor_wgt):
             )
         else:
             self.asset_info_frame.setStyleSheet(
-                "#asset_info_frame { background-image: none;}"
+                "#asset_info_frame { background-image: url(:/ui/no_preview.png);}"
             )
         return
 
@@ -137,6 +139,9 @@ class AssetEditorWidget(QWidget, Ui_asset_editor_wgt):
 
     def setAsset(self, asset: AssetTemplate):
         self.asset = asset
+        self._sjson = SmaugJson(asset["basedir"])
+        data = self._sjson.deserialize()
+        self.asset.update(data)
         self._update_ui()
         return
 
@@ -169,9 +174,13 @@ class AssetEditorWidget(QWidget, Ui_asset_editor_wgt):
             logger.warning("Asset is None")
             return
         self.asset["categoryId"] = cate_id
+        if self._sjson is not None:
+            self._sjson['categoryId'] = cate_id
         self.__update_breadcrumb()
         return
 
     def setBreadcrumb_cb(self, cb: Callable):
         self.breadcrumb_cb = cb
         return
+
+    # 補 tag 跟 id 在 smaug.json 的部份

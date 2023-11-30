@@ -1,9 +1,10 @@
-from typing import List, Dict, Literal
+from typing import List, Dict
 import os
 from pprint import pprint
 from pathlib import PureWindowsPath
-
+import json
 from smaug_cmd.adapter import fs
+from smaug_cmd.adapter.smaug import SmaugJson
 
 from smaug_cmd.setting import (
     texture_extensions,
@@ -16,7 +17,7 @@ from smaug_cmd.domain.smaug_types import (
     AssetTemplate,
     AssetFolderType,
     TEXTURE_GROUP_KEYWORDS,
-    SOFTWARE_CATEGORIRS
+    SOFTWARE_CATEGORIRS,
 )
 
 
@@ -177,8 +178,8 @@ def find_usd(file_paths: List[str]) -> str | None:
     return None
 
 
-def us_meta(file_path: str):
-    return {} # todo: implement polycount, vertex count, face count, bounding box etc.
+def usd_meta(file_path: str):
+    return {}  # todo: implement polycount, vertex count, face count, bounding box etc.
 
 
 def guess_preview_model(file_paths: List[str]) -> str | None:
@@ -186,6 +187,18 @@ def guess_preview_model(file_paths: List[str]) -> str | None:
         if file_path.split(".")[-1].lower() == "glb":
             return file_path
     return None
+
+
+# def load_dot_smaug(path: str)-> dict:
+#     # location smaug.json file
+#     smaug_json = os.path.join(path, ".smaug", "smaug.json")
+#     if not os.path.exists(smaug_json):
+#         return {}
+#     with open(smaug_json, "r") as f:
+#         smaug_data = f.read()
+
+#     data = json.loads(smaug_data)
+#     return data
 
 
 def folder_asset_template(path: str) -> AssetTemplate:
@@ -202,7 +215,7 @@ def folder_asset_template(path: str) -> AssetTemplate:
         for filename in filenames:
             os.path.join(root, filename)
             file_path = os.path.join(root, filename)
-            if '.smaug' in file_path:
+            if ".smaug" in file_path:
                 continue
             if is_texture(file_path):
                 textures.append(file_path)
@@ -221,28 +234,32 @@ def folder_asset_template(path: str) -> AssetTemplate:
         "name": asset_name,
         "categoryId": None,
         "previews": previews,
-        "preview_model": preview_model,
+        "preview_model": preview_model if preview_model else "",
         "models": models,
         "textures": textures,
         "renders": renders,
         "meta": metadata,
         "tags": tags,
-        "basedir": path
+        "basedir": path,
     }
-
+    # sjson = SmaugJson(path)
+    # data = sjson.deserialize()
+    # asset_template.update(data)
     return asset_template
 
 
-def categorize_files_by_keywords(texture_files: List[str], keywords: List[str]) -> Dict[str, List[str]]:
+def categorize_files_by_keywords(
+    texture_files: List[str], keywords: List[str]
+) -> Dict[str, List[str]]:
     categorized_files = {}
-    
+
     for keyword in keywords:
         # 使用列表推導式過濾出包含特定關鍵字的檔案
-        filtered_files = [f for f in texture_files if keyword in f.split('/')]
-        
+        filtered_files = [f for f in texture_files if keyword in f.split("/")]
+
         # 將過濾出的檔案存入字典中
         categorized_files[keyword] = filtered_files
-    
+
     return categorized_files
 
 
@@ -258,7 +275,7 @@ def to_asset_create_paylad(asset_json: AssetTemplate):
     return asset_json
 
 
-def model_group(model_files: List[str])-> Dict[str, List[str]]:
+def model_group(model_files: List[str]) -> Dict[str, List[str]]:
     keywords = SOFTWARE_CATEGORIRS.keys()
     return categorize_files_by_keywords(model_files, keywords)
 
