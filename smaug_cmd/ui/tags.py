@@ -1,4 +1,4 @@
-from PySide6.QtCore import Signal
+from PySide6.QtCore import Signal, Qt
 from PySide6.QtGui import QFont
 from PySide6.QtWidgets import (
     QHBoxLayout,
@@ -93,6 +93,7 @@ class TagsWidget(QWidget):
         self.tags_set = set()
 
         self.tag_input = QLineEdit(self)
+        self.tag_input.setFocusPolicy(Qt.FocusPolicy.ClickFocus)
         self.tag_input.setPlaceholderText("Enter a tag and press Enter...")
         self.tag_input.returnPressed.connect(self._onTagEntered)
 

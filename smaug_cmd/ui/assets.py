@@ -16,7 +16,7 @@ class AssetListDialog(QDialog, Ui_asset_list_dlg):
         self.folder_picker_widget.folderSelected.connect(self._on_root_folder_selected)
         self.logic = logic
         if logic is not None:
-            self.to_asset_template_cb = self.logic.to_asset_template
+            self.to_asset_template_cb = self.logic.asset_template
             self.asset_widget.asset_page.setBreadcrumb_cb(logic.cate_breadcrumb)
 
     def _on_folder_selected(self, path):

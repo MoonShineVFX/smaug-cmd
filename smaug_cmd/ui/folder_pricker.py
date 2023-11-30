@@ -1,5 +1,5 @@
 import sys
-from PySide6.QtCore import Signal
+from PySide6.QtCore import Signal, Qt
 from PySide6.QtWidgets import QApplication, QFileDialog, QPushButton, QVBoxLayout, QWidget
 
 
@@ -15,6 +15,7 @@ class FolderSelector(QWidget):
         self.setLayout(layout)
         
         self.select_button = QPushButton('Select Folder')
+        self.select_button.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         self.select_button.setMinimumSize(0, 32)
         self.select_button.clicked.connect(self.select_folder)
         layout.addWidget(self.select_button)
