@@ -5,17 +5,12 @@ from PySide6.QtCore import QObject
 from PySide6.QtWidgets import QMessageBox, QLabel, QPushButton
 
 from smaug_cmd.adapter.cmd_handlers import handler
-from smaug_cmd.domain.smaug_types import (
-    Menu,
-    MenuTree,
-    AssetFolderType,
-    AssetTemplate
-)
+from smaug_cmd.domain.smaug_types import Menu, MenuTree, AssetFolderType, AssetTemplate
 from smaug_cmd.model import login_in as api_login
 from smaug_cmd.model import data as ds
 from smaug_cmd.domain import parsing as ps
 from smaug_cmd.domain import command as cmd
-
+from smaug_cmd.ui.file_util import FileUtils
 
 logger = logging.getLogger("smaug-cmd.domain")
 
@@ -27,18 +22,23 @@ class SmaugCmdHandler(QObject):
 
     def error_handler(self, error_msg, er_cb: Optional[Callable] = None):
         logger.error(error_msg)
-        er_cb if er_cb(error_msg) else None
+        er_cb(error_msg) if er_cb else None
 
     def log_in(self, user_name, password) -> Optional[Tuple[int, dict]]:
         re = api_login(user_name, password)
         if re is None:
-            self.error_handler("Login error, server not response.", lambda x: QMessageBox.critical(None, "Error", x))
+            self.error_handler(
+                "Login error, server not response.",
+                lambda x: QMessageBox.critical(None, "Error", x),
+            )
             return re
         if str(re[0])[0] == "2":
             self.current_user = re[1]
             return re
         else:
-            self.error_handler(re[1]["message"], )
+            self.error_handler(
+                re[1]["message"],
+            )
             return re
 
     def get_menus(self, error_cb: Optional[Callable]) -> Optional[List[Menu]]:
@@ -57,13 +57,13 @@ class SmaugCmdHandler(QObject):
             return None
         return re[1]
 
-    def _setup_cate_breadcrumb(
+    def cate_breadcrumb(
         self, cate: int, cate_lbl: QLabel, cate_picker_btn: QPushButton
     ):
-        """Compose the category breadcrumb."""
+        """組合麵包屑"""
         # 取的分類的父分類
-        cate_query = ds.get_category(cate)
-        if str(cate_query[0])[0] != 2:
+        cate_query = ds.get_category(cate, force=True)
+        if str(cate_query[0])[0] != "2":
             self.error_handler(cate_query[1]["message"])
             return
         cate_detail = cate_query[1]
@@ -77,26 +77,33 @@ class SmaugCmdHandler(QObject):
         # convert folder to asset template
         if ps.is_asset_model_folder(folder_path) == AssetFolderType.UNKNOWN:
             return None
-        return ps.folder_asset_template(folder_path)
 
-    def create_asset_proc(self, asset_template: AssetTemplate, ui_cb: Callable = None):
+        asset_template = ps.folder_asset_template(folder_path)
+        FileUtils.create_hidden_folder(asset_template["basedir"] + "/.smaug")
+        return asset_template
+
+    def create_asset_proc(
+        self, asset_template: AssetTemplate, ui_cb: Optional[Callable] = None
+    ):
         """在資料庫建立 asset 的流程
         建立 asset 以取得 asset id 後
         會處理模型檔跟貼圖檔的分類之後壓縮成 zip 檔案
         各別上傳完 zip 檔之後再去資料庫建立 representation
         """
 
-        create_payload = cmd.CreateAsset(
-            asset_template["category_id"],
+        create_cmd = cmd.CreateAsset(
             asset_template["name"],
+            asset_template["categoryId"],
+            asset_template["meta"],
             asset_template["tags"],
         )
+
         # 建立 asset 以取得 asset id
-        asset_id = handler(create_payload)["id"]
+        asset_id = handler(create_cmd)["id"]
         asset_name = asset_template["name"]
 
         logger.debug("Asset(%s) Created", asset_id)
-        if ui_cb:
+        if ui_cb is not None:
             ui_cb(f"Asset({asset_id}) Created")
 
         smaug_commands = list()
@@ -110,6 +117,7 @@ class SmaugCmdHandler(QObject):
                     f"Upload {preview_file} as {object_name}",
                 )
             )
+            handler(create_cmd)
             smaug_commands.append(
                 (
                     cmd.CreateRepresentation(
@@ -120,7 +128,7 @@ class SmaugCmdHandler(QObject):
                         os.path.getsize(preview_file),
                         self.current_user["id"],
                     ),
-                    f"Create Preview Representation \"{object_name}\"",
+                    f'Create Preview Representation "{object_name}"',
                 )
             )
 
@@ -144,12 +152,9 @@ class SmaugCmdHandler(QObject):
                         os.path.getsize(render_file),
                         self.current_user["id"],
                     ),
-                    f"Create Render Representation {new_name}"
-                    
+                    f"Create Render Representation {new_name}",
                 )
             )
-
-
 
         zip_process_cmds = list()
         # splite textures to texture-group,
@@ -158,7 +163,10 @@ class SmaugCmdHandler(QObject):
             # make texture zip payload
             zip_file_name = object_name = f"{asset_name}_{text_key}_textures.zip"
             zip_process_cmds.append(
-                (cmd.CreateZip(files, zip_file_name), f"Create \"{text_key}\" Texture Zip")
+                (
+                    cmd.CreateZip(files, zip_file_name),
+                    f'Create "{text_key}" Texture Zip',
+                )
             )
 
         # splite models to model-group
@@ -167,17 +175,13 @@ class SmaugCmdHandler(QObject):
             # make model zip payload
             zip_file_name = object_name = f"{asset_name}_{model_key}_models.zip"
             zip_process_cmds.append(
-                (cmd.CreateZip(files, zip_file_name), f"Create \"{model_key}\" Model Zip")
+                (cmd.CreateZip(files, zip_file_name), f'Create "{model_key}" Model Zip')
             )
 
-
-        #---------------------    
+        # ---------------------
         # upload preview model process
         # upload textures process
         # upload models process
         # upload renders process
         # update meta data, find bounding box, find texture size, find model size..., etc.
         # update tags
-
-
-

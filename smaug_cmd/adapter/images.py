@@ -5,6 +5,7 @@ import numpy as np
 from PySide6.QtGui import QPixmap, QPainter, QRadialGradient, QColor, QBrush
 from PySide6.QtWidgets import QGraphicsBlurEffect, QGraphicsScene, QGraphicsPixmapItem
 from PySide6.QtCore import Qt, QPoint
+from smaug_cmd.ui.file_util import FileUtils
 
 logger = logging.getLogger("smaug_smd.adapter.image_handler")
 
@@ -13,8 +14,7 @@ class CacheHandler:
     def __init__(self, asset_dir: str):
         self.asset_dir = asset_dir
         self.cache_dir = asset_dir + "/" + ".smaug"
-        if not os.path.exists(self.cache_dir):
-            os.mkdir(self.cache_dir)
+        FileUtils.create_hidden_folder(self.cache_dir)
 
     def get_cache_file(self, filename: str):
         return self.cache_dir + "/" + filename
@@ -89,7 +89,9 @@ class ImageHandler:
         return crop_pixmap
 
     @classmethod
-    def extract_dark_color(cls, image_path, brightness_threshold=180) -> tuple[int, ...]:
+    def extract_dark_color(
+        cls, image_path, brightness_threshold=180
+    ) -> tuple[int, ...]:
         # 讀取圖像
         image = cv2.imread(image_path)
 
@@ -136,7 +138,7 @@ class ImageHandler:
         mask.fill(Qt.GlobalColor.transparent)
         # 創建一個 radial gradient 作為暗角
         gradient = QRadialGradient(
-            QPoint(mask.width() / 2, mask.height() / 2),
+            QPoint(int(mask.width() / 2), int(mask.height() / 2)),
             max(mask.width(), mask.height()) / 2,
         )
         gradient.setColorAt(0, QColor(0, 0, 0, 0))

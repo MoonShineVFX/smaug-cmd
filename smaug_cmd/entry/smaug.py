@@ -24,10 +24,10 @@ class SmaugUploaderApp(QObject):
 
         self.login_ui = LogInDialog()
 
-        self.asset_list = AssetListDialog()
+        self.asset_list = AssetListDialog(logic=self.logic)
         self.asset_list.setToAssetTemplateCallback(self.logic.asset_template)
         self.asset_list.folder_tree_widget.setRootFolder(
-            self.settings.value("rootFolder", QDir.homePath())
+            str(self.settings.value("rootFolder", QDir.homePath()))
         )
         
         self._connect()
@@ -37,7 +37,7 @@ class SmaugUploaderApp(QObject):
 
     def _on_login(self, username, password):
         re = self.logic.log_in(username, password)
-        if re[0] != 200:
+        if re is None or re[0] != 200:
             QMessageBox.critical(self.login_ui, "登入失敗", re[1]["message"])
             return
         self.current_user = re[1]
@@ -47,13 +47,6 @@ class SmaugUploaderApp(QObject):
 
     def _init(self):
         pass
-        # menus = self.logic.get_menus()
-        # for menu in menus:
-        #     logger.debug(f"menu: {menu}")
-        #     menu_tree = self.logic.get_menu_tree(menu["id"])
-        #     if menu_tree is None:
-        #         continue
-        #     self.catrgories_ui.addMenuTree(menu_tree)
 
     def run(self):
         bootstrap(setting)

@@ -5,7 +5,12 @@ from requests.auth import HTTPBasicAuth
 from requests.sessions import Session
 import logging
 from urllib.parse import quote
-from smaug_cmd.domain.smaug_types import MenuTree, CategoryDetailTree, AssetCreateParams, AssetCreateResponse
+from smaug_cmd.domain.smaug_types import (
+    MenuTree,
+    CategoryDetailTree,
+    AssetCreateParams,
+    AssetCreateResponse,
+)
 from smaug_cmd import setting
 
 logger = logging.getLogger("smaug-cmd.data")
@@ -90,7 +95,7 @@ class CachedNestedDict:
 __data = CachedNestedDict()
 
 
-def login_in(u: str, w: str) -> Optional[dict]:
+def login_in(u: str, w: str) -> Optional[Tuple[int, dict]]:
     """登入"""
     login_api = f"{setting.api_root}/login"
 
@@ -145,30 +150,34 @@ def get_menu_tree(menu_id) -> Tuple[int, MenuTree | Dict[str, str]]:
     return the_value
 
 
-def get_category(category_id) -> Tuple[int, CategoryDetailTree]:
+def get_category(category_id, force=False) -> Tuple[int, CategoryDetailTree]:
     api = f"{setting.api_root}/trpc/category.tree"
     params = {0: {"json": {"categoryId": category_id}}}
     params_str = json.dumps(params)
     encode_params = quote(params_str)
     category_tree = f"{api}?batch=1&input={encode_params}"
     cache_key = (api, "categoryId", category_id)
-    cache_value = __data[cache_key].value()
-    if cache_value:
-        return cache_value
+    # cache_value = __data[cache_key].value()
+
+    if not force:
+        cache_value = __data[cache_key].value()
+        if cache_value:
+            return cache_value
+
     try:
         res = _session.get(category_tree)
     except Exception as e:
         logger.warning(e)
         return (500, {"message": str(e)})
     category_data = res.json()[0]
-    the_value = (res.status_code, category_data["result"]["data"]["json"]["detail"])
-    return_value = (res.status_code, the_value)
+    return_value = (res.status_code, category_data["result"]["data"]["json"]["detail"])
     __data[cache_key] = return_value
     return return_value
 
 
-def create_asset(payload: AssetCreateParams) -> Tuple[int, AssetCreateResponse]:
-
+def create_asset(
+    payload: AssetCreateParams,
+) -> Tuple[int, AssetCreateResponse | Dict[str, str]]:
     api = f"{setting.api_root}/trpc/asset.create"
     payload = {
         0: {
