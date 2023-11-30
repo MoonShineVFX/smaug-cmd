@@ -181,7 +181,7 @@ def us_meta(file_path: str):
     return {} # todo: implement polycount, vertex count, face count, bounding box etc.
 
 
-def guess_preview_model(file_paths: str) -> str | None:
+def guess_preview_model(file_paths: List[str]) -> str | None:
     for file_path in file_paths:
         if file_path.split(".")[-1].lower() == "glb":
             return file_path
@@ -195,13 +195,15 @@ def folder_asset_template(path: str) -> AssetTemplate:
     previews = []
     renders = []
     models = []
-    metadata = {}
-    tags = []
+    metadata: dict = {}
+    tags: List[str] = []
 
     for root, _, filenames in os.walk(path):
         for filename in filenames:
             os.path.join(root, filename)
             file_path = os.path.join(root, filename)
+            if '.smaug' in file_path:
+                continue
             if is_texture(file_path):
                 textures.append(file_path)
             if is_preview(file_path):
