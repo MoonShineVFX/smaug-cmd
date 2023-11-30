@@ -16,8 +16,8 @@ def create_asset(payload: cmd.CreateAsset) -> AssetCreateResponse:
     return None
 
 
-def asset_categories(payload: cmd.CreateAsset) -> MenuTree:
-    """取得資料庫中的 asset 分類列表"""
+def asset_categories() -> MenuTree:
+    """取得資料庫中的 asset 分類列表(Home)"""
     logger.debug("List Asset")
     result1 = ds.get_menus()
     if str(result1[0])[0] != "2":

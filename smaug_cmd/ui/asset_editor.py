@@ -5,6 +5,7 @@ from smaug_cmd.designer.asset_editor_ui import Ui_asset_editor_wgt
 from smaug_cmd.ui.category_widgets import CategoryListWidget
 from smaug_cmd.domain.smaug_types import AssetTemplate
 from smaug_cmd.adapter.images import ImageHandler
+from smaug_cmd.adapter.cmd_handlers.asset import asset_categories
 
 logger = logging.getLogger("smaug-cmd.ui.asset_editor")
 
@@ -55,7 +56,7 @@ class AssetEditorWidget(QWidget, Ui_asset_editor_wgt):
         return
 
     def __update_breadcrumb(self):
-        if self.asset is None or self.breadcrumb_cb is None:
+        if self.asset is None or self.breadcrumb_cb is None or self.asset["categoryId"] is None:
             self.asset_cate_lbl.setText("Category: None")
             self.asset_cate_lbl.setEnabled(False)
             return
@@ -152,7 +153,18 @@ class AssetEditorWidget(QWidget, Ui_asset_editor_wgt):
         cached_preview.save(cached_preview_filepath)
         return cached_preview_filepath
 
-    def setCategory(self, cate_id: int):
+    def _on_cate_picker_btn_clicked(self):
+        # 從 api 取得 category 的資料
+        home_menutree = asset_categories()
+
+        # 顯示 CategoryListWidget
+        cate_win = CategoryListWidget(parent=self)
+        cate_win.categoryIdChanged.connect(self._on_cate_id_selected)
+        cate_win.addMenuTree(home_menutree)
+        cate_win.show()
+
+    def _on_cate_id_selected(self, cate_id: int):
+        logger.debug(f"Category Id: {cate_id}")
         if self.asset is None:
             logger.warning("Asset is None")
             return
@@ -160,20 +172,6 @@ class AssetEditorWidget(QWidget, Ui_asset_editor_wgt):
         self.__update_breadcrumb()
         return
 
-    def _on_cate_picker_btn_clicked(self):
-        # 從 api 取得 category 的資料
-
-        # 顯示 CategoryListWidget
-
-        cate_win = CategoryListWidget()
-        cate_win.addMenuTree()
-        if self.breadcrumb_cb is None:
-            logger.warning("Breadcrumb callback is None")
-        else:
-            if self.asset is not None:
-                self.breadcrumb_cb(
-                    self.asset["categoryId"], self.asset_cate_lbl, self.cate_picker_btn
-                )
-            else:
-                logger.warning("Asset is None")
+    def setBreadcrumb_cb(self, cb: Callable):
+        self.breadcrumb_cb = cb
         return
