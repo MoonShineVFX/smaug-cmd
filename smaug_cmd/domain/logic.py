@@ -1,16 +1,14 @@
 import logging
-from typing import Dict, List, Optional, Tuple, Callable
+from typing import List, Optional, Tuple, Callable
 import os
 from PySide6.QtCore import QObject
 from PySide6.QtWidgets import QMessageBox, QLabel, QPushButton
-
 from smaug_cmd.adapter.cmd_handlers import handler
 from smaug_cmd.domain.smaug_types import Menu, MenuTree, AssetFolderType, AssetTemplate
 from smaug_cmd.model import login_in as api_login
 from smaug_cmd.model import data as ds
 from smaug_cmd.domain import parsing as ps
 from smaug_cmd.domain import command as cmd
-from smaug_cmd.ui.file_util import FileUtils
 
 logger = logging.getLogger("smaug-cmd.domain")
 
@@ -79,7 +77,7 @@ class SmaugCmdHandler(QObject):
             return None
 
         asset_template = ps.folder_asset_template(folder_path)
-        FileUtils.create_hidden_folder(asset_template["basedir"] + "/.smaug")
+        # FileUtils.create_hidden_folder(asset_template["basedir"] + "/.smaug")
         return asset_template
 
     def create_asset_proc(

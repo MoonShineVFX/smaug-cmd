@@ -1,23 +1,11 @@
-import os
 import cv2
 import logging
 import numpy as np
 from PySide6.QtGui import QPixmap, QPainter, QRadialGradient, QColor, QBrush
 from PySide6.QtWidgets import QGraphicsBlurEffect, QGraphicsScene, QGraphicsPixmapItem
 from PySide6.QtCore import Qt, QPoint
-from smaug_cmd.ui.file_util import FileUtils
 
 logger = logging.getLogger("smaug_smd.adapter.image_handler")
-
-
-class CacheHandler:
-    def __init__(self, asset_dir: str):
-        self.asset_dir = asset_dir
-        self.cache_dir = asset_dir + "/" + ".smaug"
-        FileUtils.create_hidden_folder(self.cache_dir)
-
-    def get_cache_file(self, filename: str):
-        return self.cache_dir + "/" + filename
 
 
 class ImageHandler:

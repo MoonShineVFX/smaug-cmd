@@ -79,6 +79,8 @@ class TagItem(QWidget):
 
 
 class TagsWidget(QWidget):
+    tagsChanged = Signal(list)
+
     def __init__(self, parent=None):
         super(TagsWidget, self).__init__(parent)
 
@@ -120,7 +122,7 @@ class TagsWidget(QWidget):
         if len(self.tags_set) == 0 and first_widget != self.placeholder_label:
             self.f_lay.addWidget(self.placeholder_label)
             self.placeholder_label.show()
-        elif first_widget == self.placeholder_label:
+        elif first_widget == self.placeholder_label and self.f_lay.count() > 1:
             self.f_lay.removeWidget(self.placeholder_label)
             self.placeholder_label.hide()
 
@@ -130,6 +132,7 @@ class TagsWidget(QWidget):
         self.f_lay.addWidget(tag_widget)
         self.tags_set.add(tag_text)
         self._updatePlaceholder()
+        self.tagsChanged.emit(self.tags())
 
     def removeTag(self, tag_text):
         for index in range(self.f_lay.count()):
@@ -139,6 +142,7 @@ class TagsWidget(QWidget):
                 widget.deleteLater()  # 移除 widget
                 break
         self._updatePlaceholder()
+        self.tagsChanged.emit(self.tags())
 
     def tags(self):
         return list(self.tags_set)
@@ -147,7 +151,12 @@ class TagsWidget(QWidget):
         for index in range(self.f_lay.count()):
             widget = self.f_lay.itemAt(index).widget()
             if widget and isinstance(widget, TagItem):
-                self.tags_set.remove(widget.text())
+                widget.deleteLater()
+
+        self._updatePlaceholder()
+        self.tags_set = set()
+        self.tagsChanged.emit([])
+        return
 
 
 # 測試

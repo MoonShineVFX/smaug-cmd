@@ -31,9 +31,6 @@ class AssetListDialog(QDialog, Ui_asset_list_dlg):
     def setToAssetTemplateCallback(self, cb):
         self.to_asset_template_cb = cb
         return
-    
+
     def _on_push_db_pressed(self):
         logger.info("push to db pressed")
-
-
-
