@@ -1,4 +1,5 @@
 # from dataclasses import asdict
+from dataclasses import asdict
 import logging
 from typing import cast
 from smaug_cmd.domain.smaug_types import AssetCreateResponse
@@ -13,7 +14,12 @@ def create_asset(payload: cmd.CreateAsset) -> AssetCreateResponse:
     """在資料庫中建立 asset"""
 
     logger.debug("Create Asset: %s", payload)
-    return None
+    create_param = asdict(payload)
+    result = ds.create_asset(create_param)
+    if str(result[0])[0] != "2":
+        logger.error(result[1]["message"])
+        raise RuntimeError("Can't create asset")
+    return cast(AssetCreateResponse, result[1])
 
 
 def asset_categories() -> MenuTree:

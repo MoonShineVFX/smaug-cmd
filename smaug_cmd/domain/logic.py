@@ -13,7 +13,7 @@ from smaug_cmd.domain import command as cmd
 logger = logging.getLogger("smaug-cmd.domain")
 
 
-class SmaugCmdHandler(QObject):
+class SmaugCmdLogic(QObject):
     def __init__(self):
         super().__init__(None)
         self.current_user = None
@@ -22,14 +22,10 @@ class SmaugCmdHandler(QObject):
         logger.error(error_msg)
         er_cb(error_msg) if er_cb else None
 
-    def log_in(self, user_name, password) -> Optional[Tuple[int, dict]]:
+    def log_in(self, user_name, password) -> Tuple[int, dict]:
         re = api_login(user_name, password)
         if re is None:
-            self.error_handler(
-                "Login error, server not response.",
-                lambda x: QMessageBox.critical(None, "Error", x),
-            )
-            return re
+            return (500, {"message": "Login error, server not response."})
         if str(re[0])[0] == "2":
             self.current_user = re[1]
             return re
@@ -80,15 +76,12 @@ class SmaugCmdHandler(QObject):
         # FileUtils.create_hidden_folder(asset_template["basedir"] + "/.smaug")
         return asset_template
 
-    def create_asset_proc(
-        self, asset_template: AssetTemplate, ui_cb: Optional[Callable] = None
-    ):
-        """在資料庫建立 asset 的流程
-        建立 asset 以取得 asset id 後
-        會處理模型檔跟貼圖檔的分類之後壓縮成 zip 檔案
-        各別上傳完 zip 檔之後再去資料庫建立 representation
-        """
 
+class AssetLogic(QObject):
+    def __init__(self):
+        self.current_asset = None
+
+    def create_asset(self, asset_template: AssetTemplate, ui_cb: Optional[Callable] = None):
         create_cmd = cmd.CreateAsset(
             asset_template["name"],
             asset_template["categoryId"],
@@ -98,11 +91,38 @@ class SmaugCmdHandler(QObject):
 
         # 建立 asset 以取得 asset id
         asset_id = handler(create_cmd)["id"]
-        asset_name = asset_template["name"]
+        # asset_name = asset_template["name"]
 
         logger.debug("Asset(%s) Created", asset_id)
+
         if ui_cb is not None:
             ui_cb(f"Asset({asset_id}) Created")
+        return asset_id
+
+    def create_asset_proc(
+        self, asset_template: AssetTemplate, ui_cb: Optional[Callable] = None
+    ):
+        """在資料庫建立 asset 的流程
+        建立 asset 以取得 asset id 後
+        會處理模型檔跟貼圖檔的分類之後壓縮成 zip 檔案
+        各別上傳完 zip 檔之後再去資料庫建立 representation
+        """
+
+        # create_cmd = cmd.CreateAsset(
+        #     asset_template["name"],
+        #     asset_template["categoryId"],
+        #     asset_template["meta"],
+        #     asset_template["tags"],
+        # )
+
+        # # 建立 asset 以取得 asset id
+        # asset_id = handler(create_cmd)["id"]
+        # asset_name = asset_template["name"]
+
+        # logger.debug("Asset(%s) Created", asset_id)
+        
+        # if ui_cb is not None:
+        #     ui_cb(f"Asset({asset_id}) Created")
 
         smaug_commands = list()
         # upload preview command

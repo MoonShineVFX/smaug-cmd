@@ -180,12 +180,8 @@ def create_asset(
 ) -> Tuple[int, AssetCreateResponse | Dict[str, str]]:
     api = f"{setting.api_root}/trpc/asset.create"
     payload = {
-        0: {
-            "json": {
-                "categoryId": payload["category_id"],
-                "name": payload["name"],
-                "tags": payload.get("tags", []),
-            }
+        "0": {
+            "json": payload
         }
     }
     asset_create_api = f"{api}?batch=1"

@@ -8,7 +8,7 @@ from smaug_cmd.ui import LogInDialog, AssetListDialog
 
 from smaug_cmd import setting
 from smaug_cmd.bootstrap import bootstrap
-from smaug_cmd.domain.logic import SmaugCmdHandler
+from smaug_cmd.domain.logic import SmaugCmdLogic
 
 logger = logging.getLogger('smaug-cmd')
 logging.basicConfig(level=logging.DEBUG)
@@ -19,7 +19,7 @@ class SmaugUploaderApp(QObject):
     def __init__(self,):
         super(SmaugUploaderApp, self).__init__(None)
         self.current_user = None
-        self.logic = SmaugCmdHandler()
+        self.logic = SmaugCmdLogic()
         self.settings = QSettings()
 
         self.login_ui = LogInDialog()
@@ -37,7 +37,7 @@ class SmaugUploaderApp(QObject):
 
     def _on_login(self, username, password):
         re = self.logic.log_in(username, password)
-        if re is None or re[0] != 200:
+        if re[0] != 200:
             QMessageBox.critical(self.login_ui, "登入失敗", re[1]["message"])
             return
         self.current_user = re[1]
