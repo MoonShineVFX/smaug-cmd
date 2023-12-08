@@ -22,6 +22,18 @@ def create_asset(payload: cmd.CreateAsset) -> AssetCreateResponse:
     return cast(AssetCreateResponse, result[1])
 
 
+def delete_asset(payload: cmd.DeleteAsset) -> None:
+    """在資料庫中刪除 asset"""
+
+    logger.debug("Delete Asset: %s", payload)
+    delete_param = asdict(payload)
+    result = ds.delete_asset(delete_param)
+    if str(result[0])[0] != "2":
+        logger.error(result[1]["message"])
+        raise RuntimeError("Can't delete asset")
+    return
+
+
 def asset_categories() -> MenuTree:
     """取得資料庫中的 asset 分類列表(Home)"""
     logger.debug("List Asset")
