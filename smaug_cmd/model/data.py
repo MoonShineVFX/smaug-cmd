@@ -10,6 +10,8 @@ from smaug_cmd.domain.smaug_types import (
     CategoryDetailTree,
     AssetCreateParams,
     AssetCreateResponse,
+    RepresentationCreateParams,
+    RepresentationResponse,
 )
 from smaug_cmd import setting
 
@@ -179,14 +181,10 @@ def create_asset(
     payload: AssetCreateParams,
 ) -> Tuple[int, AssetCreateResponse | Dict[str, str]]:
     api = f"{setting.api_root}/trpc/asset.create"
-    payload = {
-        "0": {
-            "json": payload
-        }
-    }
+    api_payload = {"0": {"json": payload}}
     asset_create_api = f"{api}?batch=1"
     try:
-        res = _session.post(asset_create_api, json=payload)
+        res = _session.post(asset_create_api, json=api_payload)
     except Exception as e:
         logger.warning(e)
         return (500, {"message": str(e)})
@@ -199,8 +197,20 @@ def create_previews(asset_id: int, preview_files: list):
     pass
 
 
-def create_representation(asset_id: int, representation_payload: dict):
-    pass
+def create_representation(
+    payload: RepresentationCreateParams,
+) -> Tuple[int, RepresentationResponse | Dict[str, str]]:
+    api = f"{setting.api_root}/trpc/representation.create"
+    api_payload = {"0": {"json": payload}}
+    representation_create_api = f"{api}?batch=1"
+    try:
+        res = _session.post(representation_create_api, json=api_payload)
+    except Exception as e:
+        logger.warning(e)
+        return (500, {"message": str(e)})
+    representation_data = res.json()[0]
+    the_value = (res.status_code, representation_data["result"]["data"]["json"]["detail"])
+    return the_value
 
 
 def log_out():
