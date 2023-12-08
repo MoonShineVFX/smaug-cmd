@@ -172,7 +172,7 @@ class SmaugCmdLogic(QObject):
             ziped_texture = create_zip(files, zip_file_name)
             logger.debug(f'Create "{text_key}" Texture Zip')
 
-            # 準備上傳至 OOS
+            # 上傳至 OOS
             upload_zip_object_name = rfs.put_representation1(asset_id, ziped_texture, object_name)
 
             RepresentationOp.create(
@@ -190,21 +190,51 @@ class SmaugCmdLogic(QObject):
             logger.debug("Create DB record for Asset(%s): %s", asset_id, zip_file_name)
         
         # splite models to model-group
-        model_groups = ps.model_group(asset_id, asset_template["models"])
+        model_groups = ps.model_group(asset_template["models"])
         for model_key, files in model_groups.items():
             # make model zip payload
             zip_file_name = object_name = f"{asset_name}_{model_key}_models.zip"
-            zip_process_cmds.append(
-                (cmd.CreateZip(files, zip_file_name), f'Create "{model_key}" Model Zip')
+            ziped_model = create_zip(files, zip_file_name)
+            logger.debug(f'Create "{model_key}" Model Zip')
+            # 準備上傳至 OOS
+            upload_model_object_name = rfs.put_representation1(asset_id, ziped_model, object_name)
+            pre_format = ps.format_from_softkey(model_key)
+            RepresentationOp.create(
+                {
+                    "assetId": asset_id,
+                    "name": zip_file_name,
+                    "type": "MODEL",
+                    "format": pre_format,
+                    "fileSize": os.path.getsize(ziped_model),
+                    "uploaderId": self._current_user["id"],
+                    "path": upload_model_object_name,
+                    "meta": {},
+                }
             )
+            logger.debug("Create DB record for Asset(%s): %s", asset_id, zip_file_name)
 
-        # ---------------------
         # upload preview model process
-        # upload textures process
-        # upload models process
-        # upload renders process
-        # update meta data, find bounding box, find texture size, find model size..., etc.
-        # update tags
+        preview_glb = ps.guess_preview_model(asset_template["models"])
+        if preview_glb is None:
+            logger.debug("No preview model found")
+            return
+        logger.debug("Found preview model: %s", preview_glb)
+
+        preview_glb_name = f"{asset_name}_preview.glb"
+        upload_preview_glb_object_name = rfs.put_representation1(asset_id, preview_glb, preview_glb_name)
+        RepresentationOp.create(
+            {
+                "assetId": asset_id,
+                "name": preview_glb_name,
+                "type": "PREVIEW",
+                "format": "GLB",
+                "fileSize": os.path.getsize(preview_glb),
+                "uploaderId": self._current_user["id"],
+                "path": upload_preview_glb_object_name,
+                "meta": {},
+            }
+        )
+        logger.debug("Create DB record for Asset(%s): %s", asset_id, preview_glb_name)
 
 
 class AssetOp(QObject):

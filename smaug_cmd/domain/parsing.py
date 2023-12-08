@@ -2,9 +2,8 @@ from typing import List, Dict
 import os
 from pprint import pprint
 from pathlib import PureWindowsPath
-import json
 from smaug_cmd.adapter import fs
-from smaug_cmd.adapter.smaug import SmaugJson
+from smaug_cmd.domain.exceptions import SmaugError
 
 from smaug_cmd.setting import (
     texture_extensions,
@@ -16,9 +15,28 @@ from smaug_cmd.setting import (
 from smaug_cmd.domain.smaug_types import (
     AssetTemplate,
     AssetFolderType,
-    TEXTURE_GROUP_KEYWORDS,
+    RepresentationFormat,
     SOFTWARE_CATEGORIRS,
 )
+
+
+def format_from_softkey(soft_key: str) -> RepresentationFormat:
+    """從軟體關鍵字取得格式"""
+    if soft_key == "maya":
+        return "MB"
+    elif soft_key == "3dsmax":
+        return "MAX"
+    elif soft_key == "unreal":
+        return "UNREAL"
+    elif soft_key == "fbx":
+        return "FBX"
+    elif soft_key == "c4d":
+        return "C4D"
+    elif soft_key == "obj":
+        return "OBJ"
+    elif soft_key == "usd":
+        return "USD"
+    raise SmaugError(f"Unknow soft key: {soft_key}")
 
 
 def is_asset_model_folder(path) -> AssetFolderType:
@@ -276,12 +294,12 @@ def to_asset_create_paylad(asset_json: AssetTemplate):
 
 
 def model_group(model_files: List[str]) -> Dict[str, List[str]]:
-    keywords = SOFTWARE_CATEGORIRS.keys()
+    keywords = list(SOFTWARE_CATEGORIRS.keys())
     return categorize_files_by_keywords(model_files, keywords)
 
 
-def texture_group(texture_files: List[str]) -> Dict[TEXTURE_GROUP_KEYWORDS, List[str]]:
-    keywords = ["2K, 4K"]
+def texture_group(texture_files: List[str]) -> Dict[str, List[str]]:
+    keywords = ["2K", "4K"]
     return categorize_files_by_keywords(texture_files, keywords)
 
 

@@ -20,13 +20,10 @@ SOFTWARE_CATEGORIRS = {
     "usd": [".usd"],
 }
 
-REPRESENTATION_TYPE = Literal["MODEL", "PREVIEW", "RENDER", "TEXTURE"]
-
-
-REPRESENTATION_FORMAT = Literal[
+RepresentationType = Literal["MODEL", "PREVIEW", "RENDER", "TEXTURE"]
+RepresentationFormat = Literal[
     "IMG", "FBX", "GLB", "MAX", "MB", "OBJ", "C4D", "UNREAL", "USD"
 ]
-
 
 class AssetTemplate(TypedDict):
     id: Optional[int]
@@ -105,10 +102,7 @@ class MenuTree(TypedDict):
     children: List["CategoryTree"]
 
 
-RepresentationType = Literal["MODEL", "PREVIEW", "RENDER", "TEXTURE"]
-RepresentationFormat = Literal[
-    "IMG", "FBX", "GLB", "MAX", "MB", "OBJ", "C4D", "UNREAL", "USD"
-]
+
 
 
 class Representation(TypedDict):
