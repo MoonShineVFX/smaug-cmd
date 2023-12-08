@@ -19,6 +19,12 @@ class CreateAsset(Command):
     meta: Dict[str, Any]    # 其他資料(如果有)
     tags: List[str]         # 標籤
 
+
+@dataclass
+class DeleteAsset(Command):
+    assetId: str
+
+
 @dataclass
 class CreateRepresentation(Command):
     assetId: str

@@ -144,7 +144,8 @@ class RepresentationCreateParams(TypedDict):
     uploaderId: str
     meta: Dict[str, str]
 
-class RepresentationResponse(TypedDict):
+
+class RepresentationCreateResponse(TypedDict):
     id: int
     createAt: date
     uploadAt: Optional[date]
@@ -156,3 +157,17 @@ class RepresentationResponse(TypedDict):
     fileSize: int
     uploaderId: str
     textureId: Optional[str]
+
+
+class UserInfo(TypedDict):
+    id: str
+    name: str
+    email: str
+    picture: str
+    account: str
+    roleId: str
+    roleName: str
+    type: str
+    updateAt: Optional[date]
+    createAt: date
+    extenData: Dict[str, str|int]
