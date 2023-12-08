@@ -5,7 +5,7 @@ from smaug_cmd.adapter.cmd_handlers import asset, representation as resp, zip
 handle_map = {
     cmd.CreateAsset: asset.create_asset,
     cmd.CreateRepresentation: resp.create_representation,
-    cmd.UploadRepresentation: resp.upload_representation,
+    cmd.UploadFile: resp.upload_representation,
     cmd.CreateZip: zip.create_zip
 }
 
