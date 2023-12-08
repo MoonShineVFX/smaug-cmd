@@ -7,7 +7,7 @@ logger = logging.getLogger("smaug-cmd.ui.asset_list")
 
 
 class AssetListDialog(QDialog, Ui_asset_list_dlg):
-    def __init__(self, parent=None, to_asset_template_cb=None, logic: SmaugCmdLogic=None):
+    def __init__(self, parent=None, to_asset_template_cb=None, logic: SmaugCmdLogic =None):
         super(AssetListDialog, self).__init__(parent)
         self.setupUi(self)
         self.to_asset_template_cb = to_asset_template_cb
@@ -35,7 +35,4 @@ class AssetListDialog(QDialog, Ui_asset_list_dlg):
 
     def _on_push_db_pressed(self):
         logger.info("push to db pressed")
-
-    def _on_push_db_pressed(self):
-        logger.info("push to db pressed")
-        self.logic.create_asset_proc(self.asset_widget.asset, self._on_ui_cb)
+        self.logic.create_asset_proc(self.asset_widget.asset(), self._on_ui_cb)

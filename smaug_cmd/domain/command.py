@@ -19,7 +19,6 @@ class CreateAsset(Command):
     meta: Dict[str, Any]    # 其他資料(如果有)
     tags: List[str]         # 標籤
 
-
 @dataclass
 class CreateRepresentation(Command):
     assetId: str
@@ -34,11 +33,10 @@ class CreateRepresentation(Command):
 
 # minio
 @dataclass
-class UploadRepresentation(Command):
+class UploadFile(Command):
     asset_id: str
     file_path: str
     object_name: str
-
 
 
 @dataclass

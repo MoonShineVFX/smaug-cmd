@@ -23,7 +23,9 @@ SOFTWARE_CATEGORIRS = {
 REPRESENTATION_TYPE = Literal["MODEL", "PREVIEW", "RENDER", "TEXTURE"]
 
 
-REPRESENTATION_FORMAT = Literal["IMG", "FBX", "GLB", "MAX", "MB", "OBJ", "C4D", "UNREAL", "USD"]
+REPRESENTATION_FORMAT = Literal[
+    "IMG", "FBX", "GLB", "MAX", "MB", "OBJ", "C4D", "UNREAL", "USD"
+]
 
 
 class AssetTemplate(TypedDict):
@@ -38,6 +40,22 @@ class AssetTemplate(TypedDict):
     meta: Dict[str, str]  # 其他資料(如果有)
     tags: List[str]  # 標籤
     basedir: str  # 資料夾路徑
+
+
+class AssetDBTemplate(TypedDict):
+    id: Optional[int]
+    name: str
+    categoryId: Optional[int]
+    previews: List[str]  # 預覽圖
+    preview_model: str  # 預覽模型
+    models: List[Dict[str, str]]  # 模型
+    textures: List[Dict[str, str]]  # 貼圖
+    renders: List[str]  # 渲染圖
+
+    tags: List[str]  # 標籤
+    # basedir: str  # 資料夾路徑
+    createAt: date
+    updateAt: Optional[date]
 
 
 class AssetCreateResponse(TypedDict):
@@ -88,7 +106,9 @@ class MenuTree(TypedDict):
 
 
 RepresentationType = Literal["MODEL", "PREVIEW", "RENDER", "TEXTURE"]
-RepresentationFormat = Literal["IMG", "FBX", "GLB", "MAX", "MB", "OBJ", "C4D", "UNREAL", "USD"]
+RepresentationFormat = Literal[
+    "IMG", "FBX", "GLB", "MAX", "MB", "OBJ", "C4D", "UNREAL", "USD"
+]
 
 
 class Representation(TypedDict):
@@ -112,3 +132,27 @@ class AssetCreateParams(TypedDict):
     name: str
     category_id: int
     tags: List[str]
+
+
+class RepresentationCreateParams(TypedDict):
+    assetId: str
+    name: str
+    type: RepresentationType
+    format: RepresentationFormat
+    path: str
+    fileSize: int
+    uploaderId: str
+    meta: Dict[str, str]
+
+class RepresentationResponse(TypedDict):
+    id: int
+    createAt: date
+    uploadAt: Optional[date]
+    assetId: str
+    name: str
+    type: RepresentationType
+    format: RepresentationFormat
+    path: str
+    fileSize: int
+    uploaderId: str
+    textureId: Optional[str]
