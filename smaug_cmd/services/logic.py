@@ -1,5 +1,5 @@
 import logging
-from typing import cast, List, Optional, Tuple, Callable
+from typing import List, Optional, Callable
 import os
 from PySide6.QtCore import QObject
 from PySide6.QtWidgets import QLabel, QPushButton
@@ -17,10 +17,11 @@ from smaug_cmd.domain.smaug_types import (
     RepresentationCreateResponse,
     UserInfo,
 )
-from smaug_cmd.model import login_in as api_login, log_out as api_logout
+from smaug_cmd.model import login_in as api_login  # log_out as api_logout
 from smaug_cmd.model import data as ds
 from smaug_cmd.domain import parsing as ps
-from smaug_cmd.domain import command as cmd
+
+# from smaug_cmd.domain import command as cmd
 from smaug_cmd.domain.exceptions import SmaugError, SmaugOperaterError, SmaugApiError
 from smaug_cmd.services import remote_fs as rfs
 
