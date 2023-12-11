@@ -53,6 +53,8 @@ class AssetListDialog(QDialog, Ui_asset_list_dlg):
         if asset_template is None:
             QMessageBox.critical(self, "上傳失敗", "請先選擇有效 Asset 資料夾")
             return
+        if self.logic is None:
+            return
         try:
             self.logic.create_asset_proc(asset_template)
         except SmaugError as e:
