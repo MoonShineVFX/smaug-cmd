@@ -15,17 +15,16 @@ from smaug_cmd.domain.smaug_types import (
     AssetCreateParams,
     RepresentationCreateParams,
     RepresentationCreateResponse,
-    UserInfo
+    UserInfo,
 )
 from smaug_cmd.model import login_in as api_login, log_out as api_logout
 from smaug_cmd.model import data as ds
 from smaug_cmd.domain import parsing as ps
 from smaug_cmd.domain import command as cmd
-from smaug_cmd.domain.exceptions import SmaugError, SmaugOperaterError
+from smaug_cmd.domain.exceptions import SmaugError, SmaugOperaterError, SmaugApiError
 from smaug_cmd.services import remote_fs as rfs
 
 logger = logging.getLogger("smaug-cmd.domain")
-
 
 
 class SmaugCmdLogic(QObject):
@@ -76,12 +75,16 @@ class SmaugCmdLogic(QObject):
 
     def asset_template(self, folder_path) -> Optional[AssetTemplate]:
         # convert folder to asset template
-        if ps.is_asset_model_folder(folder_path) == AssetFolderType.UNKNOWN:
+        asset_folder_type = ps.is_asset_model_folder(folder_path)
+        if AssetFolderType.UNKNOWN == asset_folder_type:
             return None
 
-        asset_template = ps.folder_asset_template(folder_path)
-        # FileUtils.create_hidden_folder(asset_template["basedir"] + "/.smaug")
-        return asset_template
+        if asset_folder_type == AssetFolderType.ASSET_DEPART:
+            asset_template = ps.folder_asset_template(folder_path)
+            return asset_template
+
+        if asset_folder_type == AssetFolderType.RESOURCE_DEPART:
+            raise SmaugApiError("Resource depart folder not support yet")
 
     def create_asset_proc(self, asset_template: AssetTemplate):
         """在資料庫建立 asset 的流程
@@ -165,7 +168,7 @@ class SmaugCmdLogic(QObject):
 
         # 上傳 texture 檔案
         # splite textures to texture-group,
-        
+
         texture_groups = ps.texture_group(asset_template["textures"])
         for text_key, files in texture_groups.items():
             # make texture zip file
@@ -176,10 +179,14 @@ class SmaugCmdLogic(QObject):
             logger.debug('Create "%s" Texture Zip: %s', text_key, ziped_texture)
 
             # 上傳至 OOS
-            upload_zip_object_name = rfs.put_representation1(asset_id, object_name, ziped_texture)
-            
+            upload_zip_object_name = rfs.put_representation1(
+                asset_id, object_name, ziped_texture
+            )
+
             # 把 ziped_texture 移至 .smaug 下
-            moved_zip_file = fs.collect_to_smaug(asset_template["basedir"], ziped_texture)
+            moved_zip_file = fs.collect_to_smaug(
+                asset_template["basedir"], ziped_texture
+            )
 
             RepresentationOp.create(
                 {
@@ -194,7 +201,7 @@ class SmaugCmdLogic(QObject):
                 }
             )
             logger.debug("Create DB record for Asset(%s): %s", asset_id, zip_file_name)
-        
+
         # splite models to model-group
         model_groups = ps.model_group(asset_template["models"])
         for model_key, files in model_groups.items():
@@ -205,10 +212,12 @@ class SmaugCmdLogic(QObject):
             ziped_model = create_zip(files, zip_file_name)
             logger.debug(f'Create "{model_key}" Model Zip')
             # 準備上傳至 OOS
-            upload_model_object_name = rfs.put_representation1(asset_id, object_name, ziped_model)
+            upload_model_object_name = rfs.put_representation1(
+                asset_id, object_name, ziped_model
+            )
             # 把 ziped_model 移至 .smaug 下
             moved_zip_file = fs.collect_to_smaug(asset_template["basedir"], ziped_model)
-            
+
             pre_format = ps.format_from_softkey(model_key)
             RepresentationOp.create(
                 {
@@ -232,7 +241,9 @@ class SmaugCmdLogic(QObject):
         logger.debug("Found preview model: %s", preview_glb)
 
         preview_glb_name = f"{asset_name}_preview.glb"
-        upload_preview_glb_object_name = rfs.put_representation1(asset_id, preview_glb_name, preview_glb)
+        upload_preview_glb_object_name = rfs.put_representation1(
+            asset_id, preview_glb_name, preview_glb
+        )
         RepresentationOp.create(
             {
                 "assetId": asset_id,

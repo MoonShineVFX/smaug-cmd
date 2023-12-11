@@ -49,11 +49,11 @@ def is_asset_model_folder(path) -> AssetFolderType:
     回傳:
         bool: 如果路徑是模型資料夾，則回傳 True, 否則回傳 False。
     """
-    # 判斷是否為資源部資料夾
+    # 判斷是否為資源部資料夾(鍾墉)
     if is_resource_depart_folder(path):
         return AssetFolderType.RESOURCE_DEPART
 
-    # 判斷是否為資產部資料夾
+    # 判斷是否為資產部資料夾(家家)
     if is_asset_depart_folder(path):
         return AssetFolderType.ASSET_DEPART
 

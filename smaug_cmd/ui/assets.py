@@ -11,7 +11,10 @@ logger = logging.getLogger("smaug-cmd.ui.asset_list")
 
 class AssetListDialog(QDialog, Ui_asset_list_dlg):
     def __init__(
-        self, parent=None, to_asset_template_cb=None, logic: Optional[SmaugCmdLogic] = None
+        self,
+        parent=None,
+        to_asset_template_cb=None,
+        logic: Optional[SmaugCmdLogic] = None,
     ):
         super(AssetListDialog, self).__init__(parent)
         self.setupUi(self)
@@ -28,7 +31,11 @@ class AssetListDialog(QDialog, Ui_asset_list_dlg):
     def _on_folder_selected(self, path):
         if self.logic is None:
             return
-        asset_template = self.logic.asset_template(path)
+        try:
+            asset_template = self.logic.asset_template(path)
+        except SmaugError as e:
+            QMessageBox.critical(self, "還沒支援回收組的格式", str(e))
+            asset_template = None
         self.asset_widget.setAsset(asset_template)
         return
 
@@ -46,8 +53,7 @@ class AssetListDialog(QDialog, Ui_asset_list_dlg):
         if asset_template is None:
             QMessageBox.critical(self, "上傳失敗", "請先選擇有效 Asset 資料夾")
             return
-        try: 
+        try:
             self.logic.create_asset_proc(asset_template)
         except SmaugError as e:
             QMessageBox.critical(self, "上傳失敗", str(e))
-
