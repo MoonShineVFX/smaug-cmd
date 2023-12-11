@@ -4,6 +4,7 @@ import os
 from PySide6.QtCore import QObject
 from PySide6.QtWidgets import QLabel, QPushButton
 
+from smaug_cmd.adapter import fs
 from smaug_cmd.adapter.cmd_handlers.zip import create_zip
 from smaug_cmd.domain.smaug_types import (
     Menu,
@@ -107,11 +108,11 @@ class SmaugCmdLogic(QObject):
 
             # 上傳至 OOS，這樣才能拿到 id 寫至 db
             upload_object_name = rfs.put_representation1(
-                asset_id, preview_file, object_name
+                asset_id, object_name, preview_file
             )
 
             logger.debug(
-                "Upload previes files %s: %s as %s",
+                "Upload Asset(%s)previes files: %s as %s",
                 asset_template["name"],
                 preview_file,
                 object_name,
@@ -139,7 +140,7 @@ class SmaugCmdLogic(QObject):
 
             # 上傳到 SSO. 這樣才能拿到 id 寫至 db
             upload_object_name = rfs.put_representation1(
-                asset_id, render_file, new_name
+                asset_id, new_name, render_file
             )
             logger.debug(
                 "Upload render files %s: %s as %s",
@@ -168,12 +169,17 @@ class SmaugCmdLogic(QObject):
         texture_groups = ps.texture_group(asset_template["textures"])
         for text_key, files in texture_groups.items():
             # make texture zip file
+            if len(files) == 0:
+                continue
             zip_file_name = object_name = f"{asset_name}_{text_key}_textures.zip"
             ziped_texture = create_zip(files, zip_file_name)
-            logger.debug(f'Create "{text_key}" Texture Zip')
+            logger.debug('Create "%s" Texture Zip: %s', text_key, ziped_texture)
 
             # 上傳至 OOS
-            upload_zip_object_name = rfs.put_representation1(asset_id, ziped_texture, object_name)
+            upload_zip_object_name = rfs.put_representation1(asset_id, object_name, ziped_texture)
+            
+            # 把 ziped_texture 移至 .smaug 下
+            moved_zip_file = fs.collect_to_smaug(asset_template["basedir"], ziped_texture)
 
             RepresentationOp.create(
                 {
@@ -181,7 +187,7 @@ class SmaugCmdLogic(QObject):
                     "name": zip_file_name,
                     "type": "TEXTURE",
                     "format": "IMG",
-                    "fileSize": os.path.getsize(ziped_texture),
+                    "fileSize": os.path.getsize(moved_zip_file),
                     "uploaderId": self._current_user["id"],
                     "path": upload_zip_object_name,
                     "meta": {},
@@ -192,12 +198,17 @@ class SmaugCmdLogic(QObject):
         # splite models to model-group
         model_groups = ps.model_group(asset_template["models"])
         for model_key, files in model_groups.items():
+            if len(files) == 0:
+                continue
             # make model zip payload
             zip_file_name = object_name = f"{asset_name}_{model_key}_models.zip"
             ziped_model = create_zip(files, zip_file_name)
             logger.debug(f'Create "{model_key}" Model Zip')
             # 準備上傳至 OOS
-            upload_model_object_name = rfs.put_representation1(asset_id, ziped_model, object_name)
+            upload_model_object_name = rfs.put_representation1(asset_id, object_name, ziped_model)
+            # 把 ziped_model 移至 .smaug 下
+            moved_zip_file = fs.collect_to_smaug(asset_template["basedir"], ziped_model)
+            
             pre_format = ps.format_from_softkey(model_key)
             RepresentationOp.create(
                 {
@@ -205,7 +216,7 @@ class SmaugCmdLogic(QObject):
                     "name": zip_file_name,
                     "type": "MODEL",
                     "format": pre_format,
-                    "fileSize": os.path.getsize(ziped_model),
+                    "fileSize": os.path.getsize(moved_zip_file),
                     "uploaderId": self._current_user["id"],
                     "path": upload_model_object_name,
                     "meta": {},
@@ -221,7 +232,7 @@ class SmaugCmdLogic(QObject):
         logger.debug("Found preview model: %s", preview_glb)
 
         preview_glb_name = f"{asset_name}_preview.glb"
-        upload_preview_glb_object_name = rfs.put_representation1(asset_id, preview_glb, preview_glb_name)
+        upload_preview_glb_object_name = rfs.put_representation1(asset_id, preview_glb_name, preview_glb)
         RepresentationOp.create(
             {
                 "assetId": asset_id,
@@ -245,7 +256,7 @@ class AssetOp(QObject):
             raise SmaugOperaterError("Asset category id is None")
         param_payload: AssetCreateParams = {
             "name": asset_template["name"],
-            "category_id": asset_template["categoryId"],
+            "categoryId": asset_template["categoryId"],
             "tags": asset_template["tags"],
         }
         re = ds.create_asset(param_payload)

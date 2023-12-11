@@ -231,8 +231,8 @@ def folder_asset_template(path: str) -> AssetTemplate:
 
     for root, _, filenames in os.walk(path):
         for filename in filenames:
-            os.path.join(root, filename)
-            file_path = os.path.join(root, filename)
+            # file_path = os.path.join(root, filename)
+            file_path = root + "/" + filename
             if ".smaug" in file_path:
                 continue
             if is_texture(file_path):
@@ -270,13 +270,18 @@ def categorize_files_by_keywords(
     texture_files: List[str], keywords: List[str]
 ) -> Dict[str, List[str]]:
     categorized_files = {}
+    for f in texture_files:
+        newf = f.replace("\\", "/")
+        for keyword in keywords:
+            if keyword in newf.split("/"):
+                categorized_files.setdefault(keyword, []).append(newf)
+    
+    # for keyword in keywords:
+    #     # 使用列表推導式過濾出包含特定關鍵字的檔案
+    #     filtered_files = [f for f in texture_files if keyword in f.replace("\\","/").split("/")]
 
-    for keyword in keywords:
-        # 使用列表推導式過濾出包含特定關鍵字的檔案
-        filtered_files = [f for f in texture_files if keyword in f.split("/")]
-
-        # 將過濾出的檔案存入字典中
-        categorized_files[keyword] = filtered_files
+    #     # 將過濾出的檔案存入字典中
+    #     categorized_files[keyword] = filtered_files
 
     return categorized_files
 

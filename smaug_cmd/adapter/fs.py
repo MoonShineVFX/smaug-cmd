@@ -2,6 +2,7 @@ import zipfile
 import tempfile
 from typing import List
 import os
+import shutil
 
 
 def create_temp_zip_from_files(file_paths: List[str], file_name:str=None) -> str:
@@ -23,3 +24,17 @@ def create_temp_zip_from_files(file_paths: List[str], file_name:str=None) -> str
     
     # 返回暫存 ZIP 檔案的路徑
     return temp_file_name
+
+
+def collect_to_smaug(asset_base_dir, file_path):
+    """將檔案移動到 smaug 資料夾"""
+    # 如果檔案已經在 smaug 資料夾內，就不要再移動
+    if ".smaug" in file_path:
+        return
+    # 如果檔案不在 smaug 資料夾內，就移動到 smaug 資料夾內
+    file_name = os.path.basename(file_path)
+    new_path = os.path.join(asset_base_dir, ".smaug", file_name)
+    shutil.move(file_path, new_path)
+    return new_path
+
+

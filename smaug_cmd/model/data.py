@@ -161,7 +161,7 @@ def get_category(category_id, force=False) -> Tuple[int, CategoryDetailTree]:
 def create_asset(
     payload: AssetCreateParams,
 ) -> Tuple[int, AssetCreateResponse | Dict[str, str]]:
-    api = f"{setting.api_root}/trpc/asset.create"
+    api = f"{setting.api_root}/trpc/assets.create"
     api_payload = {"0": {"json": payload}}
     asset_create_api = f"{api}?batch=1"
     try:

@@ -124,7 +124,7 @@ class Asset(TypedDict):
 
 class AssetCreateParams(TypedDict):
     name: str
-    category_id: int
+    categoryId: int
     tags: List[str]
 
 

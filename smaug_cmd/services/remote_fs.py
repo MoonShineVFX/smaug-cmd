@@ -78,7 +78,7 @@ def put_representation1(asset_id: str, asset_name: str, file_path: str):
         uploaded_object_name = put_file(file_path, object_name)
     except Exception as e:
         logger.error(e)
-        raise SmaugApiError(f"Upload File Error:{file_name}") from e
+        raise SmaugApiError(f"Upload File Error: {file_name}") from e
     logger.debug(f"representation file {uploaded_object_name} is uploaded")
     return uploaded_object_name
 
