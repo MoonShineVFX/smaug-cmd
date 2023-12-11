@@ -1,4 +1,6 @@
 # -*- coding: utf8 -*-
+from typing import Optional
+
 from PySide6.QtCore import Signal, Slot, Qt, QSettings
 from PySide6.QtWidgets import QDialog, QMessageBox, QLineEdit, QPushButton
 from PySide6.QtWidgets import QCheckBox, QHBoxLayout, QFormLayout
@@ -9,7 +11,7 @@ class LogInDialog(QDialog):
     loginCanceled = Signal()
     _section_name = "smaugLoginDialog"
 
-    def __init__(self, parent=None, settings: QSettings = None):
+    def __init__(self, parent=None, settings: Optional[QSettings] = None):
         super(LogInDialog, self).__init__(parent)
         self._settings = settings
 
@@ -44,7 +46,7 @@ class LogInDialog(QDialog):
             self.remember_me_checkbox.setCheckState(Qt.CheckState.Checked)
             username = self._settings.value(self._section_name + "/username", None)
             if username:
-                self.username_lineedit.setText(username)
+                self.username_lineedit.setText(str(username))
             self.password_lineedit.setFocus(Qt.FocusReason.OtherFocusReason)
         else:
             self.remember_me_checkbox.setCheckState(Qt.CheckState.Unchecked)

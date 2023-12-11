@@ -21,8 +21,8 @@ class SmaugUploaderApp(QObject):
         super(SmaugUploaderApp, self).__init__(None)
         self.logic = SmaugCmdLogic()
         self.settings = QSettings()
-
-        self.login_ui = LogInDialog()
+        
+        self.login_ui = LogInDialog(settings=self.settings)
 
         self.asset_list = AssetListDialog(logic=self.logic)
         # self.asset_list.setToAssetTemplateCallback(self.logic.asset_template)

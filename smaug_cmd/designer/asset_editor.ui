@@ -437,6 +437,10 @@ background-color: rgb(0, 109, 18);
    <container>1</container>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>cate_picker_btn</tabstop>
+  <tabstop>scrollArea</tabstop>
+ </tabstops>
  <resources>
   <include location="../resource/smaug_cmd.qrc"/>
  </resources>
