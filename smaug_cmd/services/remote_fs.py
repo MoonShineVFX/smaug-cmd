@@ -9,7 +9,7 @@ from smaug_cmd.domain.exceptions import SmaugApiError
 logger = logging.getLogger("smaug-cmd.adapter")
 
 
-client = None
+client: Minio = None
 
 def init(endpoint, access_key, secret_key):
     global client

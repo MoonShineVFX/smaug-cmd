@@ -1,6 +1,6 @@
 import logging
 import sys
-
+from typing import cast
 from PySide6.QtCore import QObject, QSettings, QDir
 from PySide6.QtWidgets import QApplication, QMessageBox
 
@@ -55,7 +55,7 @@ class SmaugUploaderApp(QObject):
 
 
 if __name__ == "__main__":
-    app = QApplication.instance()
+    app = cast(QApplication, QApplication.instance())
     if not app:
         app = QApplication(sys.argv)
     if sys.platform == "win32":

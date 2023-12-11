@@ -269,7 +269,7 @@ def folder_asset_template(path: str) -> AssetTemplate:
 def categorize_files_by_keywords(
     texture_files: List[str], keywords: List[str]
 ) -> Dict[str, List[str]]:
-    categorized_files = {}
+    categorized_files: Dict[str, List[str]] = {}
     for f in texture_files:
         newf = f.replace("\\", "/")
         for keyword in keywords:

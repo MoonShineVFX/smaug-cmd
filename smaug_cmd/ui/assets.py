@@ -4,7 +4,7 @@ from typing import Optional
 from PySide6.QtWidgets import QDialog, QMessageBox
 from smaug_cmd.designer.asset_list_ui import Ui_asset_list_dlg
 from smaug_cmd.domain.exceptions import SmaugError
-from smaug_cmd.domain.logic import SmaugCmdLogic
+from smaug_cmd.services import SmaugCmdLogic
 
 logger = logging.getLogger("smaug-cmd.ui.asset_list")
 
