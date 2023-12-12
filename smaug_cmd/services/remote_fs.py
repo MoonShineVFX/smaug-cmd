@@ -69,11 +69,12 @@ def put_representation(asset_id: str, file_path: str, object_name: str=None):
 
 
 @check_client
-def put_representation1(asset_id: str, asset_name: str, file_path: str):
+def put_representation1(asset_id: str, new_name:str, file_path: str):
     """Upload representation file to smaug."""
     file_name = os.path.basename(file_path).split(".")[0]
     file_extension = os.path.splitext(file_path)[-1].lower()
-    object_name = f"/{asset_id}/{asset_name}_{file_name}{file_extension}"
+    new_name_filtered = new_name.split(".")[0]
+    object_name = f"/{asset_id}/{new_name_filtered}{file_extension}"
     try:
         uploaded_object_name = put_file(file_path, object_name)
     except Exception as e:

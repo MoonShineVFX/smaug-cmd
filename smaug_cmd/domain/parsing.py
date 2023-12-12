@@ -17,6 +17,7 @@ from smaug_cmd.domain.smaug_types import (
     AssetFolderType,
     RepresentationFormat,
     SOFTWARE_CATEGORIRS,
+    REVERSE_SOFTWARE_CATEGORIRS
 )
 
 
@@ -267,24 +268,29 @@ def folder_asset_template(path: str) -> AssetTemplate:
 
 
 def categorize_files_by_keywords(
-    texture_files: List[str], keywords: List[str]
+    files: List[str], keywords: List[str]
 ) -> Dict[str, List[str]]:
     categorized_files: Dict[str, List[str]] = {}
-    for f in texture_files:
+    for f in files:
         newf = f.replace("\\", "/")
         for keyword in keywords:
             if keyword in newf.split("/"):
                 categorized_files.setdefault(keyword, []).append(newf)
-    
-    # for keyword in keywords:
-    #     # 使用列表推導式過濾出包含特定關鍵字的檔案
-    #     filtered_files = [f for f in texture_files if keyword in f.replace("\\","/").split("/")]
-
-    #     # 將過濾出的檔案存入字典中
-    #     categorized_files[keyword] = filtered_files
-
     return categorized_files
 
+
+def categorize_models( models: List[str]) -> Dict[str, List[str]]:
+    categorized_models: Dict[str, List[str]] = {}
+    for model in models:
+        newf = model.replace("\\", "/")
+        for keywords in SOFTWARE_CATEGORIRS.values():
+            split_file = newf.split(".")
+            if len(split_file) == 0:
+                continue
+            if split_file[-1] in keywords:
+                softKey = REVERSE_SOFTWARE_CATEGORIRS[split_file[-1]]
+                categorized_models.setdefault(softKey, []).append(newf)
+    return categorized_models
 
 def to_asset_create_paylad(asset_json: AssetTemplate):
     """將 asset json 格式 轉成 asset create api 用的 json 格式"""
@@ -299,8 +305,7 @@ def to_asset_create_paylad(asset_json: AssetTemplate):
 
 
 def model_group(model_files: List[str]) -> Dict[str, List[str]]:
-    keywords = list(SOFTWARE_CATEGORIRS.keys())
-    return categorize_files_by_keywords(model_files, keywords)
+    return categorize_models(model_files)
 
 
 def texture_group(texture_files: List[str]) -> Dict[str, List[str]]:

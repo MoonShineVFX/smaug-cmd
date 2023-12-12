@@ -11,19 +11,16 @@ from smaug_cmd.domain.smaug_types import (
     MenuTree,
     AssetFolderType,
     AssetTemplate,
-    AssetCreateResponse,
-    AssetCreateParams,
     RepresentationCreateParams,
-    RepresentationCreateResponse,
     UserInfo,
 )
 from smaug_cmd.model import login_in as api_login  # log_out as api_logout
 from smaug_cmd.model import data as ds
 from smaug_cmd.domain import parsing as ps
-
-# from smaug_cmd.domain import command as cmd
-from smaug_cmd.domain.exceptions import SmaugError, SmaugOperaterError, SmaugApiError
+from smaug_cmd.domain.exceptions import SmaugError, SmaugApiError
+from smaug_cmd.domain.operators import AssetOp, RepresentationOp
 from smaug_cmd.services import remote_fs as rfs
+
 
 logger = logging.getLogger("smaug-cmd.domain")
 
@@ -108,24 +105,24 @@ class SmaugCmdLogic(QObject):
             # 重新命名檔案
             file_extension = os.path.splitext(preview_file)[-1].lower()
             file_name = f"preview-{idx}{file_extension}"
-            object_name = f"{asset_name}_{file_name}"
+            new_name = f"{asset_name}_{file_name}"
 
             # 上傳至 OOS，這樣才能拿到 id 寫至 db
             upload_object_name = rfs.put_representation1(
-                asset_id, object_name, preview_file
+                asset_id, new_name, preview_file
             )
 
             logger.debug(
                 "Upload Asset(%s)previes files: %s as %s",
                 asset_template["name"],
                 preview_file,
-                object_name,
+                new_name,
             )
 
             # 建立資料庫資料
             preview_create_represent_payload: RepresentationCreateParams = {
                 "assetId": asset_id,
-                "name": object_name,
+                "name": new_name,
                 "type": "PREVIEW",
                 "format": "IMG",
                 "fileSize": os.path.getsize(preview_file),
@@ -150,7 +147,7 @@ class SmaugCmdLogic(QObject):
                 "Upload render files %s: %s as %s",
                 asset_template["name"],
                 render_file,
-                object_name,
+                new_name,
             )
 
             # 建立資料庫資料
@@ -175,13 +172,13 @@ class SmaugCmdLogic(QObject):
             # make texture zip file
             if len(files) == 0:
                 continue
-            zip_file_name = object_name = f"{asset_name}_{text_key}_textures.zip"
+            zip_file_name = new_name = f"{asset_name}_{text_key}_textures.zip"
             ziped_texture = create_zip(files, zip_file_name)
-            logger.debug('Create "%s" Texture Zip: %s', text_key, ziped_texture)
+            logger.info('Create "%s" Texture Zip: %s', text_key, ziped_texture)
 
             # 上傳至 OOS
             upload_zip_object_name = rfs.put_representation1(
-                asset_id, object_name, ziped_texture
+                asset_id, new_name, ziped_texture
             )
 
             # 把 ziped_texture 移至 .smaug 下
@@ -209,12 +206,12 @@ class SmaugCmdLogic(QObject):
             if len(files) == 0:
                 continue
             # make model zip payload
-            zip_file_name = object_name = f"{asset_name}_{model_key}_models.zip"
+            zip_file_name = new_name = f"{asset_name}_{model_key}_models.zip"
             ziped_model = create_zip(files, zip_file_name)
             logger.debug(f'Create "{model_key}" Model Zip')
             # 準備上傳至 OOS
             upload_model_object_name = rfs.put_representation1(
-                asset_id, object_name, ziped_model
+                asset_id, new_name, ziped_model
             )
             # 把 ziped_model 移至 .smaug 下
             moved_zip_file = fs.collect_to_smaug(asset_template["basedir"], ziped_model)
@@ -259,36 +256,3 @@ class SmaugCmdLogic(QObject):
         )
         logger.debug("Create DB record for Asset(%s): %s", asset_id, preview_glb_name)
 
-
-class AssetOp(QObject):
-    @classmethod
-    def create(cls, asset_template: AssetTemplate) -> AssetCreateResponse:
-        if asset_template["categoryId"] is None:
-            logger.error("Asset category id is None")
-            raise SmaugOperaterError("Asset category id is None")
-        param_payload: AssetCreateParams = {
-            "name": asset_template["name"],
-            "categoryId": asset_template["categoryId"],
-            "tags": asset_template["tags"],
-        }
-        re = ds.create_asset(param_payload)
-        if str(re[0])[0] != "2":
-            logger.error(re[1]["message"])
-            raise SmaugOperaterError(re[1]["message"])
-        return re[1]
-
-
-class RepresentationOp(QObject):
-    @classmethod
-    def create(
-        cls, payload: RepresentationCreateParams
-    ) -> RepresentationCreateResponse:
-        re = ds.create_representation(payload)
-        if str(re[0])[0] != "2":
-            logger.error(re[1]["message"])
-            raise SmaugOperaterError(re[1]["message"])
-        if re[1] is None:
-            logger.error("Create representation return None")
-            raise SmaugOperaterError("Create representation return None")
-        else:
-            return re[1]

@@ -11,14 +11,27 @@ TEXTURE_GROUP_KEYWORDS = Literal["2K", "4K"]
 
 
 SOFTWARE_CATEGORIRS = {
-    "maya": [".mb", ".ma"],
-    "3dsmax": [".max"],
-    "unreal": [".uasset"],
-    "fbx": [".fbx"],
-    "c4d": [".c4d"],
-    "obj": [".obj", ".mtl"],
-    "usd": [".usd"],
+    "maya": ["mb", "ma"],
+    "3dsmax": ["max"],
+    "unreal": ["uasset"],
+    "fbx": ["fbx"],
+    "c4d": ["c4d"],
+    "obj": ["obj", "mtl"],
+    "usd": ["usd"],
 }
+
+REVERSE_SOFTWARE_CATEGORIRS = {
+    "max": "3dsmax",
+    "mb": "maya",
+    "ma": "maya",
+    "uasset": "unreal",
+    "fbx": "fbx",
+    "c4d": "c4d",
+    "obj": "obj",
+    "mtl": "obj",
+    "usd": "usd",
+}
+
 
 RepresentationType = Literal["MODEL", "PREVIEW", "RENDER", "TEXTURE"]
 RepresentationFormat = Literal[
