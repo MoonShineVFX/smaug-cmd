@@ -9,7 +9,7 @@ class SmaugJson:
         self.create_dot_smaug_folder()
         self.json_file = os.path.join(self._dot_smaug, "smaug.json")
         self._data: dict = {}
-        self.deserialize()
+        self.deserialize() # load data from json file
 
     def serialize(self):
         if not os.path.exists(self._dot_smaug):
@@ -27,6 +27,8 @@ class SmaugJson:
         return data
 
     def create_dot_smaug_folder(self):
+        if os.path.exists(self._dot_smaug):
+            return
         # 建立資料夾
         os.makedirs(self._dot_smaug, exist_ok=True)
 

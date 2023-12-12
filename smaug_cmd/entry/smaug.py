@@ -24,7 +24,7 @@ class SmaugUploaderApp(QObject):
         
         self.login_ui = LogInDialog(settings=self.settings)
 
-        self.asset_list = AssetListDialog(logic=self.logic)
+        self.asset_list = AssetListDialog(logic=self.logic, setting=self.settings)
         # self.asset_list.setToAssetTemplateCallback(self.logic.asset_template)
         self.asset_list.folder_tree_widget.setRootFolder(
             str(self.settings.value("rootFolder", QDir.homePath()))

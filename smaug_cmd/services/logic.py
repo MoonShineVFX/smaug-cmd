@@ -3,8 +3,8 @@ from typing import List, Optional, Callable
 import os
 from PySide6.QtCore import QObject
 from PySide6.QtWidgets import QLabel, QPushButton
-
 from smaug_cmd.adapter import fs
+from smaug_cmd.adapter.smaug import SmaugJson
 from smaug_cmd.adapter.cmd_handlers.zip import create_zip
 from smaug_cmd.domain.smaug_types import (
     Menu,
@@ -230,6 +230,11 @@ class SmaugCmdLogic(QObject):
                 }
             )
             logger.debug("Create DB record for Asset(%s): %s", asset_id, zip_file_name)
+
+        # write asset id to smaug.hson
+        sm_json = SmaugJson(asset_template["basedir"])
+        sm_json["id"]=asset_id
+        sm_json.serialize()
 
         # upload preview model process
         preview_glb = ps.guess_preview_model(asset_template["models"])
