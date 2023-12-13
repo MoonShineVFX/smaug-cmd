@@ -183,8 +183,8 @@ class AssetEditorWidget(QWidget, Ui_asset_editor_wgt):
             return
         self._asset["categoryId"] = cate_id
         if self._sjson is not None:
-            self._sjson["categoryId"] = cate_id
-            self._sjson.serialize()
+            with self._sjson:
+                self._sjson["categoryId"] = cate_id
         self.__update_breadcrumb()
         return
 
@@ -198,9 +198,8 @@ class AssetEditorWidget(QWidget, Ui_asset_editor_wgt):
             return
         self._asset["tags"] = tags
         if self._sjson is not None:
-            self._sjson["tags"] = tags
-        if self._sjson:
-            self._sjson.serialize()
+            with self._sjson: 
+                self._sjson["tags"] = tags
         return
 
     def asset(self):
