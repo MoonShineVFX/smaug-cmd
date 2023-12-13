@@ -260,6 +260,8 @@ def folder_asset_template(path: str) -> AssetTemplate:
         "meta": metadata,
         "tags": tags,
         "basedir": path,
+        "createAt": None,
+        "updateAt": None,
     }
     # sjson = SmaugJson(path)
     # data = sjson.deserialize()

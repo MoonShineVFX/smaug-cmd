@@ -1,5 +1,5 @@
 from enum import Enum
-from datetime import date
+from datetime import date, datetime
 from typing import Dict, Literal, TypedDict, List, Optional
 from PySide6.QtCore import Qt
 
@@ -50,6 +50,8 @@ class AssetTemplate(TypedDict):
     meta: Dict[str, str]  # 其他資料(如果有)
     tags: List[str]  # 標籤
     basedir: str  # 資料夾路徑
+    createAt: Optional[str]
+    updateAt: Optional[str]
 
 
 class AssetDBTemplate(TypedDict):

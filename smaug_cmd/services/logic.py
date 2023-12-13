@@ -1,3 +1,4 @@
+import datetime
 import logging
 from typing import List, Optional, Callable
 import os
@@ -234,6 +235,7 @@ class SmaugCmdLogic(QObject):
         # write asset id to smaug.hson
         sm_json = SmaugJson(asset_template["basedir"])
         sm_json["id"]=asset_id
+        sm_json["createAt"]=datetime.datetime.now().isoformat()
         sm_json.serialize()
 
         # upload preview model process
