@@ -263,3 +263,5 @@ class SmaugCmdLogic(QObject):
         )
         logger.debug("Create DB record for Asset(%s): %s", asset_id, preview_glb_name)
 
+    def update_asset_proc(self, asset_template: AssetTemplate):
+        logger.debug("Update asset: %s", asset_template["name"])
