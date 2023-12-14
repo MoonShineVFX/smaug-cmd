@@ -11,32 +11,35 @@ TEXTURE_GROUP_KEYWORDS = Literal["2K", "4K"]
 
 
 SOFTWARE_CATEGORIRS = {
-    "maya": ["mb", "ma"],
     "3dsmax": ["max"],
-    "unreal": ["uasset"],
-    "fbx": ["fbx"],
+    "blender": ["blend"],
     "c4d": ["c4d"],
+    "fbx": ["fbx"],
+    "maya": ["mb", "ma"],
     "obj": ["obj", "mtl"],
+    "unreal": ["uasset"],
     "usd": ["usd"],
 }
 
 REVERSE_SOFTWARE_CATEGORIRS = {
+    "blend": "blender",
+    "c4d": "c4d",
+    "fbx": "fbx",
+    "ma": "maya",
     "max": "3dsmax",
     "mb": "maya",
-    "ma": "maya",
-    "uasset": "unreal",
-    "fbx": "fbx",
-    "c4d": "c4d",
-    "obj": "obj",
     "mtl": "obj",
+    "obj": "obj",
+    "uasset": "unreal",
     "usd": "usd",
 }
 
 
 RepresentationType = Literal["MODEL", "PREVIEW", "RENDER", "TEXTURE"]
 RepresentationFormat = Literal[
-    "IMG", "FBX", "GLB", "MAX", "MB", "OBJ", "C4D", "UNREAL", "USD"
+    "IMG", "FBX", "GLB", "MAX", "MB", "OBJ", "C4D", "UNREAL", "BLEND", "USD"
 ]
+
 
 class AssetTemplate(TypedDict):
     id: Optional[int]
@@ -87,6 +90,17 @@ class AssetFolderType(Enum):
     ASSET_DEPART = 2
 
 
+class ResourceFolderType(Enum):
+    """Enum for the type of resource folder."""
+
+    UNKNOWN = 0
+    AVALON_SOURCE = 1
+    NORMAL_SOURCE_FOLDER = 2
+    DOWNLOAD_VARIANT1 = 3
+    DOWNLOAD_VARIANT2 = 4
+    MAXFOLDER = 5
+
+
 class CategoryTree(TypedDict):
     id: str
     name: str
@@ -115,9 +129,6 @@ class MenuTree(TypedDict):
     name: str
     iconName: str
     children: List["CategoryTree"]
-
-
-
 
 
 class Representation(TypedDict):
@@ -179,4 +190,4 @@ class UserInfo(TypedDict):
     type: str
     updateAt: Optional[date]
     createAt: date
-    extenData: Dict[str, str|int]
+    extenData: Dict[str, str | int]
