@@ -38,3 +38,22 @@ preview_factors = [
     "preview",
 ]
 # 完整檔名中有preview的檔案會被視為預覽圖
+
+exclude_folders = [
+    ".vrayThumbs", 
+    ".mayaSwatches",
+    ".smaug",
+    "_BackUp",
+    "backup",
+    ".obsidian",
+    ".trash"
+]
+
+exclude_files = [
+    "smaug.json",
+    "galaxy.json",
+    "Thumbs.db",
+    "素材上架項目.md",
+    "素材更新紀錄.md",
+    "已上架.txt"
+]
