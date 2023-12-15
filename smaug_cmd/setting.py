@@ -25,11 +25,11 @@ model_extensions = [
     "usdz",
 ]
 
-texture_extensions = ["tx", "png", "jpg", "jpeg", "tga", "bmp"]
+texture_extensions = ["tx", "png", "jpg", "jpeg", "tga", "bmp", "exr", "hdr"]
 # 合法的貼圖副檔名
 
 texture_factors = ["textures", "texture", "maps", "map"]
-# 完整檔名中有 texture_factor 裡的元素會被視為預覽圖
+# 完整檔名中有 texture_factor 裡的元素會被視為預覽圖(素材組用)
 
 render_factors = ["render", "renders", "image", "images"]
 

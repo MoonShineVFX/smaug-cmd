@@ -3,7 +3,7 @@ import os
 from pprint import pprint
 from pathlib import PureWindowsPath
 from smaug_cmd.adapter import fs
-from smaug_cmd.domain.exceptions import SmaugError
+from smaug_cmd.domain.exceptions import SmaugApiError
 
 from smaug_cmd.setting import (
     texture_extensions,
@@ -11,8 +11,6 @@ from smaug_cmd.setting import (
     preview_factors,
     render_factors,
     model_extensions,
-    exclude_files,
-    exclude_folders
 )
 from smaug_cmd.domain.smaug_types import (
     AssetTemplate,
@@ -20,7 +18,6 @@ from smaug_cmd.domain.smaug_types import (
     RepresentationFormat,
     SOFTWARE_CATEGORIRS,
     REVERSE_SOFTWARE_CATEGORIRS,
-    ResourceFolderType,
 )
 
 
@@ -40,7 +37,7 @@ def format_from_softkey(soft_key: str) -> RepresentationFormat:
         return "OBJ"
     elif soft_key == "usd":
         return "USD"
-    raise SmaugError(f"Unknow soft key: {soft_key}")
+    raise SmaugApiError(f"Unknow soft key: {soft_key}")
 
 
 def is_asset_model_folder(path) -> AssetFolderType:
@@ -284,7 +281,7 @@ def categorize_files_by_keywords(
     return categorized_files
 
 
-def categorize_models( models: List[str]) -> Dict[str, List[str]]:
+def categorize_models(models: List[str]) -> Dict[str, List[str]]:
     categorized_models: Dict[str, List[str]] = {}
     for model in models:
         newf = model.replace("\\", "/")
@@ -296,6 +293,7 @@ def categorize_models( models: List[str]) -> Dict[str, List[str]]:
                 softKey = REVERSE_SOFTWARE_CATEGORIRS[split_file[-1]]
                 categorized_models.setdefault(softKey, []).append(newf)
     return categorized_models
+
 
 def to_asset_create_paylad(asset_json: AssetTemplate):
     """將 asset json 格式 轉成 asset create api 用的 json 格式"""
@@ -326,85 +324,111 @@ def generate_zip(asset_name, name_key, textures_files: List[str]) -> str:
     return zipped_file
 
 
-class FolderClassFactory:
-    def __init__(self, path: str):
-        self._path = path
-        self._folder_type = self._which_folder_type()
-        self._mapping = {
-            ResourceFolderType.NORMAL_SOURCE: NormalResourceFolder,
-            ResourceFolderType.AVALON_SOURCE: AvalonResourceFolder,
-            ResourceFolderType.DOWNLOAD_VARIANT1: DownloadVariant1ResourceFolder,
-            ResourceFolderType.DOWNLOAD_VARIANT2: DownloadVariant2ResourceFolder,
-            ResourceFolderType.THREE_MAX: ThreedMaxResourceFolder,
-        }
+def is_avalon_source_model_folder(folder_path: str):
+    """判是否為 ResourceFolderType.AVALON_SOURCE_MODEL 資料夾"""
 
-    def _which_folder_type(self):
-        if is_asset_depart_folder(self._path):
-            return AssetFolderType.ASSET_DEPART
-        elif is_resource_depart_folder(self._path):
-            return AssetFolderType.RESOURCE_DEPART
-        elif is_download_variant1_folder(self._path):
-            return ResourceFolderType.DOWNLOAD_VARIANT1
-        elif is_download_variant2_folder(self._path):
-            return ResourceFolderType.DOWNLOAD_VARIANT2
-        elif is_3dsmax_folder(self._path):
-            return ResourceFolderType.THREE_MAX
-        else:
-            raise SmaugApiError("Unknown folder type")
-
-    def create(self):
-        return self._mapping[self._folder_type](self._path)
-
-
-
-
-def is_avalon_source_folder(folder_path:str):
-    '''判是否為 avalon source 資料夾
-    其特色是目錄下會有 _AvalonSource 資料夾, 並帶有多張 preview 圖片
-    _AvalonSource 下會有數個 texture 目錄，通常名為texture, texture_low, ...等等， 並包含多個 dcc 檔案
-    dcc 檔可能有變體, 例加有後綴 _low 的模型檔案
-    '''
+    # 要有 _AvalonSource
     if not os.path.exists(f"{folder_path}\\_AvalonSource"):
         return False
+
+    # _AvalonSource 下有要有貼圖目錄跟 dcc 檔，最少要有一個 dcc 檔，貼圖目錄裡最少要有一個檔案
+    # avalon_source_folder = folder_path + "\\_AvalonSource"
+    # if not _atlest_one_dcc_file(avalon_source_folder):
+    #     return False
+    # texture_folder = avalon_source_folder+"\\Texture"
+    # if not _atlest_one_texture_file(texture_folder):
+    #     return False
     return True
 
-def is_normal_folder(asset_templat:AssetTemplate):
-    '''判斷是否為一般 asset 資料夾
-    一般資料夾的特色是 base dir 下有一個貼圖目錄，名字可能為 Texture、tex，並且有多個 dcc 檔案, 同時也有複數 preview 圖片
-    有時也會在 base dir 下有一個 Texture_JPG 資料夾，放置轉為 JPG 的貼圖檔案
-    
-    example: R:\_Asset\MoonshineProject_2019\BundleProject_TheBeltAndRoad\TheBeltAndRoad\Environment\ChangAnGate
-    '''
-    pass
 
-def is_download_variant1_folder(base_dir): #3
-    '''判斷是否為下載變體資料夾
+def is_taiwan_culture_model_folder(folder_path: str) -> bool:
+    """判斷是否為 ResourceFolderType.TAIWAN_CULTURE_MODEL 資料夾"""
+    # 有 3D 目錄
+    # 有 texture 目錄
+    # 有 Preview 目錄
+    # 有 Render 目錄
+    folder_required = ["3D", "Texture", "Preview", "Render"]
+    
+    items = os.listdir(folder_path)
+    for folder in folder_required:
+        if folder not in items:
+            return False
+
+    return True
+
+
+def is_normal_resource_model_folder(folder_path: str):
+    """判斷是否為 ResourceFolderType.NORMAL_RESOURCE_MODEL"""
+
+    texture_folder_variant = ["Texture", "tex"]
+
+    try:
+        # 檢查貼圖資料夾
+        items = os.listdir(folder_path)
+        if not any([i in items for i in texture_folder_variant]):
+            return False
+        return True
+    except Exception as e:
+        raise SmaugApiError(f"Reading Folder({folder_path}) Error: {e}")
+
+
+def is_download_variant1_model_folder(folder_path: str):  # 3
+    """判斷是否為下載變體資料夾
     下載變體1資料夾的特色是 base dir 下數個以 `uploads_files_` 開頭的資料夾，內含貼圖跟 dcc 檔，該資料夾的名稱 `+` 替代 ` `(空白)
     並於 base dir 也有 preview 圖片
 
-    example: 
-        R:\_Asset\MoonshineProject_2020_Obsidian\202006_FetNetwork\parachute
-        R:\_Asset\MoonshineProject_2020_Obsidian\202003_ChptWokflow\robotic_arm
-    '''
+    example:
+        _Asset\MoonshineProject_2020_Obsidian\202003_ChptWokflow\robotic_arm
+        _Asset\MoonshineProject_2020_Obsidian\202001_AsusBrandVideo4\Buy\Sci+Fi+Power+Suit
+    """
     pass
 
-def is_download_variant2_folder(asset_templat:AssetTemplate): #1
-    '''判斷是否為下載變體資料夾第二型
+
+def is_download_variant2_model_folder(folder_path: str):  # 1
+    """判斷是否為下載變體資料夾第二型
     下載變體2資料夾的特色是 base dir 下有一個 `"asset 名稱"_textures` 的資料夾，內含貼圖，
     並於 base dir 下有多個 dcc 檔案, 同時也有複數 preview 圖片
 
     example: R:\_Asset\MoonshineProject_2020_Obsidian\202006_FetNetwork\parachute
-    '''
+    """
     pass
 
-def is_3dsmax_folder(asset_templat:AssetTemplate): #1
-    '''判斷是否為 3ds max 資料夾
+
+def is_3dsmax_model_folder(folder_path: str):  # 1
+    """判斷是否為 3ds max 資料夾
     3ds max 資料夾的特色是 base dir 下有一個名稱為 3d_Max 的資料夾，內含貼圖跟 dcc 檔，
     並於 base dir 下有多個 preview 檔案
 
-    example: R:\_Asset\MoonshineProject_2020_Obsidian\202003_ChptWokflow\DHQ
-    '''
+    example: _Asset\MoonshineProject_2020_Obsidian\202003_ChptWokflow\DHQ
+    """
     pass
+
+
+def _atlest_one_dcc_file(folder_path: str) -> bool:
+    """判斷資料夾下是否至少有一個 dcc 檔案"""
+
+    items = os.listdir(folder_path)
+    if len(items) == 0:
+        return False
+    for item in items:
+        item.split(".")[-1].lower() in model_extensions
+        return True
+    return False
+
+
+def _atlest_one_texture_file(folder_path: str) -> bool:
+    """判斷資料夾下是否至少有一個貼圖檔案"""
+
+    items = os.listdir(folder_path)
+    if len(items) == 0:
+        return False
+
+    asleast_one_texture = False
+    for item in items:
+        if is_texture(item):
+            asleast_one_texture = True
+            break
+    return asleast_one_texture
 
 
 if __name__ == "__main__":
