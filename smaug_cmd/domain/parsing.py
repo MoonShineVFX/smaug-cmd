@@ -11,13 +11,16 @@ from smaug_cmd.setting import (
     preview_factors,
     render_factors,
     model_extensions,
+    exclude_files,
+    exclude_folders
 )
 from smaug_cmd.domain.smaug_types import (
     AssetTemplate,
     AssetFolderType,
     RepresentationFormat,
     SOFTWARE_CATEGORIRS,
-    REVERSE_SOFTWARE_CATEGORIRS
+    REVERSE_SOFTWARE_CATEGORIRS,
+    ResourceFolderType,
 )
 
 
@@ -323,9 +326,96 @@ def generate_zip(asset_name, name_key, textures_files: List[str]) -> str:
     return zipped_file
 
 
+class FolderClassFactory:
+    def __init__(self, path: str):
+        self._path = path
+        self._folder_type = self._which_folder_type()
+        self._mapping = {
+            ResourceFolderType.NORMAL_SOURCE: NormalResourceFolder,
+            ResourceFolderType.AVALON_SOURCE: AvalonResourceFolder,
+            ResourceFolderType.DOWNLOAD_VARIANT1: DownloadVariant1ResourceFolder,
+            ResourceFolderType.DOWNLOAD_VARIANT2: DownloadVariant2ResourceFolder,
+            ResourceFolderType.THREE_MAX: ThreedMaxResourceFolder,
+        }
+
+    def _which_folder_type(self):
+        if is_asset_depart_folder(self._path):
+            return AssetFolderType.ASSET_DEPART
+        elif is_resource_depart_folder(self._path):
+            return AssetFolderType.RESOURCE_DEPART
+        elif is_download_variant1_folder(self._path):
+            return ResourceFolderType.DOWNLOAD_VARIANT1
+        elif is_download_variant2_folder(self._path):
+            return ResourceFolderType.DOWNLOAD_VARIANT2
+        elif is_3dsmax_folder(self._path):
+            return ResourceFolderType.THREE_MAX
+        else:
+            raise SmaugApiError("Unknown folder type")
+
+    def create(self):
+        return self._mapping[self._folder_type](self._path)
+
+
+
+
+def is_avalon_source_folder(folder_path:str):
+    '''判是否為 avalon source 資料夾
+    其特色是目錄下會有 _AvalonSource 資料夾, 並帶有多張 preview 圖片
+    _AvalonSource 下會有數個 texture 目錄，通常名為texture, texture_low, ...等等， 並包含多個 dcc 檔案
+    dcc 檔可能有變體, 例加有後綴 _low 的模型檔案
+    '''
+    if not os.path.exists(f"{folder_path}\\_AvalonSource"):
+        return False
+    return True
+
+def is_normal_folder(asset_templat:AssetTemplate):
+    '''判斷是否為一般 asset 資料夾
+    一般資料夾的特色是 base dir 下有一個貼圖目錄，名字可能為 Texture、tex，並且有多個 dcc 檔案, 同時也有複數 preview 圖片
+    有時也會在 base dir 下有一個 Texture_JPG 資料夾，放置轉為 JPG 的貼圖檔案
+    
+    example: R:\_Asset\MoonshineProject_2019\BundleProject_TheBeltAndRoad\TheBeltAndRoad\Environment\ChangAnGate
+    '''
+    pass
+
+def is_download_variant1_folder(base_dir): #3
+    '''判斷是否為下載變體資料夾
+    下載變體1資料夾的特色是 base dir 下數個以 `uploads_files_` 開頭的資料夾，內含貼圖跟 dcc 檔，該資料夾的名稱 `+` 替代 ` `(空白)
+    並於 base dir 也有 preview 圖片
+
+    example: 
+        R:\_Asset\MoonshineProject_2020_Obsidian\202006_FetNetwork\parachute
+        R:\_Asset\MoonshineProject_2020_Obsidian\202003_ChptWokflow\robotic_arm
+    '''
+    pass
+
+def is_download_variant2_folder(asset_templat:AssetTemplate): #1
+    '''判斷是否為下載變體資料夾第二型
+    下載變體2資料夾的特色是 base dir 下有一個 `"asset 名稱"_textures` 的資料夾，內含貼圖，
+    並於 base dir 下有多個 dcc 檔案, 同時也有複數 preview 圖片
+
+    example: R:\_Asset\MoonshineProject_2020_Obsidian\202006_FetNetwork\parachute
+    '''
+    pass
+
+def is_3dsmax_folder(asset_templat:AssetTemplate): #1
+    '''判斷是否為 3ds max 資料夾
+    3ds max 資料夾的特色是 base dir 下有一個名稱為 3d_Max 的資料夾，內含貼圖跟 dcc 檔，
+    並於 base dir 下有多個 preview 檔案
+
+    example: R:\_Asset\MoonshineProject_2020_Obsidian\202003_ChptWokflow\DHQ
+    '''
+    pass
+
+
 if __name__ == "__main__":
     if os.name == "nt":
         re = folder_asset_template("D:/repos/smaug-cmd/_source/Tree_A/")
     else:
         re = folder_asset_template("/home/deck/repos/smaug/storage/_source/Tree_A/")
     pprint(re)
+
+# 暫時不知道該怎麼處理的資料夾內容
+# R:\_Asset\MoonshineProject_2020_Obsidian\202001_AsusBrandVideo4\Buy\Sci+Fi+Power+Suit
+# R:\_Asset\MoonshineProject_2020_Obsidian\202006_FetNetwork\Robot_Worker
+# R:\_Asset\MoonshineProject_2020_Obsidian\202003_ChptWokflow\robotic_arm
+# "R:\_Asset\MoonshineProject_2020_Obsidian\202006_VTidol\VTidol" 這個是內部帶有捷徑指向另一個真實存放檔案的資料夾

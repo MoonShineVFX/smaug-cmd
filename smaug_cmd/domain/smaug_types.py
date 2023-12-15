@@ -95,10 +95,10 @@ class ResourceFolderType(Enum):
 
     UNKNOWN = 0
     AVALON_SOURCE = 1
-    NORMAL_SOURCE_FOLDER = 2
+    NORMAL_SOURCE = 2
     DOWNLOAD_VARIANT1 = 3
     DOWNLOAD_VARIANT2 = 4
-    MAXFOLDER = 5
+    THREE_MAX = 5
 
 
 class CategoryTree(TypedDict):
