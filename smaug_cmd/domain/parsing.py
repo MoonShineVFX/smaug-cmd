@@ -21,6 +21,15 @@ from smaug_cmd.domain.smaug_types import (
 )
 
 
+def _list_dir(folder_path) -> List[str]:
+    try:
+        # 檢查貼圖資料夾
+        items = os.listdir(folder_path)
+    except Exception as e:
+        raise SmaugApiError(f"Reading Folder({folder_path}) Error: {e}")
+    return items
+
+
 def format_from_softkey(soft_key: str) -> RepresentationFormat:
     """從軟體關鍵字取得格式"""
     if soft_key == "maya":
@@ -37,6 +46,8 @@ def format_from_softkey(soft_key: str) -> RepresentationFormat:
         return "OBJ"
     elif soft_key == "usd":
         return "USD"
+    elif soft_key == "blender":
+        return "BLEND"
     raise SmaugApiError(f"Unknow soft key: {soft_key}")
 
 
@@ -324,23 +335,6 @@ def generate_zip(asset_name, name_key, textures_files: List[str]) -> str:
     return zipped_file
 
 
-def is_avalon_source_model_folder(folder_path: str):
-    """判是否為 ResourceFolderType.AVALON_SOURCE_MODEL 資料夾"""
-
-    # 要有 _AvalonSource
-    if not os.path.exists(f"{folder_path}\\_AvalonSource"):
-        return False
-
-    # _AvalonSource 下有要有貼圖目錄跟 dcc 檔，最少要有一個 dcc 檔，貼圖目錄裡最少要有一個檔案
-    # avalon_source_folder = folder_path + "\\_AvalonSource"
-    # if not _atlest_one_dcc_file(avalon_source_folder):
-    #     return False
-    # texture_folder = avalon_source_folder+"\\Texture"
-    # if not _atlest_one_texture_file(texture_folder):
-    #     return False
-    return True
-
-
 def is_taiwan_culture_model_folder(folder_path: str) -> bool:
     """判斷是否為 ResourceFolderType.TAIWAN_CULTURE_MODEL 資料夾"""
     # 有 3D 目錄
@@ -349,27 +343,35 @@ def is_taiwan_culture_model_folder(folder_path: str) -> bool:
     # 有 Render 目錄
     folder_required = ["3D", "Texture", "Preview", "Render"]
     
-    items = os.listdir(folder_path)
+    items = _list_dir(folder_path)
+    items = [i.lower() for i in items]
     for folder in folder_required:
-        if folder not in items:
+        if folder.lower() not in items:
             return False
 
     return True
+
+
+def is_avalon_source_model_folder(folder_path: str):
+    """判是否為 ResourceFolderType.AVALON_SOURCE_MODEL 資料夾"""
+
+    # 要有 _AvalonSource
+    folder_required = f"{folder_path}\\_avalonsource"
+    for folder in _list_dir(folder_path):
+        if folder.lower() == folder_required:
+            return True
+    return False
 
 
 def is_normal_resource_model_folder(folder_path: str):
     """判斷是否為 ResourceFolderType.NORMAL_RESOURCE_MODEL"""
 
     texture_folder_variant = ["Texture", "tex"]
-
-    try:
-        # 檢查貼圖資料夾
-        items = os.listdir(folder_path)
-        if not any([i in items for i in texture_folder_variant]):
-            return False
-        return True
-    except Exception as e:
-        raise SmaugApiError(f"Reading Folder({folder_path}) Error: {e}")
+    items = _list_dir(folder_path)
+    items = [i.lower() for i in items]
+    if not any([i.lower() in items for i in texture_folder_variant]):
+        return False
+    return True
 
 
 def is_download_variant1_model_folder(folder_path: str):  # 3
@@ -381,7 +383,14 @@ def is_download_variant1_model_folder(folder_path: str):  # 3
         _Asset\MoonshineProject_2020_Obsidian\202003_ChptWokflow\robotic_arm
         _Asset\MoonshineProject_2020_Obsidian\202001_AsusBrandVideo4\Buy\Sci+Fi+Power+Suit
     """
-    pass
+
+    base_name = os.path.basename(folder_path)
+    folder_pattern = f"uploads_files_{base_name.replace(' ', '+')}"
+    items = _list_dir(folder_path)
+    for item in items:
+        if item.startswith(folder_pattern):
+            return True
+    return False
 
 
 def is_download_variant2_model_folder(folder_path: str):  # 1
@@ -391,7 +400,12 @@ def is_download_variant2_model_folder(folder_path: str):  # 1
 
     example: R:\_Asset\MoonshineProject_2020_Obsidian\202006_FetNetwork\parachute
     """
-    pass
+    asset_name = os.path.basename(folder_path)
+    texture_folder = f"{asset_name}_textures"
+    items = _list_dir(folder_path)
+    if texture_folder not in items:
+        return False
+    return True
 
 
 def is_3dsmax_model_folder(folder_path: str):  # 1
@@ -401,13 +415,16 @@ def is_3dsmax_model_folder(folder_path: str):  # 1
 
     example: _Asset\MoonshineProject_2020_Obsidian\202003_ChptWokflow\DHQ
     """
-    pass
+    items = _list_dir(folder_path)
+    if "3d_Max" not in items:
+        return False
+    return True
 
 
 def _atlest_one_dcc_file(folder_path: str) -> bool:
     """判斷資料夾下是否至少有一個 dcc 檔案"""
 
-    items = os.listdir(folder_path)
+    items = _list_dir(folder_path)
     if len(items) == 0:
         return False
     for item in items:
@@ -419,7 +436,7 @@ def _atlest_one_dcc_file(folder_path: str) -> bool:
 def _atlest_one_texture_file(folder_path: str) -> bool:
     """判斷資料夾下是否至少有一個貼圖檔案"""
 
-    items = os.listdir(folder_path)
+    items = _list_dir(folder_path)
     if len(items) == 0:
         return False
 
