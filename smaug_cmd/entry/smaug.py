@@ -11,7 +11,7 @@ from smaug_cmd.bootstrap import bootstrap
 from smaug_cmd.domain.exceptions import SmaugError
 from smaug_cmd.services import SmaugCmdLogic
 
-logger = logging.getLogger('smaug-cmd')
+logger = logging.getLogger('smaug_cmd')
 logging.basicConfig(level=logging.DEBUG)
 
 

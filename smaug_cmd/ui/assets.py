@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import logging
-from typing import Optional 
+from typing import Optional
 from PySide6.QtCore import QSettings, QDir
 from PySide6.QtWidgets import QDialog, QMessageBox
 
@@ -8,11 +8,11 @@ from smaug_cmd.designer.asset_list_ui import Ui_asset_list_dlg
 from smaug_cmd.domain.exceptions import SmaugError
 from smaug_cmd.services import SmaugCmdLogic
 
-logger = logging.getLogger("smaug-cmd.ui.asset_list")
+logger = logging.getLogger("smaug_cmd.ui.asset_list")
 
 
 class AssetListDialog(QDialog, Ui_asset_list_dlg):
-    _section_name= "smaugAssetListDialog"
+    _section_name = "smaugAssetListDialog"
 
     def __init__(
         self,
@@ -40,7 +40,7 @@ class AssetListDialog(QDialog, Ui_asset_list_dlg):
         if self._setting is None:
             self.folder_tree_widget.setRootFolder(str(QDir.homePath()))
             return
-        root_folder = self._setting.value(self._section_name +"/rootFolder", None)
+        root_folder = self._setting.value(self._section_name + "/rootFolder", None)
         if root_folder is None:
             self.folder_tree_widget.setRootFolder(str(QDir.homePath()))
         else:
@@ -84,7 +84,7 @@ class AssetListDialog(QDialog, Ui_asset_list_dlg):
     def closeEvent(self, event):
         self._write_settings()
         return super().closeEvent(event)
-    
+
     def _write_settings(self):
         if self._setting is None:
             return

@@ -3,7 +3,7 @@ from PySide6.QtGui import QCloseEvent
 from PySide6.QtWidgets import QTreeView, QVBoxLayout, QWidget, QFileSystemModel
 from PySide6.QtCore import QDir, QModelIndex, Signal, QSortFilterProxyModel, QSettings
 
-logger = logging.getLogger("smaug.ui")
+logger = logging.getLogger("smaug_cmd.ui")
 
 
 class DirOnlyProxyModel(QSortFilterProxyModel):

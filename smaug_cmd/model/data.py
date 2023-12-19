@@ -16,7 +16,7 @@ from smaug_cmd.domain.smaug_types import (
 from smaug_cmd.model.auth import _session
 from smaug_cmd import setting
 
-logger = logging.getLogger("smaug-cmd.data")
+logger = logging.getLogger("smaug_cmd.data")
 
 
 class NestedDict:

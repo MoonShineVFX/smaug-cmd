@@ -2,7 +2,7 @@ import logging
 
 import smaug_cmd.services.remote_fs as rfs
 
-logger = logging.getLogger("smaug-cmd.bootstrap")
+logger = logging.getLogger("smaug_cmd.bootstrap")
 
 
 def bootstrap(setting):

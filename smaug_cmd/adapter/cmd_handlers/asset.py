@@ -7,7 +7,7 @@ from smaug_cmd.domain import command as cmd
 from smaug_cmd.model import data as ds
 from smaug_cmd.domain.smaug_types import MenuTree
 
-logger = logging.getLogger("smaug-cmd.adapter.cmd_handlers.asset")
+logger = logging.getLogger("smaug_cmd.adapter.cmd_handlers.asset")
 
 
 def create_asset(payload: cmd.CreateAsset) -> AssetCreateResponse:

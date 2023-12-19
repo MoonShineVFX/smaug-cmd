@@ -14,7 +14,7 @@ from smaug_cmd.model import data as ds
 from smaug_cmd.domain.exceptions import SmaugOperaterError
 
 
-logger = logging.getLogger("smaug-cmd.domain")
+logger = logging.getLogger("smaug_cmd.domain.op")
 
 
 class AssetOp(QObject):

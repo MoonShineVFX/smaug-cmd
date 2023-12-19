@@ -5,7 +5,7 @@ from smaug_cmd.domain.exceptions import SmaugApiError
 from smaug_cmd.domain.smaug_types import UserInfo
 from smaug_cmd import setting
 
-logger = logging.getLogger("smaug-cmd.auth")
+logger = logging.getLogger("smaug_cmd.auth")
 
 
 _session = Session()

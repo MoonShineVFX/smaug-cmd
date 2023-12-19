@@ -1,15 +1,17 @@
 import logging
 import os
+
 # from typing import Any, Callable, Dict, List, Optional
 from minio import Minio
 from minio.error import S3Error
 from functools import partial
 from smaug_cmd.domain.exceptions import SmaugApiError
 
-logger = logging.getLogger("smaug-cmd.adapter")
+logger = logging.getLogger("smaug_cmd.adapter")
 
 
 client: Minio = None
+
 
 def init(endpoint, access_key, secret_key):
     global client
@@ -17,7 +19,8 @@ def init(endpoint, access_key, secret_key):
         endpoint,
         access_key=access_key,
         secret_key=secret_key,
-        secure=False,)
+        secure=False,
+    )
 
 
 def check_client(func):
@@ -26,6 +29,7 @@ def check_client(func):
         if client is None:
             raise RuntimeError("remote_fs is not initialized")
         return func(*args, **kwargs)
+
     return wrapper
 
 
@@ -54,12 +58,14 @@ def put_file(file_path, object_name) -> str:
         object_name,
         file_path,
     )
-    logger.debug("'%s' is successfully uploaded as object '%s'" % (file_path, result.object_name))
+    logger.debug(
+        "'%s' is successfully uploaded as object '%s'" % (file_path, result.object_name)
+    )
     return result.object_name
 
 
 @check_client
-def put_representation(asset_id: str, file_path: str, object_name: str=None):
+def put_representation(asset_id: str, file_path: str, object_name: str = None):
     file_name = os.path.basename(file_path)
     if not object_name:
         object_name = f"/{asset_id}/{file_name}"
@@ -69,7 +75,7 @@ def put_representation(asset_id: str, file_path: str, object_name: str=None):
 
 
 @check_client
-def put_representation1(asset_id: str, new_name:str, file_path: str):
+def put_representation1(asset_id: str, new_name: str, file_path: str):
     """Upload representation file to smaug."""
     file_name = os.path.basename(file_path).split(".")[0]
     file_extension = os.path.splitext(file_path)[-1].lower()
@@ -87,10 +93,12 @@ def put_representation1(asset_id: str, new_name:str, file_path: str):
 @check_client
 def put_preview(asset_id, asset_name, preview_file) -> str:
     """Upload preview file to smaug."""
+
     def object_name_format(idx, file_path, type):
         file_extension = os.path.splitext(file_path)[-1].lower()
         object_name = f"/{asset_id}/{asset_name}_{type}-{idx}{file_extension}"
         return object_name
 
-    return put_representation1(asset_id, asset_name, object_name_format(1, preview_file, "preview"))
-
+    return put_representation1(
+        asset_id, asset_name, object_name_format(1, preview_file, "preview")
+    )

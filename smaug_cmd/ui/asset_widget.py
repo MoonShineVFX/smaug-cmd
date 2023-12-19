@@ -3,7 +3,7 @@ import pprint
 from PySide6.QtWidgets import QStackedWidget
 from smaug_cmd.designer.asset_widget_ui import Ui_asset_widget
 
-logget = logging.getLogger("smaug-cmd.ui.asset_widget")
+logget = logging.getLogger("smaug_cmd.ui.asset_widget")
 
 
 class AssetWidget(QStackedWidget, Ui_asset_widget):

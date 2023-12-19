@@ -8,7 +8,7 @@ from smaug_cmd.adapter.images import ImageHandler
 from smaug_cmd.adapter.smaug import SmaugJson
 from smaug_cmd.adapter.cmd_handlers.asset import asset_categories
 
-logger = logging.getLogger("smaug-cmd.ui.asset_editor")
+logger = logging.getLogger("smaug_cmd.ui.asset_editor")
 
 
 class AssetEditorWidget(QWidget, Ui_asset_editor_wgt):
@@ -157,7 +157,9 @@ class AssetEditorWidget(QWidget, Ui_asset_editor_wgt):
         if self._asset is None:
             logger.warning("Asset is None")
             return ""
-        preview_filepath = self._asset["previews"][0] if self._asset["previews"] else None
+        preview_filepath = (
+            self._asset["previews"][0] if self._asset["previews"] else None
+        )
         if preview_filepath is None:
             return ""
         asset_dir = self._asset["basedir"]
@@ -198,7 +200,7 @@ class AssetEditorWidget(QWidget, Ui_asset_editor_wgt):
             return
         self._asset["tags"] = tags
         if self._sjson is not None:
-            with self._sjson: 
+            with self._sjson:
                 self._sjson["tags"] = tags
         return
 
