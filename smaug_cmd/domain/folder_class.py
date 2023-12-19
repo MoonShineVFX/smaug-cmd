@@ -1,48 +1,31 @@
+from typing import List, Type
 from smaug_cmd.domain.exceptions import SmaugApiError
-from smaug_cmd.domain import parsing as ps
-
-
 from smaug_cmd.domain.folder_parsing import (
-    FolderType,
-    AssetFolderType,
+    BaseFolder,
+    AssetDepartModelFolder,
     NormalResourceModelFolder,
     AvalonResourceModelFolder,
     DownloadVariant1ResourceModelFolder,
     ThreedMaxResourceModelFolder,
     TaiwanCultureResourceModelFolder,
-    is_taiwan_culture_model_folder,
-    is_avalon_source_model_folder,
-    is_normal_resource_model_folder,
-    is_download_variant1_model_folder,
-    is_3dmax_model_folder,
 )
 
 
 class FolderClassFactory:
     def __init__(self, path: str):
         self._path = path
-        self._folder_type = self._which_folder_type()
-        self._mapping = {
-            FolderType.TAIWAN_CULTURE_MODEL: TaiwanCultureResourceModelFolder,
-            FolderType.NORMAL_RESOURCE_MODEL: NormalResourceModelFolder,
-            FolderType.AVALON_SOURCE_MODEL: AvalonResourceModelFolder,
-            FolderType.DOWNLOAD_VARIANT1_MODEL: DownloadVariant1ResourceModelFolder,
-            FolderType.THREE_MAX_MODEL: ThreedMaxResourceModelFolder,
-        }
+        self._mapping: List[Type[BaseFolder]] = [
+            AssetDepartModelFolder,
+            TaiwanCultureResourceModelFolder,
+            NormalResourceModelFolder,
+            AvalonResourceModelFolder,
+            DownloadVariant1ResourceModelFolder,
+            ThreedMaxResourceModelFolder,
+        ]
 
-    def _which_folder_type(self):
-        if ps.is_asset_depart_folder(self._path):
-            return AssetFolderType.ASSET_DEPART
-        elif is_taiwan_culture_model_folder(self._path):
-            return FolderType.TAIWAN_CULTURE_MODEL
-        elif is_avalon_source_model_folder(self._path):
-            return FolderType.AVALON_SOURCE_MODEL
-        elif is_download_variant1_model_folder(self._path):
-            return FolderType.DOWNLOAD_VARIANT1_MODEL
-        elif is_3dmax_model_folder(self._path):
-            return FolderType.THREE_MAX_MODEL
-        else:
-            raise SmaugApiError("Unknown folder type")
-
-    def create(self):
-        return self._mapping[self._folder_type](self._path)
+    def create(self) -> BaseFolder:
+        for FolderClass in self._mapping:
+            folder_obj = FolderClass.create_if_applicable(self._path)
+            if folder_obj is not None:
+                return folder_obj
+        raise SmaugApiError(f"無法判斷 {self._path} 的資料夾類型")

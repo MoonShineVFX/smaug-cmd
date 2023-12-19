@@ -1,20 +1,15 @@
 from enum import Enum
 
 
-class AssetFolderType(Enum):
-    """Enum for the type of asset folder."""
-
-    UNKNOWN = 0
-    RESOURCE_DEPART = 1
-    ASSET_DEPART = 2
-
-
 class FolderType(Enum):
     """Enum for the type of resource folder."""
 
     UNKNOWN = "UNKNOWN"
-    
+
     ASSET_DEPART_MODEL = "ADM"
+    # 資料夾下有 Texture, Render, Model 三個目錄
+    # 目錄下有多張 preview 圖片
+
     AVALON_SOURCE_MODEL = "ASM"
     # 目錄下有多張 preview 圖片
     # 目錄下會有 _AvalonSource 資料夾,
@@ -28,7 +23,7 @@ class FolderType(Enum):
     #     _Asset\MoonshineProject_2020_Obsidian\202007_LianYue\Props\Backpack
 
     NORMAL_RESOURCE_MODEL = "NRM"
-    # 資料夾下有一個貼圖目錄，名字可能為 Texture、tex, 
+    # 資料夾下有一個貼圖目錄，名字可能為 Texture、tex,
     # 資料夾下有多個 dcc 檔案
     # 資料夾下有複數 preview 圖片
     # 有時也會在 folder_path 下有一個 Texture_JPG 資料夾，放置轉為 JPG 的貼圖檔案，這個資料夾為 Optinoal
@@ -42,12 +37,16 @@ class FolderType(Enum):
     # 資料夾下數個以 `uploads_files_` 開頭的資料夾，內含貼圖跟 dcc 檔，該資料夾的名稱 `+` 替代 ` `(空白)
     # 資料夾下也有 preview 圖片
 
-    # example: 
+    # example:
     #     _Asset\MoonshineProject_2020_Obsidian\202003_ChptWokflow\robotic_arm
     #     _Asset\MoonshineProject_2020_Obsidian\202001_AsusBrandVideo4\Buy\Sci+Fi+Power+Suit
-    
+
     THREE_MAX_MODEL = "3DM"
-    
+    # 資料夾裡有 3d_max 目錄
+
+    # example:
+    #     _Asset\MoonshineProject_2020_Obsidian\202003_ChptWokflow\DHQ
+
     TAIWAN_CULTURE_MODEL = "TCM"
     # 資料夾下有 dcc 檔，通常為 fbx
     # 資料夾下有數個 preview 圖檔
@@ -56,7 +55,7 @@ class FolderType(Enum):
     # 有 Preview 目錄, 目錄裡的也是 preview 圖檔
     # 有 Render 目錄, 下有 render 出來的圖檔
 
-    # example: 
+    # example:
     #     _Asset\Source_Taiwan\Culture01\BTStation_HighPoly
 
     UASSET_MODEL = "UM"

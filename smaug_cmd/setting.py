@@ -1,8 +1,9 @@
 import os
 from dotenv import load_dotenv
+
 load_dotenv()
 
-cache_time = 300 # 資料快取時間(秒), 超過這個時間下一次取資料就會自動更新
+cache_time = 300  # 資料快取時間(秒), 超過這個時間下一次取資料就會自動更新
 
 api_root = os.environ["API_URL"]  # 資料庫位置
 minio_host = os.environ["MINIO_HOST"]  # minio 位置
@@ -40,13 +41,13 @@ preview_factors = [
 # 完整檔名中有preview的檔案會被視為預覽圖
 
 exclude_folders = [
-    ".vrayThumbs", 
+    ".vrayThumbs",
     ".mayaSwatches",
     ".smaug",
     "_BackUp",
     "backup",
     ".obsidian",
-    ".trash"
+    ".trash",
 ]
 
 exclude_files = [
@@ -55,5 +56,5 @@ exclude_files = [
     "Thumbs.db",
     "素材上架項目.md",
     "素材更新紀錄.md",
-    "已上架.txt"
+    "已上架.txt",
 ]

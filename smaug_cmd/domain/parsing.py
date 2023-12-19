@@ -1,21 +1,12 @@
 from typing import List, Dict
-import os
-import re
-from pprint import pprint
-from pathlib import PureWindowsPath
+
+
 from smaug_cmd.adapter import fs
 from smaug_cmd.domain.exceptions import SmaugApiError
 
-from smaug_cmd.setting import (
-    texture_extensions,
-    texture_factors,
-    preview_factors,
-    render_factors,
-    model_extensions,
-)
+
 from smaug_cmd.domain.smaug_types import (
     AssetTemplate,
-    AssetFolderType,
     RepresentationFormat,
     SOFTWARE_CATEGORIRS,
     REVERSE_SOFTWARE_CATEGORIRS,
@@ -43,144 +34,33 @@ def format_from_softkey(soft_key: str) -> RepresentationFormat:
     raise SmaugApiError(f"Unknow soft key: {soft_key}")
 
 
-def is_asset_model_folder(path) -> AssetFolderType:
-    """
-    檢查指定的路徑是否為模型資料夾。
+# def is_asset_depart_folder(path) -> bool:
+#     """
+#     檢查指定的路徑下是否有 'texture', 'render', 'model' 這三個子目錄。
 
-    參數:
-        path (str): 要檢查的路徑。
+#     參數:
+#         path (str): 要檢查的目錄路徑。
 
-    回傳:
-        bool: 如果路徑是模型資料夾，則回傳 True, 否則回傳 False。
-    """
-    # 判斷是否為資源部資料夾(鍾墉)
-    if is_resource_depart_folder(path):
-        return AssetFolderType.RESOURCE_DEPART
+#     回傳:
+#         bool: 如果目錄包含 'texture', 'Render', 'Model' 子目錄，則回傳 True, 否則回傳 False。
+#     """
+#     # 列出所有子目錄和文件
+#     try:
+#         dir_contents = os.listdir(path)
+#     except FileNotFoundError:
+#         print(f"The directory '{path}' does not exist.")
+#         return False
+#     except PermissionError:
+#         print(f"Permission denied for directory '{path}'.")
+#         return False
 
-    # 判斷是否為資產部資料夾(家家)
-    if is_asset_depart_folder(path):
-        return AssetFolderType.ASSET_DEPART
+#     # 判斷是否包含 'texture', 'render', 'model' 子目錄
+#     required_subdirs = {"Texture", "Render", "Model"}
+#     actual_subdirs = {
+#         item for item in dir_contents if os.path.isdir(os.path.join(path, item))
+#     }
 
-    return AssetFolderType.UNKNOWN
-
-
-def is_asset_depart_folder(path) -> bool:
-    """
-    檢查指定的路徑下是否有 'texture', 'render', 'model' 這三個子目錄。
-
-    參數:
-        path (str): 要檢查的目錄路徑。
-
-    回傳:
-        bool: 如果目錄包含 'texture', 'Render', 'Model' 子目錄，則回傳 True, 否則回傳 False。
-    """
-    # 列出所有子目錄和文件
-    try:
-        dir_contents = os.listdir(path)
-    except FileNotFoundError:
-        print(f"The directory '{path}' does not exist.")
-        return False
-    except PermissionError:
-        print(f"Permission denied for directory '{path}'.")
-        return False
-
-    # 判斷是否包含 'texture', 'render', 'model' 子目錄
-    required_subdirs = {"Texture", "Render", "Model"}
-    actual_subdirs = {
-        item for item in dir_contents if os.path.isdir(os.path.join(path, item))
-    }
-
-    return required_subdirs.issubset(actual_subdirs)
-
-
-def is_resource_depart_folder(path) -> bool:
-    return False
-
-
-def _validate_extension(file_path: str):
-    """檢查副檔名是否合法
-
-    - 副檔名在 setting 中有列表
-    """
-    if file_path.split(".")[-1].lower() in texture_extensions:
-        return True
-    return False
-
-
-def model_classifier_extension(file_path: str) -> bool:
-    """檢查副檔名是否合法
-
-    - 副檔名在 setting 中有列表
-    """
-    if file_path.split(".")[-1].lower() in model_extensions:
-        return True
-    return False
-
-
-def is_texture(file_path: str):
-    if not _validate_extension(file_path):
-        return False
-
-    if any([i in file_path.lower() for i in texture_factors]):
-        return True
-    return False
-
-
-def is_preview(file_path: str):
-    """是否為預覽圖
-
-    - preview 檔所在地至少要有一層目錄
-    - preview 檔的名字裡有包含完整的目錄名(都先轉成小寫比對)或是 preview 檔的檔名叫做 "preview"
-    - preview 檔是合法的圖案，合法圖檔副檔名在 setting 中有列表
-    """
-
-    asset_pathobj = PureWindowsPath(file_path)
-
-    if not asset_pathobj.parent.name:
-        return False
-
-    if not _validate_extension(file_path):
-        return False
-
-    path_parts = asset_pathobj.parts
-    file_name = path_parts[-1].lower()
-    parent_name = path_parts[-2].lower()
-    if parent_name in file_name:
-        return True
-
-    if any([i in file_path for i in preview_factors]):
-        return True
-    return False
-
-
-def is_render_image(file_path: str):
-    """是否為渲染圖
-
-    - 渲染圖檔的名字裡有包含完整的目錄名(都先轉成小寫比對)或是渲染圖檔的檔名叫做 "render"
-    - 渲染圖檔是合法的圖案，合法圖檔副檔名在 setting 中有列表
-    """
-
-    asset_pathobj = PureWindowsPath(file_path)
-
-    if not asset_pathobj.parent.name:
-        return False
-
-    if not _validate_extension(file_path):
-        return False
-
-    path_parts = asset_pathobj.parts
-
-    for render_factor in render_factors:
-        for path_part in path_parts:
-            if render_factor.lower() == path_part.lower():
-                return True
-    return False
-
-
-def is_model(file_path: str):
-    if file_path.split(".")[-1].lower() in model_extensions:
-        return True
-    return False
+#     return required_subdirs.issubset(actual_subdirs)
 
 
 def is_usd(file_path: str):
@@ -202,74 +82,6 @@ def find_usd(file_paths: List[str]) -> str | None:
 
 def usd_meta(file_path: str):
     return {}  # todo: implement polycount, vertex count, face count, bounding box etc.
-
-
-def guess_preview_model(file_paths: List[str]) -> str | None:
-    for file_path in file_paths:
-        if file_path.split(".")[-1].lower() == "glb":
-            return file_path
-    return None
-
-
-# def load_dot_smaug(path: str)-> dict:
-#     # location smaug.json file
-#     smaug_json = os.path.join(path, ".smaug", "smaug.json")
-#     if not os.path.exists(smaug_json):
-#         return {}
-#     with open(smaug_json, "r") as f:
-#         smaug_data = f.read()
-
-#     data = json.loads(smaug_data)
-#     return data
-
-
-def folder_asset_template(path: str) -> AssetTemplate:
-    """將資料夾轉成 json 格式"""
-
-    textures = []
-    previews = []
-    renders = []
-    models = []
-    metadata: dict = {}
-    tags: List[str] = []
-
-    for root, _, filenames in os.walk(path):
-        for filename in filenames:
-            # file_path = os.path.join(root, filename)
-            file_path = root + "/" + filename
-            if ".smaug" in file_path:
-                continue
-            if is_texture(file_path):
-                textures.append(file_path)
-            if is_preview(file_path):
-                previews.append(file_path)
-            if is_render_image(file_path):
-                renders.append(file_path)
-            if is_model(file_path):
-                models.append(file_path)
-
-    preview_model = guess_preview_model(models)
-
-    asset_name = os.path.basename(path)
-    asset_template: AssetTemplate = {
-        "id": None,
-        "name": asset_name,
-        "categoryId": None,
-        "previews": previews,
-        "preview_model": preview_model if preview_model else "",
-        "models": models,
-        "textures": textures,
-        "renders": renders,
-        "meta": metadata,
-        "tags": tags,
-        "basedir": path,
-        "createAt": None,
-        "updateAt": None,
-    }
-    # sjson = SmaugJson(path)
-    # data = sjson.deserialize()
-    # asset_template.update(data)
-    return asset_template
 
 
 def categorize_files_by_keywords(
@@ -327,39 +139,12 @@ def generate_zip(asset_name, name_key, textures_files: List[str]) -> str:
     return zipped_file
 
 
-def _atlest_one_dcc_file(folder_path: str) -> bool:
-    """判斷資料夾下是否至少有一個 dcc 檔案"""
-
-    items = _list_dir(folder_path)
-    if len(items) == 0:
-        return False
-    for item in items:
-        item.split(".")[-1].lower() in model_extensions
-        return True
-    return False
-
-
-def _atlest_one_texture_file(folder_path: str) -> bool:
-    """判斷資料夾下是否至少有一個貼圖檔案"""
-
-    items = _list_dir(folder_path)
-    if len(items) == 0:
-        return False
-
-    asleast_one_texture = False
-    for item in items:
-        if is_texture(item):
-            asleast_one_texture = True
-            break
-    return asleast_one_texture
-
-
-if __name__ == "__main__":
-    if os.name == "nt":
-        re = folder_asset_template("D:/repos/smaug-cmd/_source/Tree_A/")
-    else:
-        re = folder_asset_template("/home/deck/repos/smaug/storage/_source/Tree_A/")
-    pprint(re)
+# if __name__ == "__main__":
+#     if os.name == "nt":
+#         re = folder_asset_template("D:/repos/smaug-cmd/_source/Tree_A/")
+#     else:
+#         re = folder_asset_template("/home/deck/repos/smaug/storage/_source/Tree_A/")
+#     pprint(re)
 
 # 暫時不知道該怎麼處理的資料夾內容
 # R:\_Asset\MoonshineProject_2020_Obsidian\202001_AsusBrandVideo4\Buy\Sci+Fi+Power+Suit

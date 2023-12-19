@@ -1,5 +1,16 @@
 from smaug_cmd.domain.folder_parsing import util
 from smaug_cmd.domain.folder_parsing.base_folder import BaseFolder
+from smaug_cmd.domain.folder_parsing.folder_typing import FolderType
+
+
+class TaiwanCultureResourceModelFolder(BaseFolder):
+    def __init__(self, path: str):
+        super().__init__(path)
+        self._folder_type = FolderType.TAIWAN_CULTURE_MODEL
+
+    @classmethod
+    def is_applicable(cls, folderpath:str)->bool:
+        return is_taiwan_culture_model_folder(folderpath)
 
 
 def is_taiwan_culture_model_folder(folder_path: str) -> bool:
@@ -17,8 +28,3 @@ def is_taiwan_culture_model_folder(folder_path: str) -> bool:
             return False
 
     return True
-
-
-class TaiwanCultureResourceModelFolder(BaseFolder):
-    def __init__(self, path: str):
-        super().__init__(path)

@@ -10,7 +10,6 @@ from smaug_cmd.adapter.cmd_handlers.zip import create_zip
 from smaug_cmd.domain.smaug_types import (
     Menu,
     MenuTree,
-    AssetFolderType,
     AssetTemplate,
     RepresentationCreateParams,
     UserInfo,
@@ -18,12 +17,13 @@ from smaug_cmd.domain.smaug_types import (
 from smaug_cmd.model import login_in as api_login  # log_out as api_logout
 from smaug_cmd.model import data as ds
 from smaug_cmd.domain import parsing as ps
-from smaug_cmd.domain.exceptions import SmaugError, SmaugApiError
+from smaug_cmd.domain.exceptions import SmaugError
+from smaug_cmd.domain.folder_class import FolderClassFactory
 from smaug_cmd.domain.operators import AssetOp, RepresentationOp
 from smaug_cmd.services import remote_fs as rfs
 
 
-logger = logging.getLogger("smaug-cmd.domain")
+logger = logging.getLogger("smaug_cmd.domain")
 
 
 class SmaugCmdLogic(QObject):
@@ -74,16 +74,9 @@ class SmaugCmdLogic(QObject):
 
     def asset_template(self, folder_path) -> Optional[AssetTemplate]:
         # convert folder to asset template
-        asset_folder_type = ps.is_asset_model_folder(folder_path)
-        if AssetFolderType.UNKNOWN == asset_folder_type:
-            return None
 
-        if asset_folder_type == AssetFolderType.ASSET_DEPART:
-            asset_template = ps.folder_asset_template(folder_path)
-            return asset_template
-
-        if asset_folder_type == AssetFolderType.RESOURCE_DEPART:
-            raise SmaugApiError("Resource depart folder not support yet")
+        folder_obj = FolderClassFactory(folder_path).create()
+        return folder_obj.asset_template()
 
     def create_asset_proc(self, asset_template: AssetTemplate):
         """在資料庫建立 asset 的流程
@@ -234,8 +227,8 @@ class SmaugCmdLogic(QObject):
 
         # write asset id to smaug.hson
         sm_json = SmaugJson(asset_template["basedir"])
-        sm_json["id"]=asset_id
-        sm_json["createAt"]=datetime.datetime.now().isoformat()
+        sm_json["id"] = asset_id
+        sm_json["createAt"] = datetime.datetime.now().isoformat()
         sm_json.serialize()
 
         # upload preview model process
