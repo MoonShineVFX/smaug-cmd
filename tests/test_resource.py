@@ -1,7 +1,7 @@
 import os
 import unittest
 from unittest.mock import patch
-from smaug_cmd.domain.parsing import (
+from smaug_cmd.domain.folder_parsing import (
     is_3dmax_model_folder,
     is_avalon_source_model_folder,
     is_taiwan_culture_model_folder,
@@ -55,7 +55,7 @@ class TestKindOfFolder(unittest.TestCase):
             self.assertTrue(is_avalon_source_model_folder(ava_folder))
             self.assertFalse(is_normal_resource_model_folder(ava_folder))
             self.assertFalse(is_download_variant1_model_folder(ava_folder))
-            self.assertFalse(is_3dsmax_model_folder(ava_folder))
+            self.assertFalse(is_3dmax_model_folder(ava_folder))
 
     def test_is_download_variant1_model_folder(self):
         down_variant1 = [
@@ -72,10 +72,10 @@ class TestKindOfFolder(unittest.TestCase):
             self.assertFalse(is_avalon_source_model_folder(down_variant1_folder))
             self.assertFalse(is_normal_resource_model_folder(down_variant1_folder))
             self.assertTrue(is_download_variant1_model_folder(down_variant1_folder))
-            self.assertFalse(is_3dsmax_model_folder(down_variant1_folder))
+            self.assertFalse(is_3dmax_model_folder(down_variant1_folder))
 
     def test_is_3dmax_model_folder(self):
-
+        pass
 
 
 if __name__ == "__main__":
