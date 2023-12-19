@@ -1,5 +1,6 @@
 from typing import List, Dict
 import os
+import re
 from pprint import pprint
 from pathlib import PureWindowsPath
 from smaug_cmd.adapter import fs
@@ -19,15 +20,6 @@ from smaug_cmd.domain.smaug_types import (
     SOFTWARE_CATEGORIRS,
     REVERSE_SOFTWARE_CATEGORIRS,
 )
-
-
-def _list_dir(folder_path) -> List[str]:
-    try:
-        # 檢查貼圖資料夾
-        items = os.listdir(folder_path)
-    except Exception as e:
-        raise SmaugApiError(f"Reading Folder({folder_path}) Error: {e}")
-    return items
 
 
 def format_from_softkey(soft_key: str) -> RepresentationFormat:
@@ -333,92 +325,6 @@ def generate_zip(asset_name, name_key, textures_files: List[str]) -> str:
     zip_file_name = f"{asset_name}_{name_key}_texture.zip"
     zipped_file = fs.create_temp_zip_from_files(textures_files, zip_file_name)
     return zipped_file
-
-
-def is_taiwan_culture_model_folder(folder_path: str) -> bool:
-    """判斷是否為 ResourceFolderType.TAIWAN_CULTURE_MODEL 資料夾"""
-    # 有 3D 目錄
-    # 有 texture 目錄
-    # 有 Preview 目錄
-    # 有 Render 目錄
-    folder_required = ["3D", "Texture", "Preview", "Render"]
-    
-    items = _list_dir(folder_path)
-    items = [i.lower() for i in items]
-    for folder in folder_required:
-        if folder.lower() not in items:
-            return False
-
-    return True
-
-
-def is_avalon_source_model_folder(folder_path: str):
-    """判是否為 ResourceFolderType.AVALON_SOURCE_MODEL 資料夾"""
-
-    # 要有 _AvalonSource
-    folder_required = f"{folder_path}\\_avalonsource"
-    for folder in _list_dir(folder_path):
-        if folder.lower() == folder_required:
-            return True
-    return False
-
-
-def is_normal_resource_model_folder(folder_path: str):
-    """判斷是否為 ResourceFolderType.NORMAL_RESOURCE_MODEL"""
-
-    texture_folder_variant = ["Texture", "tex"]
-    items = _list_dir(folder_path)
-    items = [i.lower() for i in items]
-    if not any([i.lower() in items for i in texture_folder_variant]):
-        return False
-    return True
-
-
-def is_download_variant1_model_folder(folder_path: str):  # 3
-    """判斷是否為下載變體資料夾
-    下載變體1資料夾的特色是 base dir 下數個以 `uploads_files_` 開頭的資料夾，內含貼圖跟 dcc 檔，該資料夾的名稱 `+` 替代 ` `(空白)
-    並於 base dir 也有 preview 圖片
-
-    example:
-        _Asset\MoonshineProject_2020_Obsidian\202003_ChptWokflow\robotic_arm
-        _Asset\MoonshineProject_2020_Obsidian\202001_AsusBrandVideo4\Buy\Sci+Fi+Power+Suit
-    """
-
-    base_name = os.path.basename(folder_path)
-    folder_pattern = f"uploads_files_{base_name.replace(' ', '+')}"
-    items = _list_dir(folder_path)
-    for item in items:
-        if item.startswith(folder_pattern):
-            return True
-    return False
-
-
-def is_download_variant2_model_folder(folder_path: str):  # 1
-    """判斷是否為下載變體資料夾第二型
-    下載變體2資料夾的特色是 base dir 下有一個 `"asset 名稱"_textures` 的資料夾，內含貼圖，
-    並於 base dir 下有多個 dcc 檔案, 同時也有複數 preview 圖片
-
-    example: R:\_Asset\MoonshineProject_2020_Obsidian\202006_FetNetwork\parachute
-    """
-    asset_name = os.path.basename(folder_path)
-    texture_folder = f"{asset_name}_textures"
-    items = _list_dir(folder_path)
-    if texture_folder not in items:
-        return False
-    return True
-
-
-def is_3dsmax_model_folder(folder_path: str):  # 1
-    """判斷是否為 3ds max 資料夾
-    3ds max 資料夾的特色是 base dir 下有一個名稱為 3d_Max 的資料夾，內含貼圖跟 dcc 檔，
-    並於 base dir 下有多個 preview 檔案
-
-    example: _Asset\MoonshineProject_2020_Obsidian\202003_ChptWokflow\DHQ
-    """
-    items = _list_dir(folder_path)
-    if "3d_Max" not in items:
-        return False
-    return True
 
 
 def _atlest_one_dcc_file(folder_path: str) -> bool:
