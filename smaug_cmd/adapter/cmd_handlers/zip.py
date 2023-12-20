@@ -1,8 +1,8 @@
-from typing import List
+from typing import List, Optional
 from smaug_cmd.adapter import fs
 
 
-def create_zip(file_paths: List[str], file_name: str = None) -> str:
+def create_zip(file_paths: List[str], file_name: Optional[str] = None) -> str:
     """將 textures 壓成 zip 檔案"""
     # 產生 zip 檔名
     # if `file_name` end with no ".zip", add it.

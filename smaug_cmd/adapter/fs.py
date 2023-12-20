@@ -1,11 +1,13 @@
+from typing import List, Optional
 import zipfile
 import tempfile
-from typing import List
 import os
 import shutil
 
+from smaug_cmd.adapter import fs
 
-def create_temp_zip_from_files(file_paths: List[str], file_name:str=None) -> str:
+
+def create_temp_zip_from_files(file_paths: List[str], file_name:Optional[str]=None) -> str:
     temp_file_name = ""
     with tempfile.NamedTemporaryFile(suffix='.zip', delete=False) as temp_file:
         with zipfile.ZipFile(temp_file.name, 'w', zipfile.ZIP_DEFLATED) as zipf:
@@ -39,4 +41,11 @@ def collect_to_smaug(asset_base_dir, file_path):
     shutil.move(file_path, new_path)
     return new_path
 
+def create_zip(file_paths: List[str], file_name: Optional[str] = None) -> str:
+    """將 textures 壓成 zip 檔案"""
+    # 產生 zip 檔名
+    # if `file_name` end with no ".zip", add it.
 
+    zip_file_name = f"{file_name}"
+    zipped_file = fs.create_temp_zip_from_files(file_paths, zip_file_name)
+    return zipped_file
