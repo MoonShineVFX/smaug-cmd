@@ -5,7 +5,7 @@ from PySide6.QtGui import QBrush
 from PySide6.QtWidgets import QWidget, QTreeWidget, QTreeWidgetItem, QVBoxLayout
 from smaug_cmd.domain.smaug_types import MenuTree, CategoryTree, CategoryRole
 
-logger = logging.getLogger("smaug-cmd.ui")
+logger = logging.getLogger("smaug_cmd.ui")
 
 
 class CategoryListWidget(QWidget):

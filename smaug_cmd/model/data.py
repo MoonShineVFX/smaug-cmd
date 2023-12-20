@@ -1,8 +1,8 @@
 import json
 import time
-from typing import Optional, Tuple, Dict, Any, Union
-from requests.auth import HTTPBasicAuth
-from requests.sessions import Session
+from typing import Tuple, Dict, Any, Union
+
+
 import logging
 from urllib.parse import quote
 from smaug_cmd.domain.smaug_types import (
@@ -10,13 +10,13 @@ from smaug_cmd.domain.smaug_types import (
     CategoryDetailTree,
     AssetCreateParams,
     AssetCreateResponse,
+    RepresentationCreateParams,
+    RepresentationCreateResponse,
 )
+from smaug_cmd.model.auth import _session
 from smaug_cmd import setting
 
-logger = logging.getLogger("smaug-cmd.data")
-
-
-_session = Session()
+logger = logging.getLogger("smaug_cmd.data")
 
 
 class NestedDict:
@@ -95,23 +95,6 @@ class CachedNestedDict:
 __data = CachedNestedDict()
 
 
-def login_in(u: str, w: str) -> Optional[Tuple[int, dict]]:
-    """登入"""
-    login_api = f"{setting.api_root}/login"
-
-    try:
-        res = _session.post(login_api, auth=HTTPBasicAuth(u, w))
-    except Exception as e:
-        logger.warning(e)
-        return None
-    auth_token = _session.cookies.get("authToken")
-    logger.debug(f"auth_token: {auth_token}")
-    if auth_token:
-        _session.headers.update({"Authorization": f"Bearer {auth_token}"})
-
-    return (res.status_code, res.json())
-
-
 def get_menus():
     """取得所有的 categories"""
     minus_api = f"{setting.api_root}/menus"
@@ -178,19 +161,11 @@ def get_category(category_id, force=False) -> Tuple[int, CategoryDetailTree]:
 def create_asset(
     payload: AssetCreateParams,
 ) -> Tuple[int, AssetCreateResponse | Dict[str, str]]:
-    api = f"{setting.api_root}/trpc/asset.create"
-    payload = {
-        0: {
-            "json": {
-                "categoryId": payload["category_id"],
-                "name": payload["name"],
-                "tags": payload.get("tags", []),
-            }
-        }
-    }
+    api = f"{setting.api_root}/trpc/assets.create"
+    api_payload = {"0": {"json": payload}}
     asset_create_api = f"{api}?batch=1"
     try:
-        res = _session.post(asset_create_api, json=payload)
+        res = _session.post(asset_create_api, json=api_payload)
     except Exception as e:
         logger.warning(e)
         return (500, {"message": str(e)})
@@ -199,23 +174,23 @@ def create_asset(
     return the_value
 
 
-def create_previews(asset_id: int, preview_files: list):
-    pass
-
-
-def create_representation(asset_id: int, representation_payload: dict):
-    pass
-
-
-def log_out():
-    """登出"""
-    logout_api = f"{setting.api_root}/logout"
+def create_representation(
+    payload: RepresentationCreateParams,
+) -> Tuple[int, RepresentationCreateResponse | Dict[str, str]]:
+    api = f"{setting.api_root}/trpc/representation.create"
+    api_payload = {"0": {"json": payload}}
+    representation_create_api = f"{api}?batch=1"
     try:
-        logout_resp = _session.post(logout_api)
+        res = _session.post(representation_create_api, json=api_payload)
     except Exception as e:
-        print(e)
-        return None
-    return logout_resp.json()
+        logger.warning(e)
+        return (500, {"message": str(e)})
+    representation_data = res.json()[0]
+    the_value = (
+        res.status_code,
+        representation_data["result"]["data"]["json"]["detail"],
+    )
+    return the_value
 
 
 if __name__ == "__main__":

@@ -10,7 +10,7 @@ logger = logging.getLogger("smaug_smd.adapter.image_handler")
 
 class ImageHandler:
     @classmethod
-    def make_thumbnail(cls, asset_dir: str, filepath: str):
+    def make_thumbnail(cls, asset_dir: str, filepath: str) -> QPixmap:
         # 取得圖片暗部代表色
         dark_color = cls.extract_dark_color(filepath)
         dark_qcolor = QColor(dark_color[0], dark_color[1], dark_color[2], 255)
@@ -120,7 +120,7 @@ class ImageHandler:
         return background_pixmap
 
     @classmethod
-    def vignette(cls, pixmap, cornerColor=QColor(0, 0, 0, 255)):
+    def vignette(cls, pixmap, cornerColor=QColor(0, 0, 0, 255)) -> QPixmap:
         # 創建一個和原圖一樣大小的 QPixmap 作為遮罩
         mask = QPixmap(pixmap.size())
         mask.fill(Qt.GlobalColor.transparent)

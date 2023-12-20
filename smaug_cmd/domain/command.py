@@ -21,6 +21,11 @@ class CreateAsset(Command):
 
 
 @dataclass
+class DeleteAsset(Command):
+    assetId: str
+
+
+@dataclass
 class CreateRepresentation(Command):
     assetId: str
     name: str
@@ -34,11 +39,10 @@ class CreateRepresentation(Command):
 
 # minio
 @dataclass
-class UploadRepresentation(Command):
+class UploadFile(Command):
     asset_id: str
     file_path: str
     object_name: str
-
 
 
 @dataclass

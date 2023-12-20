@@ -3,7 +3,7 @@ from PySide6.QtGui import QCloseEvent
 from PySide6.QtWidgets import QTreeView, QVBoxLayout, QWidget, QFileSystemModel
 from PySide6.QtCore import QDir, QModelIndex, Signal, QSortFilterProxyModel, QSettings
 
-logger = logging.getLogger("smaug.ui")
+logger = logging.getLogger("smaug_cmd.ui")
 
 
 class DirOnlyProxyModel(QSortFilterProxyModel):
@@ -71,6 +71,9 @@ class FolderTreeWidget(QWidget):
         proxy_root_index = self.proxy_model.mapFromSource(self.model.index(folder_path))
         self.tree.setRootIndex(proxy_root_index)
     
+    def rootFolder(self):
+        return self.model.rootPath()
+
     def closeEvent(self, event: QCloseEvent) -> None:
         self.settings.setValue("rootFolder", self.currentSelectedPath())
         return super().closeEvent(event)

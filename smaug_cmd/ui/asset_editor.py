@@ -8,7 +8,7 @@ from smaug_cmd.adapter.images import ImageHandler
 from smaug_cmd.adapter.smaug import SmaugJson
 from smaug_cmd.adapter.cmd_handlers.asset import asset_categories
 
-logger = logging.getLogger("smaug-cmd.ui.asset_editor")
+logger = logging.getLogger("smaug_cmd.ui.asset_editor")
 
 
 class AssetEditorWidget(QWidget, Ui_asset_editor_wgt):
@@ -20,9 +20,9 @@ class AssetEditorWidget(QWidget, Ui_asset_editor_wgt):
     ):
         super(AssetEditorWidget, self).__init__(parent)
         self.setupUi(self)
-        self.asset = asset
+        self._asset = asset
         self._sjson = (
-            SmaugJson(self.asset["basedir"]) if self.asset is not None else None
+            SmaugJson(self._asset["basedir"]) if self._asset is not None else None
         )
         self.breadcrumb_cb = breadcrumb_cb
         self.cate_picker_btn.clicked.connect(self._on_cate_picker_btn_clicked)
@@ -41,42 +41,42 @@ class AssetEditorWidget(QWidget, Ui_asset_editor_wgt):
         return
 
     def __update_asset_name(self):
-        if self.asset is None:
+        if self._asset is None:
             self.asset_name_lbl.setText("New Asset")
             self.asset_name_lbl.setEnabled(False)
             return
         self.asset_name_lbl.setEnabled(True)
-        self.asset_name_lbl.setText(self.asset["name"])
-        asset_name = self.asset["name"]
-        if self.asset["name"] == "":
+        self.asset_name_lbl.setText(self._asset["name"])
+        asset_name = self._asset["name"]
+        if self._asset["name"] == "":
             asset_name = "New Asset"
         self.asset_name_lbl.setText(asset_name)
         return
 
     def __update_asset_id(self):
-        if self.asset is None:
+        if self._asset is None:
             self.asset_id_lbl.setText("Id: None")
             return
-        self.asset_id_lbl.setText(f'Id: {str(self.asset["id"])}')
+        self.asset_id_lbl.setText(f'Id: {str(self._asset["id"])}')
         return
 
     def __update_breadcrumb(self):
         if (
-            self.asset is None
+            self._asset is None
             or self.breadcrumb_cb is None
-            or self.asset["categoryId"] is None
+            or self._asset["categoryId"] is None
         ):
             self.asset_cate_lbl.setText("Category: None")
             self.asset_cate_lbl.setEnabled(False)
             return
         self.asset_cate_lbl.setEnabled(True)
         self.breadcrumb_cb(
-            self.asset["categoryId"], self.asset_cate_lbl, self.cate_picker_btn
+            self._asset["categoryId"], self.asset_cate_lbl, self.cate_picker_btn
         )
         return
 
     def __update_previews(self):
-        if self.asset is None:
+        if self._asset is None:
             # dir_base = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
             # no_picture = os.path.join(dir_base, "resource", "no_picture.png")
             self.preview_widget.clear()
@@ -84,7 +84,7 @@ class AssetEditorWidget(QWidget, Ui_asset_editor_wgt):
             return
 
         self.setEnabled(True)
-        self.preview_widget.setPictures(self.asset["previews"])
+        self.preview_widget.setPictures(self._asset["previews"])
 
         cached_preview = self.__make_preview()
         if cached_preview != "":
@@ -100,67 +100,69 @@ class AssetEditorWidget(QWidget, Ui_asset_editor_wgt):
         return
 
     def __update_renders(self):
-        if self.asset is None:
+        if self._asset is None:
             # dir_base = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
             # no_picture = os.path.join(dir_base, "resource", "no_picture.png")
             self.render_widget.clear()
             self.setEnabled(False)
             return
         self.preview_widget.setEnabled(True)
-        self.render_widget.setPictures(self.asset["renders"])
+        self.render_widget.setPictures(self._asset["renders"])
         return
 
     def __update_tags(self):
-        if self.asset is None:
+        if self._asset is None:
             self.tags_widget.clear()
             self.tags_widget.setEnabled(False)
             return
 
         self.tags_widget.setEnabled(True)
-        tags = self.asset["tags"]
+        tags = self._asset["tags"]
         self.tags_widget.clear()
         for tag in tags:
             self.tags_widget.addTag(tag)
         return
 
     def __update_model_files(self):
-        if self.asset is None:
+        if self._asset is None:
             self.model_widget.setEnabled(False)
             self.model_widget.clear()
             return
         self.model_widget.setEnabled(True)
-        files = self.asset["models"]
+        files = self._asset["models"]
         self.model_widget.clear()
         self.model_widget.setFiles(files)
         return
 
     def __update_texture_files(self):
-        if self.asset is None:
+        if self._asset is None:
             self.textures_widget.setEnabled(False)
             self.textures_widget.clear()
             return
         self.textures_widget.setEnabled(True)
-        files = self.asset["textures"]
+        files = self._asset["textures"]
         self.textures_widget.clear()
         self.textures_widget.setFiles(files)
         return
 
     def setAsset(self, asset: AssetTemplate):
-        self.asset = asset
+        self._asset = asset
         self._sjson = SmaugJson(asset["basedir"])
         data = self._sjson.deserialize()
-        self.asset.update(data)
+        self._asset.update(data)
         self._update_ui()
         return
 
     def __make_preview(self):
-        if self.asset is None:
+        if self._asset is None:
             logger.warning("Asset is None")
             return ""
-        preview_filepath = self.asset["previews"][0] if self.asset["previews"] else None
+        preview_filepath = (
+            self._asset["previews"][0] if self._asset["previews"] else None
+        )
         if preview_filepath is None:
             return ""
-        asset_dir = self.asset["basedir"]
+        asset_dir = self._asset["basedir"]
         cached_preview = ImageHandler.make_thumbnail(asset_dir, preview_filepath)
         cached_preview_filepath = asset_dir + "/.smaug/preview.png"
         cached_preview.save(cached_preview_filepath)
@@ -178,13 +180,13 @@ class AssetEditorWidget(QWidget, Ui_asset_editor_wgt):
 
     def _on_cate_id_selected(self, cate_id: int):
         logger.debug(f"Category Id: {cate_id}")
-        if self.asset is None:
+        if self._asset is None:
             logger.warning("Asset is None")
             return
-        self.asset["categoryId"] = cate_id
+        self._asset["categoryId"] = cate_id
         if self._sjson is not None:
-            self._sjson["categoryId"] = cate_id
-            self._sjson.serialize()
+            with self._sjson:
+                self._sjson["categoryId"] = cate_id
         self.__update_breadcrumb()
         return
 
@@ -193,14 +195,16 @@ class AssetEditorWidget(QWidget, Ui_asset_editor_wgt):
         return
 
     def _on_tag_changed(self, tags: list):
-        if self.asset is None:
+        if self._asset is None:
             logger.warning("Asset is None")
             return
-        self.asset["tags"] = tags
+        self._asset["tags"] = tags
         if self._sjson is not None:
-            self._sjson["tags"] = tags
-        if self._sjson:
-            self._sjson.serialize()
+            with self._sjson:
+                self._sjson["tags"] = tags
         return
+
+    def asset(self):
+        return self._asset
 
     # 補 id 在 smaug.json 的部份

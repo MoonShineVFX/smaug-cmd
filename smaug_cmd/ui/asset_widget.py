@@ -3,7 +3,7 @@ import pprint
 from PySide6.QtWidgets import QStackedWidget
 from smaug_cmd.designer.asset_widget_ui import Ui_asset_widget
 
-logget = logging.getLogger("smaug-cmd.ui.asset_widget")
+logget = logging.getLogger("smaug_cmd.ui.asset_widget")
 
 
 class AssetWidget(QStackedWidget, Ui_asset_widget):
@@ -22,3 +22,8 @@ class AssetWidget(QStackedWidget, Ui_asset_widget):
         self.asset_page.setAsset(asset_template)
         self.setCurrentWidget(self.asset_page)
         return
+
+    def asset(self):
+        if self.currentWidget() == self.empty_page:
+            return None
+        return self.asset_page.asset()

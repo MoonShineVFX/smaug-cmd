@@ -217,6 +217,7 @@ class Ui_asset_editor_wgt(object):
         self.verticalLayout.addWidget(self.scrollArea)
 
         self.verticalLayout.setStretch(1, 1)
+        QWidget.setTabOrder(self.cate_picker_btn, self.scrollArea)
 
         self.retranslateUi(asset_editor_wgt)
 

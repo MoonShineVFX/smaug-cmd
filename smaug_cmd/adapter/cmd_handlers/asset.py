@@ -1,4 +1,5 @@
 # from dataclasses import asdict
+from dataclasses import asdict
 import logging
 from typing import cast
 from smaug_cmd.domain.smaug_types import AssetCreateResponse
@@ -6,14 +7,31 @@ from smaug_cmd.domain import command as cmd
 from smaug_cmd.model import data as ds
 from smaug_cmd.domain.smaug_types import MenuTree
 
-logger = logging.getLogger("smaug-cmd.adapter.cmd_handlers.asset")
+logger = logging.getLogger("smaug_cmd.adapter.cmd_handlers.asset")
 
 
 def create_asset(payload: cmd.CreateAsset) -> AssetCreateResponse:
     """在資料庫中建立 asset"""
 
     logger.debug("Create Asset: %s", payload)
-    return None
+    create_param = asdict(payload)
+    result = ds.create_asset(create_param)
+    if str(result[0])[0] != "2":
+        logger.error(result[1]["message"])
+        raise RuntimeError("Can't create asset")
+    return cast(AssetCreateResponse, result[1])
+
+
+def delete_asset(payload: cmd.DeleteAsset) -> None:
+    """在資料庫中刪除 asset"""
+
+    logger.debug("Delete Asset: %s", payload)
+    delete_param = asdict(payload)
+    result = ds.delete_asset(delete_param)
+    if str(result[0])[0] != "2":
+        logger.error(result[1]["message"])
+        raise RuntimeError("Can't delete asset")
+    return
 
 
 def asset_categories() -> MenuTree:
