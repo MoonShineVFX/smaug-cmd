@@ -1,27 +1,19 @@
-import datetime
 import logging
 from typing import List, Optional, Callable
-import os
+
 from PySide6.QtCore import QObject
 from PySide6.QtWidgets import QLabel, QPushButton
-from smaug_cmd.adapter import fs
-from smaug_cmd.adapter.smaug import SmaugJson
-from smaug_cmd.adapter.cmd_handlers.zip import create_zip
+
 from smaug_cmd.domain.smaug_types import (
     Menu,
     MenuTree,
     AssetTemplate,
-    RepresentationCreateParams,
     UserInfo,
 )
 from smaug_cmd.model import login_in as api_login  # log_out as api_logout
 from smaug_cmd.model import data as ds
-from smaug_cmd.domain import parsing as ps
 from smaug_cmd.domain.exceptions import SmaugError
 from smaug_cmd.domain.folder_class import FolderClassFactory
-from smaug_cmd.domain.operators import AssetOp, RepresentationOp
-from smaug_cmd.services import remote_fs as rfs
-
 
 logger = logging.getLogger("smaug_cmd.domain")
 
@@ -75,8 +67,10 @@ class SmaugCmdLogic(QObject):
     def asset_template(self, folder_path) -> Optional[AssetTemplate]:
         # convert folder to asset template
 
-        folder_obj = FolderClassFactory(folder_path).create()
-        return folder_obj.asset_template()
+        self._folder_obj = FolderClassFactory(folder_path).create()
+        if self._folder_obj is not None:
+            return self._folder_obj.asset_template()
+        return None
 
     def create_asset_proc(self, asset_template: AssetTemplate):
         """在資料庫建立 asset 的流程
@@ -87,174 +81,9 @@ class SmaugCmdLogic(QObject):
         # 檢查是否登入
         if self._current_user is None:
             raise SmaugError("Please login first.")
-
-        # 建立 asset 以取得 asset id
-        assert_resp = AssetOp.create(asset_template)
-        asset_id = assert_resp["id"]
-        asset_name = asset_template["name"]
-        logger.debug("Asset: %s(%s) Created", asset_name, asset_id)
-
-        # 先上傳 preview 檔案
-        for idx, preview_file in enumerate(asset_template["previews"]):
-            # 重新命名檔案
-            file_extension = os.path.splitext(preview_file)[-1].lower()
-            file_name = f"preview-{idx}{file_extension}"
-            new_name = f"{asset_name}_{file_name}"
-
-            # 上傳至 OOS，這樣才能拿到 id 寫至 db
-            upload_object_name = rfs.put_representation1(
-                asset_id, new_name, preview_file
-            )
-
-            logger.debug(
-                "Upload Asset(%s)previes files: %s as %s",
-                asset_template["name"],
-                preview_file,
-                new_name,
-            )
-
-            # 建立資料庫資料
-            preview_create_represent_payload: RepresentationCreateParams = {
-                "assetId": asset_id,
-                "name": new_name,
-                "type": "PREVIEW",
-                "format": "IMG",
-                "fileSize": os.path.getsize(preview_file),
-                "uploaderId": self._current_user["id"],
-                "path": upload_object_name,
-                "meta": {},
-            }
-            RepresentationOp.create(preview_create_represent_payload)
-            logger.debug("Create DB record for Asset(%s): %s", asset_id, file_name)
-
-        # 上傳 render 檔案
-        for idx, render_file in enumerate(asset_template["renders"]):
-            file_extension = os.path.splitext(preview_file)[-1].lower()
-            file_name = f"render-{idx}{file_extension}"
-            new_name = f"{asset_name}_{file_name}"
-
-            # 上傳到 SSO. 這樣才能拿到 id 寫至 db
-            upload_object_name = rfs.put_representation1(
-                asset_id, new_name, render_file
-            )
-            logger.debug(
-                "Upload render files %s: %s as %s",
-                asset_template["name"],
-                render_file,
-                new_name,
-            )
-
-            # 建立資料庫資料
-            render_representation_create_payload: RepresentationCreateParams = {
-                "assetId": asset_id,
-                "name": new_name,
-                "type": "RENDER",
-                "format": "IMG",
-                "fileSize": os.path.getsize(render_file),
-                "uploaderId": self._current_user["id"],
-                "path": upload_object_name,
-                "meta": {},
-            }
-            RepresentationOp.create(render_representation_create_payload)
-            logger.debug("Create DB record for Asset(%s): %s", asset_id, file_name)
-
-        # 上傳 texture 檔案
-        # splite textures to texture-group,
-
-        texture_groups = ps.texture_group(asset_template["textures"])
-        for text_key, files in texture_groups.items():
-            # make texture zip file
-            if len(files) == 0:
-                continue
-            zip_file_name = new_name = f"{asset_name}_{text_key}_textures.zip"
-            ziped_texture = create_zip(files, zip_file_name)
-            logger.info('Create "%s" Texture Zip: %s', text_key, ziped_texture)
-
-            # 上傳至 OOS
-            upload_zip_object_name = rfs.put_representation1(
-                asset_id, new_name, ziped_texture
-            )
-
-            # 把 ziped_texture 移至 .smaug 下
-            moved_zip_file = fs.collect_to_smaug(
-                asset_template["basedir"], ziped_texture
-            )
-
-            RepresentationOp.create(
-                {
-                    "assetId": asset_id,
-                    "name": zip_file_name,
-                    "type": "TEXTURE",
-                    "format": "IMG",
-                    "fileSize": os.path.getsize(moved_zip_file),
-                    "uploaderId": self._current_user["id"],
-                    "path": upload_zip_object_name,
-                    "meta": {},
-                }
-            )
-            logger.debug("Create DB record for Asset(%s): %s", asset_id, zip_file_name)
-
-        # splite models to model-group
-        model_groups = ps.model_group(asset_template["models"])
-        for model_key, files in model_groups.items():
-            if len(files) == 0:
-                continue
-            # make model zip payload
-            zip_file_name = new_name = f"{asset_name}_{model_key}_models.zip"
-            ziped_model = create_zip(files, zip_file_name)
-            logger.debug(f'Create "{model_key}" Model Zip')
-            # 準備上傳至 OOS
-            upload_model_object_name = rfs.put_representation1(
-                asset_id, new_name, ziped_model
-            )
-            # 把 ziped_model 移至 .smaug 下
-            moved_zip_file = fs.collect_to_smaug(asset_template["basedir"], ziped_model)
-
-            pre_format = ps.format_from_softkey(model_key)
-            RepresentationOp.create(
-                {
-                    "assetId": asset_id,
-                    "name": zip_file_name,
-                    "type": "MODEL",
-                    "format": pre_format,
-                    "fileSize": os.path.getsize(moved_zip_file),
-                    "uploaderId": self._current_user["id"],
-                    "path": upload_model_object_name,
-                    "meta": {},
-                }
-            )
-            logger.debug("Create DB record for Asset(%s): %s", asset_id, zip_file_name)
-
-        # write asset id to smaug.hson
-        sm_json = SmaugJson(asset_template["basedir"])
-        sm_json["id"] = asset_id
-        sm_json["createAt"] = datetime.datetime.now().isoformat()
-        sm_json.serialize()
-
-        # upload preview model process
-        preview_glb = ps.guess_preview_model(asset_template["models"])
-        if preview_glb is None:
-            logger.debug("No preview model found")
+        if self._folder_obj is None:
             return
-        logger.debug("Found preview model: %s", preview_glb)
-
-        preview_glb_name = f"{asset_name}_preview.glb"
-        upload_preview_glb_object_name = rfs.put_representation1(
-            asset_id, preview_glb_name, preview_glb
-        )
-        RepresentationOp.create(
-            {
-                "assetId": asset_id,
-                "name": preview_glb_name,
-                "type": "PREVIEW",
-                "format": "GLB",
-                "fileSize": os.path.getsize(preview_glb),
-                "uploaderId": self._current_user["id"],
-                "path": upload_preview_glb_object_name,
-                "meta": {},
-            }
-        )
-        logger.debug("Create DB record for Asset(%s): %s", asset_id, preview_glb_name)
+        self._folder_obj.upload_asset(asset_template, self._current_user)
 
     def update_asset_proc(self, asset_template: AssetTemplate):
         logger.debug("Update asset: %s", asset_template["name"])

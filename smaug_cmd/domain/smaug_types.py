@@ -41,7 +41,7 @@ RepresentationFormat = Literal[
 ]
 
 class AssetTemplate(TypedDict):
-    id: Optional[int]
+    id: Optional[str]
     name: str
     categoryId: Optional[int]
     previews: List[str]  # 預覽圖

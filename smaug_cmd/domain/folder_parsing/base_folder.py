@@ -1,6 +1,7 @@
+import datetime
 import os
 import logging
-from typing import List, Optional
+from typing import List
 from smaug_cmd.adapter.smaug import SmaugJson
 from smaug_cmd.domain.smaug_types import AssetTemplate
 from smaug_cmd.setting import (
@@ -10,7 +11,8 @@ from smaug_cmd.setting import (
 )
 from smaug_cmd.domain.folder_parsing import util
 from smaug_cmd.domain.folder_parsing.folder_typing import FolderType
-
+from smaug_cmd.domain.upload_strategies import BaseUploadStrategy
+from smaug_cmd.domain.operators import AssetOp
 
 logger = logging.getLogger("smaug_cmd.domain.folders")
 
@@ -23,20 +25,13 @@ def guess_preview_model(file_paths: List[str]) -> str | None:
 
 
 class BaseFolder:
-
     @classmethod
-    def create_if_applicable(cls, folderpath:str)-> Optional["BaseFolder"]:
-        """如果是可以建立的資料夾，就建立"""
-        if cls.is_applicable(folderpath):
-            return cls(folderpath)
-        return None
-    
-    @classmethod
-    def is_applicable(cls, folderpath:str)->bool:
+    def is_applicable(cls, folderpath: str) -> bool:
         """判斷 folderpath 是否是此類別能處理的資料夾"""
         raise NotImplementedError
 
-    def __init__(self, path: str, **kwargs):
+    def __init__(self, path: str, upload_strategy: BaseUploadStrategy):
+        self.upload_strategy = upload_strategy
         self._folder_type = FolderType.UNKNOWN
         self._path = path
         self._rawfilepaths: List[str] = []
@@ -125,3 +120,25 @@ class BaseFolder:
 
     def folder_type(self) -> FolderType:
         return self._folder_type
+
+    def upload_asset(self, asset_template, current_user):
+        """上傳模板"""
+        assert_resp = AssetOp.create(asset_template)
+        asset_id = assert_resp["id"]
+        self._at["id"] = asset_id
+        asset_template["id"] = asset_id
+        asset_name = asset_template["name"]
+
+        self.upload_strategy.upload_previews(asset_template, current_user)
+        self.upload_strategy.upload_textures(asset_template, current_user)
+        self.upload_strategy.upload_renders(asset_template, current_user)
+        self.upload_strategy.upload_models(asset_template, current_user)
+        self.upload_strategy.upload_3d_preview(asset_template, current_user)
+
+        # write asset id to smaug.hson
+        sm_json = SmaugJson(asset_template["basedir"])
+        sm_json["id"] = asset_id
+        sm_json["createAt"] = datetime.datetime.now().isoformat()
+        sm_json.serialize()
+
+        logger.debug("Asset: %s(%s) Created", asset_name, asset_id)
