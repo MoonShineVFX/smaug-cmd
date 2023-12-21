@@ -1,5 +1,5 @@
+import os
 from typing import List, Dict
-
 
 from smaug_cmd.adapter import fs
 from smaug_cmd.domain.exceptions import SmaugApiError
@@ -137,6 +137,34 @@ def generate_zip(asset_name, name_key, textures_files: List[str]) -> str:
     zip_file_name = f"{asset_name}_{name_key}_texture.zip"
     zipped_file = fs.create_temp_zip_from_files(textures_files, zip_file_name)
     return zipped_file
+
+
+def md_path_to_categories(md_path: str):
+    if "_Pic" in md_path:
+        return []
+
+    # Split the path into a list of directories
+    dirs = md_path.split(os.sep)
+
+    # Remove unnecessary parts of the path
+    dirs = dirs[dirs.index("_Obsidian") + 1 :]
+
+    # Handle the file name
+    file_name = dirs[-1]
+    if file_name.endswith(".md"):
+        file_name = file_name.replace(".md", "")
+        file_name = file_name.split("_")[1]  # Get the part after 'Project 2019_'
+        file_name = file_name.split(" ")[0]  # Remove 中文的部份
+        dirs[-1] = file_name
+
+    # Create a list of dictionaries
+    categories = []
+    for i in range(len(dirs)):
+        categories.append(
+            {"cate_name": dirs[i], "parent": dirs[i - 1] if i > 0 else None}
+        )
+
+    return categories
 
 
 # if __name__ == "__main__":

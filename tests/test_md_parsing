@@ -1,0 +1,66 @@
+import os
+import unittest
+
+# from pprint import pprint
+from dotenv import load_dotenv
+from smaug_cmd.domain.parsing import md_path_to_categories
+
+load_dotenv()
+
+
+class TestMdParsing(unittest.TestCase):
+    def setUp(self):
+        TEST_DATA_RESOURCE = os.getenv("TEST_DATA_RESOURCE")
+        test_data = [
+            r"Project2019_AncientEast 古代東方.md",
+            r"Project2019_Weapon 武器.md",
+            r"_Pic",
+        ]
+        self.test_folder1 = [
+            f"{TEST_DATA_RESOURCE}\\_Obsidian\MoonShineAsset\Project 2019\\" + item
+            for item in test_data
+        ]
+        self.test_folder1_excepted = [
+            [
+                {
+                    "cate_name": "MoonShineAsset",
+                    "parent": None,
+                },
+                {
+                    "cate_name": "Project 2019",
+                    "parent": "MoonShineAsset",
+                },
+                {
+                    "cate_name": "AncientEast",
+                    "parent": "Project 2019",
+                },
+            ],
+            [
+                {
+                    "cate_name": "MoonShineAsset",
+                    "parent": None,
+                },
+                {
+                    "cate_name": "Project 2019",
+                    "parent": "MoonShineAsset",
+                },
+                {
+                    "cate_name": "Weapon",
+                    "parent": "Project 2019",
+                },
+            ],
+            [],
+        ]
+
+    def test_example(self):
+        for idx, ma_path in enumerate(self.test_folder1):
+            re = md_path_to_categories(ma_path)
+            self.assertTrue(
+                re
+                == self.test_folder1_excepted[idx]
+            )
+        print(self.test_folder1[1])
+
+
+if __name__ == "__main__":
+    unittest.main()
