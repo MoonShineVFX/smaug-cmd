@@ -11,7 +11,7 @@ logger = logging.getLogger("smaug_cmd.auth")
 _session = Session()
 
 
-def login_in(u: str, w: str) -> UserInfo:
+def log_in(u: str, w: str) -> UserInfo:
     """登入"""
     login_api = f"{setting.api_root}/login"
 

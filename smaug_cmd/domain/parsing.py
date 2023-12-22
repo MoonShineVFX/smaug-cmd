@@ -166,6 +166,10 @@ def md_path_to_categories(md_path: str):
 
     return categories
 
+def md_combine_categories(list1:List[Dict], list2:List[Dict]):
+    combined = list1.copy()
+    combined += [d for d in list2 if not any(d['cate_name'] == x['cate_name'] for x in list1)]
+    return combined
 
 # if __name__ == "__main__":
 #     if os.name == "nt":

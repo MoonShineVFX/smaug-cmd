@@ -3,7 +3,7 @@ import unittest
 
 # from pprint import pprint
 from dotenv import load_dotenv
-from smaug_cmd.domain.parsing import md_path_to_categories
+from smaug_cmd.domain.parsing import md_path_to_categories, md_combine_categories
 
 load_dotenv()
 
@@ -61,6 +61,28 @@ class TestMdParsing(unittest.TestCase):
             )
         print(self.test_folder1[1])
 
+    def test_combine(self):
+        re = md_combine_categories(self.test_folder1_excepted[0], self.test_folder1_excepted[1])
+        self.assertTrue(re == [
+                {
+                    "cate_name": "MoonShineAsset",
+                    "parent": None,
+                },
+                {
+                    "cate_name": "Project 2019",
+                    "parent": "MoonShineAsset",
+                },
+                {
+                    "cate_name": "AncientEast",
+                    "parent": "Project 2019",
+                },
+                {
+                    "cate_name": "Weapon",
+                    "parent": "Project 2019",
+                }
+            ]
+        )
+        
 
 if __name__ == "__main__":
     unittest.main()

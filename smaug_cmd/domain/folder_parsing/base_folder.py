@@ -7,21 +7,12 @@ from smaug_cmd.domain.smaug_types import AssetTemplate
 from smaug_cmd.setting import (
     exclude_files,
     exclude_folders,
-    texture_factors,
 )
-from smaug_cmd.domain.folder_parsing import util
 from smaug_cmd.domain.folder_parsing.folder_typing import FolderType
 from smaug_cmd.domain.upload_strategies import BaseUploadStrategy
 from smaug_cmd.domain.operators import AssetOp
 
 logger = logging.getLogger("smaug_cmd.domain.folders")
-
-
-def guess_preview_model(file_paths: List[str]) -> str | None:
-    for file_path in file_paths:
-        if file_path.split(".")[-1].lower() == "glb":
-            return file_path
-    return None
 
 
 class BaseFolder:
@@ -87,17 +78,10 @@ class BaseFolder:
         raise NotImplementedError
 
     def is_model(self, file_path: str) -> bool:
-        if not util.validate_model_extension(file_path):
-            return False
-        return True
+        raise NotImplementedError
 
     def is_texture(self, file_path: str) -> bool:
-        if not util.validate_tex_extension(file_path):
-            return False
-
-        if any([i in file_path.lower() for i in texture_factors]):
-            return True
-        return False
+        raise NotImplementedError
 
     def is_3d_preview(self, file_path: str) -> bool:
         """預設的 3d 預覽檔案判斷

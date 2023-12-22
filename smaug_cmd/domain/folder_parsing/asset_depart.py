@@ -2,19 +2,18 @@ from pathlib import PureWindowsPath
 from smaug_cmd.domain.folder_parsing import BaseFolder, util
 from smaug_cmd.domain.folder_parsing.folder_typing import FolderType
 from smaug_cmd.setting import preview_factors, render_factors
+from smaug_cmd.setting import texture_factors
 
 
 class AssetDepartModelFolder(BaseFolder):
-
     @classmethod
-    def is_applicable(cls, folderpath:str)->bool:
+    def is_applicable(cls, folderpath: str) -> bool:
         return is_asset_depart_model_folder(folderpath)
 
-    def __init__(self, path: str):
-        super().__init__(path)
+    def __init__(self, path: str, upload_strategies):
+        super().__init__(path, upload_strategies)
         self._folder_type = FolderType.ASSET_DEPART_MODEL
 
-    
     def is_preview(self, file_path: str):
         """是否為預覽圖
 
@@ -41,7 +40,6 @@ class AssetDepartModelFolder(BaseFolder):
             return True
         return False
 
-
     def is_render_image(self, file_path: str) -> bool:
         """是否為渲染圖
 
@@ -53,7 +51,7 @@ class AssetDepartModelFolder(BaseFolder):
 
         if not asset_pathobj.parent.name:
             return False
-        
+
         if not util.validate_tex_extension(file_path):
             return False
 
@@ -63,6 +61,19 @@ class AssetDepartModelFolder(BaseFolder):
             for path_part in path_parts:
                 if render_factor.lower() == path_part.lower():
                     return True
+        return False
+
+    def is_model(self, file_path: str) -> bool:
+        if not util.validate_model_extension(file_path):
+            return False
+        return True
+
+    def is_texture(self, file_path: str) -> bool:
+        if not util.validate_tex_extension(file_path):
+            return False
+
+        if any([i in file_path.lower() for i in texture_factors]):
+            return True
         return False
 
 
