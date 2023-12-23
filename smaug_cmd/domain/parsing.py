@@ -157,6 +157,7 @@ def md_path_to_categories(md_path: str):
         file_name = file_name.split(" ")[0]  # Remove 中文的部份
         dirs[-1] = file_name
 
+    
     # Create a list of dictionaries
     categories = []
     for i in range(len(dirs)):
@@ -168,7 +169,7 @@ def md_path_to_categories(md_path: str):
 
 def md_combine_categories(list1:List[Dict], list2:List[Dict]):
     combined = list1.copy()
-    combined += [d for d in list2 if not any(d['cate_name'] == x['cate_name'] for x in list1)]
+    combined += [d for d in list2 if not any(d['cate_name'] == x['cate_name'] and d['parent'] == x['parent'] for x in list1)]
     return combined
 
 # if __name__ == "__main__":

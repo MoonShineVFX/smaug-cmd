@@ -218,7 +218,7 @@ def create_category(
 
 def get_categories_by_name(
     name: str,
-) -> Tuple[int, CategoryCreateResponse | Dict[str, str]]:
+) -> Tuple[int, Dict[str, str] | CategoryCreateResponse]:
     api = f"{setting.api_root}/trpc/categories.getByName"
     api_payload = {"0": {"json": {"name": name}}}
     api_payload_str = json.dumps(api_payload)
@@ -235,6 +235,6 @@ def get_categories_by_name(
 
 
 # if __name__ == "__main__":
-    # login_in("admin", "admin")
-    # cates = get_categories_by_name("Project 2019")
-    # print(cates[1][0]["id"])
+# login_in("admin", "admin")
+# cates = get_categories_by_name("Project 2019")
+# print(cates[1][0]["id"])

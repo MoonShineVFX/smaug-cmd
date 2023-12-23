@@ -4,6 +4,7 @@ from typing import Generator, List, Dict
 from smaug_cmd.domain import parsing as ps
 from smaug_cmd.domain.operators import CategoryOp, MenuOp
 from smaug_cmd.model.auth import log_in, log_out
+from smaug_cmd.domain.exceptions import SmaugError
 
 def smaug_resource_uploader(folder: str):
     """Upload a asset from resource team to smaug.
@@ -17,7 +18,7 @@ def smaug_resource_uploader(folder: str):
         all_categories = ps.md_combine_categories(all_categories, ps.md_path_to_categories(mb_file))
     
     # 祭 resource menu 的 id
-    menus = MenuOp.all()    
+    menus = MenuOp.all()
 
     resources_menu_id = None
     for menu in menus:
@@ -26,7 +27,7 @@ def smaug_resource_uploader(folder: str):
             break
 
     if resources_menu_id is None:
-        raise Exception("Can't find Resources menu.")
+        raise SmaugError("Can't find Resources menu.")
 
     # 依序建立分類
     
@@ -34,7 +35,13 @@ def smaug_resource_uploader(folder: str):
     uploader_pw = os.environ.get("UPLOADER_PW", "")
     log_in(uploader_id, uploader_pw)
     for category in all_categories:
-        CategoryOp.create(category["cate_name"], None, resources_menu_id)
+        parent_id = None
+        if category['parent'] is not None:
+            # 找出 parent_id
+            parent_cates = CategoryOp.getByName(category['parent'])
+            if parent_cates:
+                parent_id = parent_cates[0]['id']
+        CategoryOp.create(category["cate_name"], parent_id, resources_menu_id)
     log_out()
 
 def _find_md_files(md_file_folder) -> Generator[str, None, None]:
@@ -46,4 +53,4 @@ def _find_md_files(md_file_folder) -> Generator[str, None, None]:
 
 
 if __name__=='__main__':
-    smaug_resource_uploader("C:\\repos\\smaugs\\resource\\_Asset\\_Obsidian\\MoonShineAsset")
+    smaug_resource_uploader("Y:\\resource\\_Asset\\_Obsidian\\MoonShineAsset")
