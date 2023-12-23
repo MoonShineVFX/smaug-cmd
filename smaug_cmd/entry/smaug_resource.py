@@ -15,7 +15,7 @@ def smaug_resource_uploader(folder: str):
     # 從所有的 md 檔組合出分類結構
     all_categories:List[Dict] = []
     for mb_file in _find_md_files(folder):
-        all_categories = ps.md_combine_categories(all_categories, ps.md_path_to_categories(mb_file))
+        all_categories = ps.md_combine_categories(all_categories, ps.md_parsing_categories(mb_file))
     
     # 祭 resource menu 的 id
     menus = MenuOp.all()
