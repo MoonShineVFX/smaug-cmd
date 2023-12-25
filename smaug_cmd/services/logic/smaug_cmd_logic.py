@@ -10,7 +10,7 @@ from smaug_cmd.domain.smaug_types import (
     AssetTemplate,
     UserInfo,
 )
-from smaug_cmd.model import log_in as api_login  # log_out as api_logout
+from smaug_cmd.services.auth import log_in as api_login  # log_out as api_logout
 from smaug_cmd.model import data as ds
 from smaug_cmd.domain.exceptions import SmaugError
 from smaug_cmd.domain.folder_class import FolderClassFactory

@@ -1,6 +1,6 @@
 import json
 import time
-from typing import Optional, Tuple, Dict, Any, Union
+from typing import List, Optional, Tuple, Dict, Any, Union
 
 import logging
 from urllib.parse import quote
@@ -14,7 +14,7 @@ from smaug_cmd.domain.smaug_types import (
     RepresentationCreateParams,
     RepresentationCreateResponse,
 )
-from smaug_cmd.model.auth import _session
+from smaug_cmd.services.auth import _session
 from smaug_cmd import setting
 
 logger = logging.getLogger("smaug_cmd.data")
@@ -218,9 +218,26 @@ def create_category(
 
 def get_categories_by_name(
     name: str,
-) -> Tuple[int, Dict[str, str] | CategoryCreateResponse]:
+) -> Tuple[int, Dict[str, str] | List[CategoryCreateResponse]]:
     api = f"{setting.api_root}/trpc/categories.getByName"
     api_payload = {"0": {"json": {"name": name}}}
+    api_payload_str = json.dumps(api_payload)
+    encode_params = quote(api_payload_str)
+    full_api = f"{api}?batch=1&input={encode_params}"
+    try:
+        res = _session.get(full_api)
+    except Exception as e:
+        logger.warning(e)
+        return (500, {"message": str(e)})
+    categories_data = res.json()[0]
+    the_value = (res.status_code, categories_data["result"]["data"]["json"]["list"])
+    return the_value
+
+
+def get_categories_by_name_parent(name: str, parnet_name: Optional[str], menu_id: str) -> Tuple[int, Dict[str, str] | List[CategoryCreateResponse]]:
+    
+    api = f"{setting.api_root}/trpc/categories.getByNameAndParent"
+    api_payload = {"0": {"json": {"name": name, "parent": parnet_name, "menuId": menu_id}}}
     api_payload_str = json.dumps(api_payload)
     encode_params = quote(api_payload_str)
     full_api = f"{api}?batch=1&input={encode_params}"

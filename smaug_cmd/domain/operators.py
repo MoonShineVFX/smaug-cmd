@@ -71,6 +71,14 @@ class CategoryOp(QObject):
             raise SmaugOperaterError(re[1]["message"])
         return re[1]
 
+    @classmethod
+    def getByNameAndParent(cls, name: str, parent: Optional[str], menu_id:str) -> List[CategoryCreateResponse]:
+        re = ds.get_categories_by_name_parent(name, parent, menu_id)
+        if str(re[0])[0] != "2":
+            logger.error(re[1]["message"])
+            raise SmaugOperaterError(re[1]["message"])
+        return re[1]
+
 
 class MenuOp(QObject):
     @classmethod
