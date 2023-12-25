@@ -15,8 +15,9 @@ def smaug_resource_uploader(folder: str):
     # 從所有的 md 檔組合出分類結構
     all_categories:List[Dict] = []
     for mb_file in _find_md_files(folder):
-        all_categories = ps.md_combine_categories(all_categories, ps.md_parsing_categories(mb_file))
-    
+        md_json = ps.md_parsing(mb_file)
+        md_uploader = ps.md_uploader(md_json)
+
     # 祭 resource menu 的 id
     menus = MenuOp.all()
 
@@ -52,5 +53,9 @@ def _find_md_files(md_file_folder) -> Generator[str, None, None]:
                 yield md_file
 
 
+def _md_upload(md_file):
+    md_json = ps.md_parsing(md_file)
+    md_uploader = ps.md_uploader(md_json)
+    md_uploader.upload()
 if __name__=='__main__':
     smaug_resource_uploader("Y:\\resource\\_Asset\\_Obsidian\\MoonShineAsset")

@@ -192,3 +192,24 @@ class CategoryCreateResponse(TypedDict):
     isVisible: bool
     menuId: str
     path: str
+
+
+class MdCategrory(TypedDict):
+    cate_name: str
+    parent: Optional[str]
+
+
+class MdAsset(TypedDict):
+    description: str
+    folder: str
+    preview: List[str]
+
+
+class MdAssets(TypedDict):
+    asset_name: str
+    data:List[MdAsset] 
+
+
+class MdJson(TypedDict):
+    categories: List[MdCategrory]
+    assets: List[MdAssets]

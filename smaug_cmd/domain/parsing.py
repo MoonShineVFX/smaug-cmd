@@ -158,7 +158,7 @@ def md_parsing_categories(md_path: str):
     dirs = md_path.split(os.sep)
 
     # Remove unnecessary parts of the path
-    dirs = dirs[dirs.index("_Obsidian") + 1 :]
+    dirs = dirs[dirs.index("MoonShineAsset") + 1 :]
 
     # Handle the file name
     file_name = dirs[-1]
