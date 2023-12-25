@@ -61,6 +61,7 @@ def md_asset_uploader(md_asset: MdAsset, idx: Optional[int], category: CategoryC
         raise SmaugError(f"Can't find folder class for {md_asset['folder']}")
 
     asset_template = folder_obj.asset_template()
+    asset_template["categoryId"] = category["id"]
     if idx is not None:
         asset_template["name"] = f"{asset_template['name']} {idx}"
     
@@ -70,7 +71,7 @@ def md_asset_uploader(md_asset: MdAsset, idx: Optional[int], category: CategoryC
     if md_asset["folder"]:
         asset_template["basedir"] = md_asset["folder"]
     
-    # 看要不要更新 asset 的 meta
+    # 看要不要拿 descript 去當 asset 的 tag
 
     if user_id is None:
         raise SmaugError("Can't get current user.")

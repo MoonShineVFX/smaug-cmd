@@ -28,7 +28,7 @@ class AvalonResourceModelFolder(BaseFolder):
         return True
 
     def is_render_image(self, file_path: str) -> bool:
-        """2023.12.25 時，目前沒有渲染圖"""
+        """2023.12.25 開發時，還沒有渲染圖"""
         return False
 
     def is_model(self, file_path: str) -> bool:
