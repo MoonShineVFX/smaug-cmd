@@ -40,6 +40,7 @@ RepresentationFormat = Literal[
     "IMG", "FBX", "GLB", "MAX", "MB", "OBJ", "C4D", "UNREAL", "BLEND", "USD", "MIX"
 ]
 
+
 class AssetTemplate(TypedDict):
     id: Optional[str]
     name: str
@@ -171,3 +172,44 @@ class UserInfo(TypedDict):
     updateAt: Optional[date]
     createAt: date
     extenData: Dict[str, str | int]
+
+
+class CategoryCreateParams(TypedDict):
+    name: str
+    parentId: int
+    menuId: str
+
+
+class CategoryCreateResponse(TypedDict):
+    id: int
+    name: str
+    parentId: Optional[int]
+    createAt: str
+    createId: str
+    updateAt: str
+    updateId: Optional[str]
+    isDeleted: bool
+    isVisible: bool
+    menuId: str
+    path: str
+
+
+class MdCategrory(TypedDict):
+    cate_name: str
+    parent: Optional[str]
+
+
+class MdAsset(TypedDict):
+    description: str
+    folder: str
+    previews: List[str]
+
+
+class MdAssets(TypedDict):
+    asset_name: str
+    data:List[MdAsset] 
+
+
+class MdJson(TypedDict):
+    categories: List[MdCategrory]
+    assets: List[MdAssets]

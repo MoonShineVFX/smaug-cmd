@@ -1,27 +1,18 @@
 import datetime
 import os
 import logging
-from typing import List
+from typing import List, Optional
 from smaug_cmd.adapter.smaug import SmaugJson
 from smaug_cmd.domain.smaug_types import AssetTemplate
 from smaug_cmd.setting import (
     exclude_files,
     exclude_folders,
-    texture_factors,
 )
-from smaug_cmd.domain.folder_parsing import util
 from smaug_cmd.domain.folder_parsing.folder_typing import FolderType
 from smaug_cmd.domain.upload_strategies import BaseUploadStrategy
 from smaug_cmd.domain.operators import AssetOp
 
 logger = logging.getLogger("smaug_cmd.domain.folders")
-
-
-def guess_preview_model(file_paths: List[str]) -> str | None:
-    for file_path in file_paths:
-        if file_path.split(".")[-1].lower() == "glb":
-            return file_path
-    return None
 
 
 class BaseFolder:
@@ -30,7 +21,12 @@ class BaseFolder:
         """判斷 folderpath 是否是此類別能處理的資料夾"""
         raise NotImplementedError
 
-    def __init__(self, path: str, upload_strategy: BaseUploadStrategy):
+    def __init__(
+        self,
+        path: str,
+        upload_strategy: BaseUploadStrategy,
+        asset_name: Optional[str] = None,
+    ):
         self.upload_strategy = upload_strategy
         self._folder_type = FolderType.UNKNOWN
         self._path = path
@@ -52,6 +48,8 @@ class BaseFolder:
         }
         self._init()
         self._init_from_smaug()
+        if asset_name is not None:
+            self._at["name"] = asset_name
 
     def _init(self):
         # 取得資料夾的所有內容檔案
@@ -87,17 +85,10 @@ class BaseFolder:
         raise NotImplementedError
 
     def is_model(self, file_path: str) -> bool:
-        if not util.validate_model_extension(file_path):
-            return False
-        return True
+        raise NotImplementedError
 
     def is_texture(self, file_path: str) -> bool:
-        if not util.validate_tex_extension(file_path):
-            return False
-
-        if any([i in file_path.lower() for i in texture_factors]):
-            return True
-        return False
+        raise NotImplementedError
 
     def is_3d_preview(self, file_path: str) -> bool:
         """預設的 3d 預覽檔案判斷
@@ -121,7 +112,7 @@ class BaseFolder:
     def folder_type(self) -> FolderType:
         return self._folder_type
 
-    def upload_asset(self, asset_template, current_user):
+    def upload_asset(self, asset_template, uploader_id: str):
         """上傳模板"""
         assert_resp = AssetOp.create(asset_template)
         asset_id = assert_resp["id"]
@@ -129,11 +120,11 @@ class BaseFolder:
         asset_template["id"] = asset_id
         asset_name = asset_template["name"]
 
-        self.upload_strategy.upload_previews(asset_template, current_user)
-        self.upload_strategy.upload_textures(asset_template, current_user)
-        self.upload_strategy.upload_renders(asset_template, current_user)
-        self.upload_strategy.upload_models(asset_template, current_user)
-        self.upload_strategy.upload_3d_preview(asset_template, current_user)
+        self.upload_strategy.upload_previews(asset_template, uploader_id)
+        self.upload_strategy.upload_textures(asset_template, uploader_id)
+        self.upload_strategy.upload_renders(asset_template, uploader_id)
+        self.upload_strategy.upload_models(asset_template, uploader_id)
+        self.upload_strategy.upload_3d_preview(asset_template, uploader_id)
 
         # write asset id to smaug.hson
         sm_json = SmaugJson(asset_template["basedir"])

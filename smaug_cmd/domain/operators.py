@@ -1,10 +1,11 @@
 import logging
+from typing import List, Optional
 from PySide6.QtCore import QObject
 from smaug_cmd.domain.smaug_types import (
-
     AssetTemplate,
     AssetCreateResponse,
     AssetCreateParams,
+    CategoryCreateResponse,
     RepresentationCreateParams,
     RepresentationCreateResponse,
 )
@@ -49,3 +50,37 @@ class RepresentationOp(QObject):
             raise SmaugOperaterError("Create representation return None")
         else:
             return re[1]
+
+
+class CategoryOp(QObject):
+    @classmethod
+    def create(
+        cls, name: str, parent_id: Optional[int], menu_id: str
+    ) -> CategoryCreateResponse:
+        re = ds.create_category(name, parent_id, menu_id)
+        if str(re[0])[0] != "2":
+            logger.error(re[1]["message"])
+            raise SmaugOperaterError(re[1]["message"])
+        return re[1]
+
+    @classmethod
+    def getByName(cls, name: str) -> List[CategoryCreateResponse]:
+        re = ds.get_categories_by_name(name)
+        if str(re[0])[0] != "2":
+            logger.error(re[1]["message"])
+            raise SmaugOperaterError(re[1]["message"])
+        return re[1]
+
+
+class MenuOp(QObject):
+    @classmethod
+    def all(cls):
+        re = ds.get_menus()
+        if str(re[0])[0] != "2":
+            logger.error(re[1]["message"])
+            raise SmaugOperaterError(re[1]["message"])
+        return re[1]
+
+
+if __name__ == "__main__":
+    print(CategoryOp.getByName("Project 2019"))

@@ -1,15 +1,16 @@
 import json
 import time
-from typing import Tuple, Dict, Any, Union
-
+from typing import Optional, Tuple, Dict, Any, Union
 
 import logging
 from urllib.parse import quote
+from smaug_cmd.domain.exceptions import SmaugApiError
 from smaug_cmd.domain.smaug_types import (
-    MenuTree,
-    CategoryDetailTree,
     AssetCreateParams,
     AssetCreateResponse,
+    CategoryDetailTree,
+    CategoryCreateResponse,
+    MenuTree,
     RepresentationCreateParams,
     RepresentationCreateResponse,
 )
@@ -193,8 +194,47 @@ def create_representation(
     return the_value
 
 
-if __name__ == "__main__":
-    # login_in("admin", "admin")
-    menus = get_menus()
-    for menu in menus:
-        print(get_menu_tree(menu["id"]))
+def create_category(
+    name: str, parent_id: Optional[int], menu_id: str
+) -> Tuple[int, CategoryCreateResponse | Dict[str, str]]:
+    api = f"{setting.api_root}/trpc/categories.create"
+    api_payload = (
+        {"0": {"json": {"name": name, "parentId": parent_id, "menuId": menu_id}}}
+        if parent_id
+        else {"0": {"json": {"name": name, "menuId": menu_id}}}
+    )
+    category_create_api = f"{api}?batch=1"
+    try:
+        res = _session.post(category_create_api, json=api_payload)
+    except Exception as e:
+        logger.warning(e)
+        return (500, {"message": str(e)})
+    category_data = res.json()[0]
+    if "error" in category_data:
+        raise SmaugApiError(category_data["error"]["json"]["message"])
+    the_value = (res.status_code, category_data["result"]["data"]["json"]["detail"])
+    return the_value
+
+
+def get_categories_by_name(
+    name: str,
+) -> Tuple[int, Dict[str, str] | CategoryCreateResponse]:
+    api = f"{setting.api_root}/trpc/categories.getByName"
+    api_payload = {"0": {"json": {"name": name}}}
+    api_payload_str = json.dumps(api_payload)
+    encode_params = quote(api_payload_str)
+    full_api = f"{api}?batch=1&input={encode_params}"
+    try:
+        res = _session.get(full_api)
+    except Exception as e:
+        logger.warning(e)
+        return (500, {"message": str(e)})
+    categories_data = res.json()[0]
+    the_value = (res.status_code, categories_data["result"]["data"]["json"]["list"])
+    return the_value
+
+
+# if __name__ == "__main__":
+# login_in("admin", "admin")
+# cates = get_categories_by_name("Project 2019")
+# print(cates[1][0]["id"])

@@ -1,4 +1,5 @@
 import logging
+from typing import Optional
 from requests.auth import HTTPBasicAuth
 from requests.sessions import Session
 from smaug_cmd.domain.exceptions import SmaugApiError
@@ -9,9 +10,10 @@ logger = logging.getLogger("smaug_cmd.auth")
 
 
 _session = Session()
+_user: Optional[UserInfo] = None
 
 
-def login_in(u: str, w: str) -> UserInfo:
+def log_in(u: str, w: str) -> UserInfo:
     """登入"""
     login_api = f"{setting.api_root}/login"
 
@@ -25,8 +27,10 @@ def login_in(u: str, w: str) -> UserInfo:
     logger.debug(f"auth_token: {auth_token}")
     if auth_token:
         _session.headers.update({"Authorization": f"Bearer {auth_token}"})
-    user_info:UserInfo = res.json()
-    return (user_info)
+    user_info: UserInfo = res.json()
+    global _user
+    _user = user_info
+    return user_info
 
 
 def log_out():
@@ -38,3 +42,8 @@ def log_out():
         print(e)
         return None
     return logout_resp.json()
+
+
+def current_user():
+    """取得目前登入的使用者資訊"""
+    return _user
