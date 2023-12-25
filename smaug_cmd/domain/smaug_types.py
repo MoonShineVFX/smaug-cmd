@@ -202,7 +202,7 @@ class MdCategrory(TypedDict):
 class MdAsset(TypedDict):
     description: str
     folder: str
-    preview: List[str]
+    previews: List[str]
 
 
 class MdAssets(TypedDict):
