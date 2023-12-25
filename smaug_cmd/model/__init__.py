@@ -1,2 +1,2 @@
 from .thread import MenuTreeThread
-from .auth import log_in , log_out
+from ..services.auth import log_in , log_out

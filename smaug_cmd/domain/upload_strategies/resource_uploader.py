@@ -1,6 +1,6 @@
 import os
 from typing import Optional
-from smaug_cmd.model.auth import log_in, log_out
+from smaug_cmd.services.auth import log_in
 from smaug_cmd.domain.smaug_types import CategoryCreateResponse, MdJson, MdAsset
 from smaug_cmd.domain.exceptions import SmaugError
 from smaug_cmd.domain.operators import CategoryOp, MenuOp
@@ -24,14 +24,23 @@ def md_uploader(md_json: MdJson):
     user = log_in(uploader_id, uploader_pw)
     last_category = None
     for category in md_json["categories"]:
-        parent_id = None
-        if category["parent"] is not None:
-            # 找出 parent_id
-            parent_cates = CategoryOp.getByName(category["parent"])
-            if parent_cates:
-                parent_id = parent_cates[0]["id"]
-        last_category = CategoryOp.create(
-            category["cate_name"], parent_id, resources_menu_id
+        # 確定是不是已有分類
+        created = False
+        cates = CategoryOp.getByNameAndParent(category["cate_name"], category["parent"], resources_menu_id)
+        if cates:
+            last_category = cates[0]
+            created = True
+
+        # 沒現存的就建一個
+        if not created:
+            parent_id = None
+            if category["parent"] is not None:
+                # 找出 parent_id
+                parent_cates = CategoryOp.getByName(category["parent"])
+                if parent_cates:
+                    parent_id = parent_cates[0]["id"]
+            last_category = CategoryOp.create(
+                category["cate_name"], parent_id, resources_menu_id
         )
     if last_category is None:
         raise SmaugError("Can't find last category.")
