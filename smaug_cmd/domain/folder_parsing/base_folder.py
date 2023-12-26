@@ -31,9 +31,10 @@ class BaseFolder:
         self._folder_type = FolderType.UNKNOWN
         self._path = path
         self._rawfilepaths: List[str] = []
+        asset_name = os.path.basename(path) if path else ""
         self._at: AssetTemplate = {
             "id": None,
-            "name": "",
+            "name": asset_name,
             "categoryId": None,
             "previews": [],  # 預覽圖
             "preview_model": "",  # 預覽模型
@@ -46,12 +47,12 @@ class BaseFolder:
             "createAt": None,
             "updateAt": None,
         }
-        self._init()
+        self._parsing()
         self._init_from_smaug()
         if asset_name is not None:
             self._at["name"] = asset_name
 
-    def _init(self):
+    def _parsing(self):
         # 取得資料夾的所有內容檔案
         for root, folders, files in os.walk(self._path):
             if os.path.basename(root) in exclude_folders:
