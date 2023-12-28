@@ -16,42 +16,14 @@ class UploadStrategy(BaseUploadStrategy):
         """上傳預覽圖，提供基礎實作
         重新命名每個圖檔，並上傳至 OOS, 再建立資料庫資料連資料
         """
-        for idx, preview_file in enumerate(asset_template["previews"]):
-            asset_id = asset_template["id"]
-            if asset_id is None:
-                raise SmaugApiError("Asset id is None")
+        asset_id = asset_template["id"]
+        if asset_id is None:
+            raise SmaugApiError("Asset id is None")
 
-            # 重新命名檔案
-            asset_name = asset_template["name"]
-            file_extension = os.path.splitext(preview_file)[-1].lower()
-            file_name = f"preview-{idx}{file_extension}"
-            new_name = f"{asset_name}_{file_name}"
+        if not asset_template["previews"]:
+            raise SmaugApiError("Asset previews is empty")
 
-            # 上傳至 OOS，這樣才能拿到 id 寫至 db
-            upload_object_name = rfs.put_representation1(
-                asset_id, new_name, preview_file
-            )
-
-            logger.debug(
-                "Upload Asset(%s)previes files: %s as %s",
-                asset_template["name"],
-                preview_file,
-                new_name,
-            )
-
-            # 建立資料庫資料
-            preview_create_represent_payload: RepresentationCreateParams = {
-                "assetId": asset_id,
-                "name": new_name,
-                "type": "PREVIEW",
-                "format": "IMG",
-                "fileSize": os.path.getsize(preview_file),
-                "uploaderId": user_id,
-                "path": upload_object_name,
-                "meta": {},
-            }
-            RepresentationOp.create(preview_create_represent_payload)
-            logger.debug("Create DB record for Asset(%s): %s", asset_id, file_name)
+        self._upload_pic(asset_template, user_id, None, asset_template["previews"][0])
 
     def upload_renders(self, asset_template: AssetTemplate, upload_user: str):
         """上傳算圖檔，提供基礎實作
@@ -171,3 +143,41 @@ class UploadStrategy(BaseUploadStrategy):
             }
         )
         logger.debug("Create DB record for Asset(%s): %s", asset_id, preview_glb_name)
+
+    def _upload_pic(self, asset_template, user_id, idx, preview_file):
+        asset_id = asset_template["id"]
+        if asset_id is None:
+            raise SmaugApiError("Asset id is None")
+
+            # 重新命名檔案
+        asset_name = asset_template["name"]
+        file_extension = os.path.splitext(preview_file)[-1].lower()
+        if idx:
+            file_name = f"preview-{idx}{file_extension}"
+        else:
+            file_name = f"preview{file_extension}"
+        new_name = f"{asset_name}_{file_name}"
+
+        # 上傳至 OOS，這樣才能拿到 id 寫至 db
+        upload_object_name = rfs.put_representation1(asset_id, new_name, preview_file)
+
+        logger.debug(
+            "Upload Asset(%s)previes files: %s as %s",
+            asset_template["name"],
+            preview_file,
+            new_name,
+        )
+
+        # 建立資料庫資料
+        preview_create_represent_payload: RepresentationCreateParams = {
+            "assetId": asset_id,
+            "name": new_name,
+            "type": "PREVIEW",
+            "format": "IMG",
+            "fileSize": os.path.getsize(preview_file),
+            "uploaderId": user_id,
+            "path": upload_object_name,
+            "meta": {},
+        }
+        RepresentationOp.create(preview_create_represent_payload)
+        logger.debug("Create DB record for Asset(%s): %s", asset_id, file_name)
