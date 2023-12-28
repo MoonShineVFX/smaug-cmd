@@ -161,8 +161,8 @@ class BaseFolder:
         # write asset id to smaug.hson
         sm_json = SmaugJson(asset_template["basedir"])
         sm_json["id"] = asset_id
-        sm_json["createAt"] = datetime.datetime.now().isoformat()
+        sm_json["createAt"] = assert_resp["createAt"]
         sm_json.serialize()
-        logger.info("Write Asset info to .smaug", asset_name, asset_id)
+        logger.info("Write Asset: %s(%s) info to .smaug", asset_name, asset_id)
 
         logger.debug("Asset: %s(%s) Upload is Done", asset_name, asset_id)

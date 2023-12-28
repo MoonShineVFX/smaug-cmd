@@ -28,8 +28,8 @@ class AvalonResourceModelFolder(BaseFolder):
         return True
 
     def is_render_image(self, file_path: str) -> bool:
-        """先拿 preview 來當 render image"""
-        return self.is_preview(file_path)
+        """目前沒有渲染圖"""
+        return False
 
     def is_model(self, file_path: str) -> bool:
         if not util.validate_model_extension(file_path):
