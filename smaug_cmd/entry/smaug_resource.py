@@ -33,7 +33,7 @@ def _find_md_files(md_file_folder) -> Generator[str, None, None]:
     for root, _, files in os.walk(md_file_folder):
         for file in files:
             if file.endswith(".md"):
-                md_file = os.path.join(root, file)
+                md_file = os.path.join(root, file).replace("\\", "/")
                 yield md_file
 
 

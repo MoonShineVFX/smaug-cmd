@@ -9,7 +9,7 @@ class FileUtils:
         current_directory = os.getcwd()
 
         # 完整路徑
-        path = os.path.join(current_directory, folder_name)
+        path = os.path.join(current_directory, folder_name).replace("\\", "/")
 
         # 建立資料夾
         os.makedirs(path, exist_ok=True)

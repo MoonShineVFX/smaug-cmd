@@ -20,7 +20,7 @@ def create_temp_zip_from_files(file_paths: List[str], file_name:Optional[str]=No
 
      # 如果有提供 file_name，則重新命名暫存文件
     if file_name:
-        new_file_path = os.path.join(os.path.dirname(temp_file_name), file_name)
+        new_file_path = os.path.join(os.path.dirname(temp_file_name), file_name).replace("\\", "/")
         if os.path.exists(new_file_path):
             os.remove(new_file_path)
         os.rename(temp_file_name, new_file_path)

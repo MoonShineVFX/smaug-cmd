@@ -65,8 +65,8 @@ class BaseFolder:
             for file in files:
                 if file in exclude_files:
                     continue
-                self._rawfilepaths.append(os.path.join(root, file))
-                file_path = os.path.join(root, file)
+                self._rawfilepaths.append(os.path.join(root, file).replace("\\", "/"))
+                file_path = os.path.join(root, file).replace("\\", "/")
                 if self.is_texture(file_path):
                     self._at["textures"].append(file_path)
                 elif self.is_preview(file_path):

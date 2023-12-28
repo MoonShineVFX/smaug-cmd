@@ -16,7 +16,7 @@ class TestRemoteFS(unittest.TestCase):
     def test_file_upload_and_delete(self):
         if os.sys.platform == "win32":
             basedir = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
-            self.file = os.path.join(basedir, self.file_win)
+            self.file = os.path.join(basedir, self.file_win).replace("\\", "/")
         file_name = os.path.basename(self.file).split('.')[0]
         file_extension = os.path.splitext(self.file)[-1].lower()
         object_name = f"test_asset_id/{file_name}_preview{file_extension}"

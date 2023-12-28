@@ -172,7 +172,9 @@ class UploadWidget(QWidget):
             return
 
         data = model.data(idx, AssetRole)
-        thumb_source = os.path.join(data["preview_folder"], "Large_0.jpg")
+        thumb_source = os.path.join(data["preview_folder"], "Large_0.jpg").replace(
+            "\\", "/"
+        )
         if not os.path.exists(thumb_source):
             msg = QMessageBox(self, "Wraning", "Find No Large_0.jpg")
             msg.setWindowModality(Qt.WindowModality.WindowModal)

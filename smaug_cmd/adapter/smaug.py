@@ -7,9 +7,9 @@ logger = logging.getLogger("smaug_cmd.adapter")
 
 class SmaugJson:
     def __init__(self, asset_base_path: str):
-        self._dot_smaug = os.path.join(asset_base_path, ".smaug")
+        self._dot_smaug = os.path.join(asset_base_path, ".smaug").replace("\\", "/")
         self.create_dot_smaug_folder()
-        self.json_file = os.path.join(self._dot_smaug, "smaug.json")
+        self.json_file = os.path.join(self._dot_smaug, "smaug.json").replace("\\", "/")
         self._data: dict = {}
         self.deserialize() # load data from json file
 

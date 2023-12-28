@@ -52,12 +52,12 @@ def md_uploader(md_json: MdJson):
 
     # 依照 md_json 的 assets 建立資產
     for md_assets in  md_json["assets"]:
-        if (md_assets["data"]) == 1:
-            for md_asset in md_assets["data"]:
-                md_asset_uploader(md_asset, None, last_category, user["id"])
-        else:
-            for idx, md_asset in enumerate(md_assets["data"]):
-                md_asset_uploader(md_asset, idx, last_category, user["id"])
+        # if (md_assets["data"]) == 1:
+        #     for md_asset in md_assets["data"]:
+        #         md_asset_uploader(md_asset, None, last_category, user["id"])
+        # else:
+        for idx, md_asset in enumerate(md_assets["data"]):
+            md_asset_uploader(md_asset, None, last_category, user["id"])
 
 
 def md_asset_uploader(md_asset: MdAsset, idx: Optional[int], category: CategoryCreateResponse, user_id: str):
