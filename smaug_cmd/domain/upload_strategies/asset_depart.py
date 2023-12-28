@@ -5,7 +5,7 @@ from smaug_cmd.domain.smaug_types import (
     RepresentationCreateParams,
 )
 from smaug_cmd.adapter import fs
-from smaug_cmd.domain.upload_strategies.base_upload_strategy import BaseUploadStrategy
+from smaug_cmd.domain.upload_strategies import UploadStrategy
 from smaug_cmd.domain.operators import RepresentationOp
 from smaug_cmd.domain import parsing as ps
 from smaug_cmd.services import remote_fs as rfs
@@ -13,7 +13,7 @@ from smaug_cmd.services import remote_fs as rfs
 logger = logging.getLogger("smaug_cmd.domain.upload_strategy")
 
 
-class AssetDepartUploadStrategy(BaseUploadStrategy):
+class AssetDepartUploadStrategy(UploadStrategy):
     def upload_previews(self, asset_template: AssetTemplate, user_id: str):
         for idx, preview_file in enumerate(asset_template["previews"]):
             asset_id = asset_template["id"]
