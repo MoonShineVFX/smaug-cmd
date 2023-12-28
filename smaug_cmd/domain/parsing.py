@@ -1,6 +1,6 @@
 import os
 import re
-from typing import Any, List, Dict
+from typing import Any, List, Dict, Optional
 
 from smaug_cmd.adapter import fs
 from smaug_cmd.domain.exceptions import SmaugApiError
@@ -8,6 +8,10 @@ from smaug_cmd.domain.exceptions import SmaugApiError
 
 from smaug_cmd.domain.smaug_types import (
     AssetTemplate,
+    MdAsset,
+    MdAssets,
+    MdCategrory,
+    MdJson,
     RepresentationFormat,
     SOFTWARE_CATEGORIRS,
     REVERSE_SOFTWARE_CATEGORIRS,
@@ -140,17 +144,17 @@ def generate_zip(asset_name, name_key, textures_files: List[str]) -> str:
     return zipped_file
 
 
-def md_parsing(md_file: str):
+def md_parsing(md_file: str) -> MdJson:
     """解析 md 檔案，產生 md json 格式"""
-    md_json = dict()
-    md_json["name"] = os.path.basename(md_file)
-    md_json["categories"] = md_parsing_categories(md_file)
-    md_json["assets"] = md_parsing_asset(md_file)
-    
+    md_json: MdJson = {
+        "name": os.path.basename(md_file),
+        "categories": md_parsing_categories(md_file),
+        "assets": md_parsing_asset(md_file),
+    }
     return md_json
 
 
-def md_parsing_categories(md_path: str):
+def md_parsing_categories(md_path: str) -> List[MdCategrory]:
     if "_Pic" in md_path:
         return []
 
@@ -168,9 +172,8 @@ def md_parsing_categories(md_path: str):
         file_name = file_name.split(" ")[0]  # Remove 中文的部份
         dirs[-1] = file_name
 
-    
     # Create a list of dictionaries
-    categories = []
+    categories: List[MdCategrory] = []
     for i in range(len(dirs)):
         categories.append(
             {"cate_name": dirs[i], "parent": dirs[i - 1] if i > 0 else None}
@@ -179,9 +182,16 @@ def md_parsing_categories(md_path: str):
     return categories
 
 
-def md_combine_categories(list1:List[Dict], list2:List[Dict]):
+def md_combine_categories(list1: List[Dict], list2: List[Dict]):
     combined = list1.copy()
-    combined += [d for d in list2 if not any(d['cate_name'] == x['cate_name'] and d['parent'] == x['parent'] for x in list1)]
+    combined += [
+        d
+        for d in list2
+        if not any(
+            d["cate_name"] == x["cate_name"] and d["parent"] == x["parent"]
+            for x in list1
+        )
+    ]
     return combined
 
 
@@ -199,15 +209,15 @@ def md_parsing_asset(md_file):
     # update all preview path
     for asset in asset_json:
         for data in asset["data"]:
-            data["preview"] = [
+            data["previews"] = [
                 os.path.join(base_dir, preview).replace("\\", "/")
-                for preview in data["preview"]
+                for preview in data["previews"]
             ]
 
     return asset_json
 
 
-def md_parse_kanban_to_json(file_content: str) -> List[Dict[str, Any]]:
+def md_parse_kanban_to_json(file_content: str) -> List[MdAssets]:
     """
     Parse the kanban file content to a structured JSON format.
 
@@ -219,36 +229,38 @@ def md_parse_kanban_to_json(file_content: str) -> List[Dict[str, Any]]:
     """
     assets = []
     current_asset_name = None
-    asset_data = None
-    preview_pattern = re.compile(r'!\[\[([^]]+)\]\]')
+    asset_data: List[MdAsset] = []
+    preview_pattern = re.compile(r"!\[\[([^]]+)\]\]")
 
-    for line in file_content.split('\n'):
-        if line.startswith('## '):
+    for line in file_content.split("\n"):
+        if line.startswith("## "):
             # Save previous asset data if any
             if current_asset_name:
                 assets.append({"asset_name": current_asset_name, "data": asset_data})
 
             # Start new asset
             current_asset_name = line[3:].strip()
-            asset_data = []
 
-        elif line.startswith('- [ ]'):
-            folder_match = re.search(r'\[Open Folder\]\(file://([^)]+)\)', line)
+        elif line.startswith("- [ ]"):
+            folder_match = re.search(r"\[Open Folder\]\(file://([^)]+)\)", line)
             previews = preview_pattern.findall(line)
-            
+
             # Match the description by looking from the end of the line backwards to the first '<br>'
-            description_match = re.search(r'<br>([^<]+)$', line)
+            description_match = re.search(r"<br>([^<]+)$", line)
 
             if folder_match and description_match:
                 folder = folder_match.group(1)
+                # 用 TEST_DATA_RESOURCE 來取代 R:\_Asset
+                test_data_resource = os.environ.get("TEST_DATA_RESOURCE")
+                if test_data_resource is not None:
+                    folder = folder.replace("R:/_Asset", test_data_resource).replace("\\", "/")
+
                 description = description_match.group(1).strip()
-                if description.endswith(']'):
+                if description.endswith("]"):
                     description = ""
-                asset_data.append({
-                    "folder": folder,
-                    "preview": previews,
-                    "description": description
-                })
+                asset_data.append(
+                    {"folder": folder, "previews": previews, "description": description}
+                )
 
     # Append last asset
     if current_asset_name:
@@ -259,7 +271,10 @@ def md_parse_kanban_to_json(file_content: str) -> List[Dict[str, Any]]:
 
 if __name__ == "__main__":
     from pprint import pprint
-    md_json = md_parsing(r"Y:\resource\_Asset\_Obsidian\MoonShineAsset\Project 2019\Project2019_Nature 自然.md")
+
+    md_json = md_parsing(
+        r"Y:\resource\_Asset\_Obsidian\MoonShineAsset\Project 2019\Project2019_Nature 自然.md"
+    )
     pprint(md_json)
 
 # 暫時不知道該怎麼處理的資料夾內容

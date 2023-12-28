@@ -1,3 +1,4 @@
-from .base_upload_strategy import BaseUploadStrategy
+from .upload_strategy import UploadStrategy
 from .asset_depart import AssetDepartUploadStrategy
 from .avalon_source import AvalonResourceUploader
+from .taiwan_culture import TaiwanCultureUploadStrategy

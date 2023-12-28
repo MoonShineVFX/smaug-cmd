@@ -1,7 +1,12 @@
 import os
+import logging
 from typing import Generator
+from smaug_cmd.domain.exceptions import SmaugError
 from smaug_cmd.domain import parsing as ps
-from smaug_cmd.domain.upload_strategies.resource_uploader import md_uploader
+from smaug_cmd.services.logic.resource_upload_logic import md_uploader
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger("smaug_cmd.domain.resource_upload")
 
 
 def smaug_resource_uploader(folder: str):
@@ -14,7 +19,10 @@ def smaug_resource_uploader(folder: str):
     # 從所有的 md 檔組合出分類結構
     for mb_file in _find_md_files(folder):
         md_json = ps.md_parsing(mb_file)
-        md_uploader(md_json)
+        try:
+            md_uploader(md_json)
+        except SmaugError as e:
+            logger.info(e)
 
 
 def _find_md_files(md_file_folder) -> Generator[str, None, None]:

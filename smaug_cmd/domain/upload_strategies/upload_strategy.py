@@ -5,7 +5,7 @@ from smaug_cmd.domain.exceptions import SmaugApiError
 from smaug_cmd.domain.operators import RepresentationOp
 from smaug_cmd.domain import parsing as ps
 from smaug_cmd.domain.smaug_types import AssetTemplate, RepresentationCreateParams
-from smaug_cmd.domain.upload_strategies import BaseUploadStrategy
+from smaug_cmd.domain.upload_strategies.base_upload_strategy import BaseUploadStrategy
 from smaug_cmd.services import remote_fs as rfs
 
 logger = logging.getLogger("smaug_cmd.domain.upload_strategy")
@@ -142,5 +142,35 @@ class UploadStrategy(BaseUploadStrategy):
         if not asset_template["textures"]:
             raise SmaugApiError("Asset textures is empty")
 
+    def upload_3d_preview(self, asset_template: AssetTemplate, user_id):
+        """上傳 3D 預覽檔案, 提供基礎實作"""
+        asset_id = asset_template["id"]
+        if asset_id is None:
+            raise SmaugApiError("Asset id is None")
+        if not asset_template["preview_model"]:
+            raise SmaugApiError("Asset preview model is empty")
+        
+        
+        asset_name = asset_template["name"]
+        preview_glb = asset_template["preview_model"]
+        logger.debug("Found preview model: %s", preview_glb)
+
+        preview_glb_name = f"{asset_name}_preview.glb"
+        upload_preview_glb_object_name = rfs.put_representation1(
+            asset_id, preview_glb_name, preview_glb
+        )
+        RepresentationOp.create(
+            {
+                "assetId": asset_id,
+                "name": preview_glb_name,
+                "type": "PREVIEW",
+                "format": "GLB",
+                "fileSize": os.path.getsize(preview_glb),
+                "uploaderId": user_id,
+                "path": upload_preview_glb_object_name,
+                "meta": {},
+            }
+        )
+        logger.debug("Create DB record for Asset(%s): %s", asset_id, preview_glb_name)
 
 

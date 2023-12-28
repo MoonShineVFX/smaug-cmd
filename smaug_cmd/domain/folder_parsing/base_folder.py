@@ -9,7 +9,7 @@ from smaug_cmd.setting import (
     exclude_folders,
 )
 from smaug_cmd.domain.folder_parsing.folder_typing import FolderType
-from smaug_cmd.domain.upload_strategies import BaseUploadStrategy
+from smaug_cmd.domain.upload_strategies.base_upload_strategy import BaseUploadStrategy
 from smaug_cmd.domain.operators import AssetOp
 
 logger = logging.getLogger("smaug_cmd.domain.folders")
@@ -31,7 +31,12 @@ class BaseFolder:
         self._folder_type = FolderType.UNKNOWN
         self._path = path
         self._rawfilepaths: List[str] = []
-        asset_name = os.path.basename(path) if path else ""
+        asset_name = ""
+        if path and path[-1] == "/":
+            asset_name = path.split("/")[-2]
+        else:
+            asset_name = os.path.basename(path)
+
         self._at: AssetTemplate = {
             "id": None,
             "name": asset_name,
@@ -116,15 +121,21 @@ class BaseFolder:
     def upload_asset(self, asset_template, uploader_id: str):
         """上傳模板"""
         assert_resp = AssetOp.create(asset_template)
+        logger.info("Asset: %s Created", asset_template["name"])
         asset_id = assert_resp["id"]
         self._at["id"] = asset_id
         asset_template["id"] = asset_id
         asset_name = asset_template["name"]
 
+        logger.info("%s: preview Uploading", asset_name)
         self.upload_strategy.upload_previews(asset_template, uploader_id)
+        logger.info("%s: texture Uploading", asset_name)
         self.upload_strategy.upload_textures(asset_template, uploader_id)
+        logger.info("%s: render Uploading", asset_name)
         self.upload_strategy.upload_renders(asset_template, uploader_id)
+        logger.info("%s: model Uploading", asset_name)
         self.upload_strategy.upload_models(asset_template, uploader_id)
+        logger.info("%s: 3d preview Uploading", asset_name)
         self.upload_strategy.upload_3d_preview(asset_template, uploader_id)
 
         # write asset id to smaug.hson
@@ -132,5 +143,6 @@ class BaseFolder:
         sm_json["id"] = asset_id
         sm_json["createAt"] = datetime.datetime.now().isoformat()
         sm_json.serialize()
+        logger.info("Write Asset info to .smaug", asset_name, asset_id)
 
-        logger.debug("Asset: %s(%s) Created", asset_name, asset_id)
+        logger.debug("Asset: %s(%s) Upload is Done", asset_name, asset_id)

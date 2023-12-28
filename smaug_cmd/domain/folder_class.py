@@ -9,21 +9,22 @@ from smaug_cmd.domain.folder_parsing import (
     TaiwanCultureResourceModelFolder,
 )
 from smaug_cmd.domain.upload_strategies import (
-    BaseUploadStrategy,
+    UploadStrategy,
     AssetDepartUploadStrategy,
+    AvalonResourceUploader,
+    TaiwanCultureUploadStrategy
+    
 )
 
 
 class FolderClassFactory:
     def __init__(self, path: str):
         self._path = path
-        self._mapping: Dict[Type[BaseFolder], Type[BaseUploadStrategy]] = {
+        self._mapping: Dict[Type[BaseFolder], Type[UploadStrategy]] = {
             AssetDepartModelFolder: AssetDepartUploadStrategy,
-            TaiwanCultureResourceModelFolder: BaseUploadStrategy,
-            NormalResourceModelFolder: BaseUploadStrategy,
-            AvalonResourceModelFolder: BaseUploadStrategy,
-            DownloadVariant1ResourceModelFolder: BaseUploadStrategy,
-            ThreedMaxResourceModelFolder: BaseUploadStrategy,
+            TaiwanCultureResourceModelFolder: TaiwanCultureUploadStrategy,
+            AvalonResourceModelFolder: AvalonResourceUploader
+            # NormalResourceModelFolder: BaseUploadStrategy,
         }
 
     def create(self) -> Optional[BaseFolder]:

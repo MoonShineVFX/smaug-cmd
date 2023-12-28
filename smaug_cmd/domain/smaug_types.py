@@ -213,3 +213,4 @@ class MdAssets(TypedDict):
 class MdJson(TypedDict):
     categories: List[MdCategrory]
     assets: List[MdAssets]
+    name: str

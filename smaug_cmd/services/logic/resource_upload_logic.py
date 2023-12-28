@@ -8,6 +8,9 @@ from smaug_cmd.domain.operators import CategoryOp, MenuOp
 from smaug_cmd.domain.folder_class import FolderClassFactory 
 
 
+logger = logging.getLogger("smaug_cmd.domain.resource_upload")
+
+
 def md_uploader(md_json: MdJson):
     # 找出 resource menu 的 id
     menus = MenuOp.all()
@@ -45,12 +48,14 @@ def md_uploader(md_json: MdJson):
         )
     if last_category is None:
         raise SmaugError("Can't find last category.")
+    logger.info("%s is Created.", last_category['name'])
 
     # 依照 md_json 的 assets 建立資產
     for md_assets in  md_json["assets"]:
         if (md_assets["data"]) == 1:
             for md_asset in md_assets["data"]:
                 md_asset_uploader(md_asset, None, last_category, user["id"])
+            md_asset_uploader(md_asset, None, last_category, user["id"])
         else:
             for idx, md_asset in enumerate(md_assets["data"]):
                 md_asset_uploader(md_asset, idx, last_category, user["id"])
@@ -66,13 +71,14 @@ def md_asset_uploader(md_asset: MdAsset, idx: Optional[int], category: CategoryC
     if idx is not None:
         asset_template["name"] = f"{asset_template['name']} {idx}"
     
+    # 用 md_asset 的資料覆蓋 asset_template
     if md_asset["previews"]:
         asset_template["previews"] = md_asset["previews"]
     
     if md_asset["folder"]:
         asset_template["basedir"] = md_asset["folder"]
     
-    # 看要不要拿 descript 去當 asset 的 tag
+    # todo: 看要不要拿 description 去當 asset 的 tag
 
     if user_id is None:
         raise SmaugError("Can't get current user.")
