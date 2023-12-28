@@ -28,8 +28,8 @@ class AvalonResourceModelFolder(BaseFolder):
         return True
 
     def is_render_image(self, file_path: str) -> bool:
-        """2023.12.25 開發時，還沒有渲染圖"""
-        return False
+        """先拿 preview 來當 render image"""
+        return self.is_preview(file_path)
 
     def is_model(self, file_path: str) -> bool:
         if not util.validate_model_extension(file_path):
@@ -43,7 +43,7 @@ class AvalonResourceModelFolder(BaseFolder):
     def is_texture(self, file_path: str) -> bool:
         if not util.validate_tex_extension(file_path):
             return False
-        if file_path.find(self.ava_folder + '/texture'):
+        if file_path.find(self.ava_folder + "/texture"):
             return True
         return False
 

@@ -5,13 +5,14 @@ import os
 
 logger = logging.getLogger("smaug_cmd.adapter")
 
+
 class SmaugJson:
     def __init__(self, asset_base_path: str):
         self._dot_smaug = os.path.join(asset_base_path, ".smaug").replace("\\", "/")
         self.create_dot_smaug_folder()
         self.json_file = os.path.join(self._dot_smaug, "smaug.json").replace("\\", "/")
         self._data: dict = {}
-        self.deserialize() # load data from json file
+        self.deserialize()  # load data from json file
 
     def serialize(self):
         try:
@@ -20,8 +21,8 @@ class SmaugJson:
             with open(self.json_file, "w") as f:
                 json.dump(self._data, f, indent=4)
         except Exception as e:
-            logger.error("Failed to serialize smaug.json")
-            
+            logger.error("Failed to serialize smaug.json. Reson: %s", e)
+
     def deserialize(self) -> dict:
         try:
             if not os.path.exists(self.json_file):
@@ -32,7 +33,7 @@ class SmaugJson:
             self._data.update(data)
             return data
         except Exception as e:
-            logger.error("Failed to deserialize smaug.json: %s", e) 
+            logger.error("Failed to deserialize smaug.json: %s", e)
             return {}
 
     def create_dot_smaug_folder(self):

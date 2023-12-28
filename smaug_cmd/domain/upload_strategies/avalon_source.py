@@ -15,11 +15,10 @@ class AvalonResourceUploader(UploadStrategy):
     def upload_textures(self, asset_template: AssetTemplate, user_id: str):
         # 執行基本檢查
         super().upload_textures(asset_template, user_id)
-        
+
         asset_id = asset_template["id"]
         assert asset_id is not None, "Asset id is None"
         asset_name = asset_template["name"]
-
 
         keyword_group = ["_AvalonSource/texture", "_AvalonSource/texture_low"]
         group_files = _group_files_by_directory(asset_template["textures"])
@@ -32,17 +31,17 @@ class AvalonResourceUploader(UploadStrategy):
             zip_file_name = new_name = f"{asset_name}_{text_key}.zip"
             ziped_texture = fs.create_zip(files, zip_file_name)
             logger.info('Create "%s" Texture Zip: %s', text_key, ziped_texture)
-            
+
             # 上傳至 OOS
             upload_zip_object_name = rfs.put_representation1(
                 asset_id, new_name, ziped_texture
             )
-            
-             # 把 ziped_texture 移至 .smaug 下
+
+            # 把 ziped_texture 移至 .smaug 下
             moved_zip_file = fs.collect_to_smaug(
                 asset_template["basedir"], ziped_texture
             )
-            
+
             RepresentationOp.create(
                 {
                     "assetId": asset_id,
@@ -57,7 +56,6 @@ class AvalonResourceUploader(UploadStrategy):
             )
             logger.debug("Create DB record for Asset(%s): %s", asset_id, zip_file_name)
 
-        
 
 def _filter_by_keywors(keyword_group, group_files):
     filter_group_files = {}
@@ -67,7 +65,6 @@ def _filter_by_keywors(keyword_group, group_files):
                 filter_group_files[k] = v
                 continue
     return filter_group_files
-
 
 
 # import os
@@ -92,5 +89,5 @@ def _group_files_by_directory(files: List) -> Dict[str, List[str]]:
     return result
 
 
-def exclude_key_from_dict(original_dict, key_to_exclude:str):
+def exclude_key_from_dict(original_dict, key_to_exclude: str):
     return {k: v for k, v in original_dict.items() if key_to_exclude.find(k) == -1}

@@ -149,8 +149,7 @@ class UploadStrategy(BaseUploadStrategy):
             raise SmaugApiError("Asset id is None")
         if not asset_template["preview_model"]:
             raise SmaugApiError("Asset preview model is empty")
-        
-        
+
         asset_name = asset_template["name"]
         preview_glb = asset_template["preview_model"]
         logger.debug("Found preview model: %s", preview_glb)
@@ -172,5 +171,3 @@ class UploadStrategy(BaseUploadStrategy):
             }
         )
         logger.debug("Create DB record for Asset(%s): %s", asset_id, preview_glb_name)
-
-

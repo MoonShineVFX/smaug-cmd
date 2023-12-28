@@ -3,6 +3,7 @@ import os
 import logging
 from typing import List, Optional
 from smaug_cmd.adapter.smaug import SmaugJson
+from smaug_cmd.domain.exceptions import SmaugApiError
 from smaug_cmd.domain.smaug_types import AssetTemplate
 from smaug_cmd.setting import (
     exclude_files,
@@ -128,15 +129,34 @@ class BaseFolder:
         asset_name = asset_template["name"]
 
         logger.info("%s: preview Uploading", asset_name)
-        self.upload_strategy.upload_previews(asset_template, uploader_id)
+        try:
+            self.upload_strategy.upload_previews(asset_template, uploader_id)
+        except SmaugApiError as e:
+            logger.warning("Failed to upload previews. Reason: %s", e)
+
         logger.info("%s: texture Uploading", asset_name)
-        self.upload_strategy.upload_textures(asset_template, uploader_id)
+        try:
+            self.upload_strategy.upload_textures(asset_template, uploader_id)
+        except SmaugApiError as e:
+            logger.warning("Failed to upload textures. Reason: %s", e)
+
         logger.info("%s: render Uploading", asset_name)
-        self.upload_strategy.upload_renders(asset_template, uploader_id)
+        try:
+            self.upload_strategy.upload_renders(asset_template, uploader_id)
+        except SmaugApiError as e:
+            logger.warning("Failed to upload renders. Reason: %s", e)
+
         logger.info("%s: model Uploading", asset_name)
-        self.upload_strategy.upload_models(asset_template, uploader_id)
+        try:
+            self.upload_strategy.upload_models(asset_template, uploader_id)
+        except SmaugApiError as e:
+            logger.warning("Failed to upload models. Reason: %s", e)
+
         logger.info("%s: 3d preview Uploading", asset_name)
-        self.upload_strategy.upload_3d_preview(asset_template, uploader_id)
+        try:
+            self.upload_strategy.upload_3d_preview(asset_template, uploader_id)
+        except SmaugApiError as e:
+            logger.warning("Failed to upload 3d preview. Reason: %s", e)
 
         # write asset id to smaug.hson
         sm_json = SmaugJson(asset_template["basedir"])
