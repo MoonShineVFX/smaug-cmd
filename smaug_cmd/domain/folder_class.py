@@ -2,10 +2,7 @@ from typing import Dict, Type, Optional
 from smaug_cmd.domain.folder_parsing import (
     BaseFolder,
     AssetDepartModelFolder,
-    NormalResourceModelFolder,
     AvalonResourceModelFolder,
-    DownloadVariant1ResourceModelFolder,
-    ThreedMaxResourceModelFolder,
     TaiwanCultureResourceModelFolder,
 )
 from smaug_cmd.domain.upload_strategies import (

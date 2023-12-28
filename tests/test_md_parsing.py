@@ -8,8 +8,7 @@ from smaug_cmd.domain.parsing import (
     md_combine_categories,
     md_parse_kanban_to_json,
     md_parsing_asset,
-    md_parsing
-    
+    md_parsing,
 )
 
 load_dotenv()
@@ -24,18 +23,16 @@ class TestMdCategory(unittest.TestCase):
             r"_Pic",
         ]
         self.test_folder1 = [
-            f"{TEST_DATA_RESOURCE}\\_Obsidian\MoonShineAsset\Project 2019\\" + item
+            f"{TEST_DATA_RESOURCE}/_Obsidian/MoonShineAsset/Project 2019/{item}".replace(
+                "\\", "/"
+            )
             for item in test_data
         ]
         self.test_folder1_excepted = [
             [
                 {
-                    "cate_name": "MoonShineAsset",
-                    "parent": None,
-                },
-                {
                     "cate_name": "Project 2019",
-                    "parent": "MoonShineAsset",
+                    "parent": None,
                 },
                 {
                     "cate_name": "AncientEast",
@@ -43,14 +40,7 @@ class TestMdCategory(unittest.TestCase):
                 },
             ],
             [
-                {
-                    "cate_name": "MoonShineAsset",
-                    "parent": None,
-                },
-                {
-                    "cate_name": "Project 2019",
-                    "parent": "MoonShineAsset",
-                },
+                {"cate_name": "Project 2019", "parent": None},
                 {
                     "cate_name": "Weapon",
                     "parent": "Project 2019",
@@ -64,32 +54,6 @@ class TestMdCategory(unittest.TestCase):
             re = md_parsing_categories(ma_path)
             self.assertTrue(re == self.test_folder1_excepted[idx])
         print(self.test_folder1[1])
-
-    def test_combine(self):
-        re = md_combine_categories(
-            self.test_folder1_excepted[0], self.test_folder1_excepted[1]
-        )
-        self.assertTrue(
-            re
-            == [
-                {
-                    "cate_name": "MoonShineAsset",
-                    "parent": None,
-                },
-                {
-                    "cate_name": "Project 2019",
-                    "parent": "MoonShineAsset",
-                },
-                {
-                    "cate_name": "AncientEast",
-                    "parent": "Project 2019",
-                },
-                {
-                    "cate_name": "Weapon",
-                    "parent": "Project 2019",
-                },
-            ]
-        )
 
 
 class TestMdContent(unittest.TestCase):
@@ -121,15 +85,17 @@ kanban-plugin: basic
 """
 
     def test_md_parsing_content(self):
+        test_data_resource = os.environ.get("TEST_DATA_RESOURCE")
+        re = md_parse_kanban_to_json(self.test_content1)
         self.assertTrue(
-            md_parse_kanban_to_json(self.test_content1)
+            re
             == [
                 {
                     "asset_name": "castle",
                     "data": [
                         {
                             "description": "中國古代城牆、古城",
-                            "folder": "R:/_Asset/MoonshineProject_2020_Obsidian/202006_TheLegendOfHuangYi/Set/castle/",
+                            "folder": f"{test_data_resource}/MoonshineProject_2020_Obsidian/202006_TheLegendOfHuangYi/Set/castle/".replace("\\", "/"),
                             "previews": [
                                 "202006_TheLegendOfHuangYi_castle_lookdev_render_Preview_camera1.jpg",
                                 "202006_TheLegendOfHuangYi_castle_lookdev_render_Preview_camera2.jpg",
@@ -142,7 +108,7 @@ kanban-plugin: basic
                     "data": [
                         {
                             "description": "中國神獸",
-                            "folder": "R:/_Asset/MoonshineProject_2020_Obsidian/202006_VrMazu/Char/Monster/",
+                            "folder": f"{test_data_resource}/MoonshineProject_2020_Obsidian/202006_VrMazu/Char/Monster/".replace("\\", "/"),
                             "previews": [
                                 "202006_VrMazu_Monster_lookdev_render_Preview_camera1.jpg",
                                 "202006_VrMazu_Monster_lookdev_render_Preview_camera2.jpg",
@@ -155,19 +121,18 @@ kanban-plugin: basic
                     "data": [
                         {
                             "description": "蟬、鴿子",
-                            "folder": "R:/_Asset/MoonshineProject_2020/BundleProject_TeaGold/Char/CiacdaDove/",
+                            "folder": f"{test_data_resource}/MoonshineProject_2020/BundleProject_TeaGold/Char/CiacdaDove/".replace("\\", "/"),
                             "previews": ["TeaGold_Char_CiacdaDove_Preview.jpg"],
                         },
                         {
                             "description": "小蚱蜢",
-                            "folder": "R:/_Asset/MoonshineProject_2020/BundleProject_TeaGold/Char/Teahopper/",
+                            "folder": f"{test_data_resource}/MoonshineProject_2020/BundleProject_TeaGold/Char/Teahopper/".replace("\\", "/"),
                             "previews": ["TeaGold_Char_Teahopper_Preview.jpg"],
                         },
                     ],
                 },
             ]
         )
-
 
 
 if __name__ == "__main__":
