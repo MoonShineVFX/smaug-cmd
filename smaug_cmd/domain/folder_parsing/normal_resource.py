@@ -2,11 +2,12 @@ from smaug_cmd.domain.folder_parsing import util
 from smaug_cmd.domain.folder_parsing.taiwan_culture import is_taiwan_culture_model_folder
 from smaug_cmd.domain.folder_parsing.asset_depart import is_asset_depart_model_folder
 from smaug_cmd.domain.folder_parsing.base_folder import BaseFolder
+from smaug_cmd.domain.upload_strategies.normal_resource import NormalResourceUploadStrategy
 
 
 class NormalResourceModelFolder(BaseFolder):
-    def __init__(self, path: str):
-        super().__init__(path)
+    def __init__(self, path: str, upload_strategy:NormalResourceUploadStrategy =None):
+        super().__init__(path, upload_strategy)
     
     @classmethod
     def is_applicable(cls, folderpath:str)->bool:
