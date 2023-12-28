@@ -9,7 +9,7 @@ from smaug_cmd.ui import LogInDialog, AssetListDialog
 from smaug_cmd import setting
 from smaug_cmd.bootstrap import bootstrap
 from smaug_cmd.domain.exceptions import SmaugError
-from smaug_cmd.services import SmaugCmdLogic
+from smaug_cmd.services.logic.smaug_cmd_logic import SmaugCmdLogic
 
 logger = logging.getLogger('smaug_cmd')
 logging.basicConfig(level=logging.DEBUG)

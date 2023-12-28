@@ -130,7 +130,7 @@ kanban-plugin: basic
                         {
                             "description": "中國古代城牆、古城",
                             "folder": "R:/_Asset/MoonshineProject_2020_Obsidian/202006_TheLegendOfHuangYi/Set/castle/",
-                            "preview": [
+                            "previews": [
                                 "202006_TheLegendOfHuangYi_castle_lookdev_render_Preview_camera1.jpg",
                                 "202006_TheLegendOfHuangYi_castle_lookdev_render_Preview_camera2.jpg",
                             ],
@@ -143,7 +143,7 @@ kanban-plugin: basic
                         {
                             "description": "中國神獸",
                             "folder": "R:/_Asset/MoonshineProject_2020_Obsidian/202006_VrMazu/Char/Monster/",
-                            "preview": [
+                            "previews": [
                                 "202006_VrMazu_Monster_lookdev_render_Preview_camera1.jpg",
                                 "202006_VrMazu_Monster_lookdev_render_Preview_camera2.jpg",
                             ],
@@ -156,12 +156,12 @@ kanban-plugin: basic
                         {
                             "description": "蟬、鴿子",
                             "folder": "R:/_Asset/MoonshineProject_2020/BundleProject_TeaGold/Char/CiacdaDove/",
-                            "preview": ["TeaGold_Char_CiacdaDove_Preview.jpg"],
+                            "previews": ["TeaGold_Char_CiacdaDove_Preview.jpg"],
                         },
                         {
                             "description": "小蚱蜢",
                             "folder": "R:/_Asset/MoonshineProject_2020/BundleProject_TeaGold/Char/Teahopper/",
-                            "preview": ["TeaGold_Char_Teahopper_Preview.jpg"],
+                            "previews": ["TeaGold_Char_Teahopper_Preview.jpg"],
                         },
                     ],
                 },

@@ -159,7 +159,7 @@ def md_parsing_categories(md_path: str) -> List[MdCategrory]:
         return []
 
     # Split the path into a list of directories
-    dirs = md_path.split(os.sep)
+    dirs = md_path.split("/")
 
     # Remove unnecessary parts of the path
     dirs = dirs[dirs.index("MoonShineAsset") + 1 :]
@@ -237,7 +237,7 @@ def md_parse_kanban_to_json(file_content: str) -> List[MdAssets]:
             # Save previous asset data if any
             if current_asset_name:
                 assets.append({"asset_name": current_asset_name, "data": asset_data})
-
+                asset_data = []
             # Start new asset
             current_asset_name = line[3:].strip()
 
@@ -271,9 +271,9 @@ def md_parse_kanban_to_json(file_content: str) -> List[MdAssets]:
 
 if __name__ == "__main__":
     from pprint import pprint
-
+    test_data_resource = os.environ.get("TEST_DATA_RESOURCE")
     md_json = md_parsing(
-        r"Y:\resource\_Asset\_Obsidian\MoonShineAsset\Project 2019\Project2019_Nature 自然.md"
+        f"{test_data_resource}/_Obsidian/MoonShineAsset/Project 2019/Project2019_Nature 自然.md"
     )
     pprint(md_json)
 

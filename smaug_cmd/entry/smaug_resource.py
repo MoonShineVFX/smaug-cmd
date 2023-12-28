@@ -1,12 +1,16 @@
 import os
 import logging
 from typing import Generator
+from smaug_cmd.bootstrap import bootstrap
 from smaug_cmd.domain.exceptions import SmaugError
 from smaug_cmd.domain import parsing as ps
 from smaug_cmd.services.logic.resource_upload_logic import md_uploader
+from smaug_cmd import setting
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("smaug_cmd.domain.resource_upload")
+
+bootstrap(setting)
 
 
 def smaug_resource_uploader(folder: str):
@@ -35,5 +39,5 @@ def _find_md_files(md_file_folder) -> Generator[str, None, None]:
 
 if __name__ == "__main__":
     smaug_resource_uploader(
-        f"{os.environ.get('TEST_DATA_RESOURCE')}\\_Obsidian\\MoonShineAsset"
+        f"{os.environ.get('TEST_DATA_RESOURCE')}/_Obsidian/MoonShineAsset".replace("\\", "/")
     )

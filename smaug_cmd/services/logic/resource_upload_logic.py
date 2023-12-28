@@ -55,7 +55,6 @@ def md_uploader(md_json: MdJson):
         if (md_assets["data"]) == 1:
             for md_asset in md_assets["data"]:
                 md_asset_uploader(md_asset, None, last_category, user["id"])
-            md_asset_uploader(md_asset, None, last_category, user["id"])
         else:
             for idx, md_asset in enumerate(md_assets["data"]):
                 md_asset_uploader(md_asset, idx, last_category, user["id"])

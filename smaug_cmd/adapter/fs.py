@@ -37,7 +37,11 @@ def collect_to_smaug(asset_base_dir, file_path):
         return
     # 如果檔案不在 smaug 資料夾內，就移動到 smaug 資料夾內
     file_name = os.path.basename(file_path)
-    new_path = os.path.join(asset_base_dir, ".smaug", file_name)
+    new_path = os.path.join(asset_base_dir, ".smaug", file_name).replace("\\", "/")
+    
+    if not os.path.exists(os.path.dirname(new_path)):
+        os.makedirs(os.path.dirname(new_path))
+    
     shutil.move(file_path, new_path)
     return new_path
 
