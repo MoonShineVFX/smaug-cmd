@@ -1,6 +1,7 @@
 import logging
 import os
 from smaug_cmd.adapter import fs
+from smaug_cmd.domain.exceptions import SmaugApiError
 from smaug_cmd.domain.operators import RepresentationOp
 from smaug_cmd.domain import parsing as ps
 from smaug_cmd.domain.smaug_types import AssetTemplate, RepresentationCreateParams
@@ -15,7 +16,7 @@ class UploadStrategy(BaseUploadStrategy):
         for idx, preview_file in enumerate(asset_template["previews"]):
             asset_id = asset_template["id"]
             if asset_id is None:
-                raise ValueError("Asset id is None")
+                raise SmaugApiError("Asset id is None")
 
             # 重新命名檔案
             asset_name = asset_template["name"]
@@ -53,7 +54,7 @@ class UploadStrategy(BaseUploadStrategy):
         # 上傳 render 檔案
         asset_id = asset_template["id"]
         if asset_id is None:
-            raise ValueError("Asset id is None")
+            raise SmaugApiError("Asset id is None")
         asset_name = asset_template["name"]
         for idx, render_file in enumerate(asset_template["renders"]):
             file_extension = os.path.splitext(render_file)[-1].lower()
@@ -88,7 +89,7 @@ class UploadStrategy(BaseUploadStrategy):
     def upload_models(self, asset_template: AssetTemplate, user_id: str):
         asset_id = asset_template["id"]
         if asset_id is None:
-            raise ValueError("Asset id is None")
+            raise SmaugApiError("Asset id is None")
 
         asset_name = asset_template["name"]
         model_groups = ps.model_group(asset_template["models"])
@@ -122,4 +123,9 @@ class UploadStrategy(BaseUploadStrategy):
             logger.debug("Create DB record for Asset(%s): %s", asset_id, zip_file_name)
 
     def upload_textures(self, asset_template: AssetTemplate, user_id: str):
-        pass
+        asset_id = asset_template["id"]
+        if asset_id is None:
+            raise SmaugApiError("Asset id is None")
+        if not asset_template["textures"]:
+            raise SmaugApiError("Asset textures is empty")
+
