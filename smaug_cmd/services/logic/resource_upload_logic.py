@@ -1,4 +1,5 @@
 import os
+import logging
 from typing import Optional
 from smaug_cmd.services.auth import log_in
 from smaug_cmd.domain.smaug_types import CategoryCreateResponse, MdJson, MdAsset
