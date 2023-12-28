@@ -13,6 +13,9 @@ logger = logging.getLogger("smaug_cmd.domain.upload_strategy")
 
 class UploadStrategy(BaseUploadStrategy):
     def upload_previews(self, asset_template: AssetTemplate, user_id: str):
+        """上傳預覽圖，提供基礎實作
+        重新命名每個圖檔，並上傳至 OOS, 再建立資料庫資料連資料
+        """
         for idx, preview_file in enumerate(asset_template["previews"]):
             asset_id = asset_template["id"]
             if asset_id is None:
@@ -51,6 +54,9 @@ class UploadStrategy(BaseUploadStrategy):
             logger.debug("Create DB record for Asset(%s): %s", asset_id, file_name)
 
     def upload_renders(self, asset_template: AssetTemplate, upload_user: str):
+        """上傳算圖檔，提供基礎實作
+        重新命名每個圖檔，並上傳至 OOS, 再建立資料庫資料連資料
+        """
         # 上傳 render 檔案
         asset_id = asset_template["id"]
         if asset_id is None:
@@ -87,6 +93,9 @@ class UploadStrategy(BaseUploadStrategy):
             logger.debug("Create DB record for Asset(%s): %s", asset_id, file_name)
 
     def upload_models(self, asset_template: AssetTemplate, user_id: str):
+        """上傳模型檔案，提供基礎實作
+        依 DCC 軟體分類，並上傳至 OOS, 再建立資料庫資料連資料
+        """
         asset_id = asset_template["id"]
         if asset_id is None:
             raise SmaugApiError("Asset id is None")
@@ -123,9 +132,15 @@ class UploadStrategy(BaseUploadStrategy):
             logger.debug("Create DB record for Asset(%s): %s", asset_id, zip_file_name)
 
     def upload_textures(self, asset_template: AssetTemplate, user_id: str):
+        """上傳貼圖檔案
+        這個方法會把貼圖檔案分類，並上傳至 OOS, 再建立資料庫資料連資料
+        怎麼分類就依子類別實作
+        """
         asset_id = asset_template["id"]
         if asset_id is None:
             raise SmaugApiError("Asset id is None")
         if not asset_template["textures"]:
             raise SmaugApiError("Asset textures is empty")
+
+
 
