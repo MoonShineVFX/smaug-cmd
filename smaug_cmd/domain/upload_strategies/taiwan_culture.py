@@ -1,6 +1,7 @@
 import logging
 import os
 from smaug_cmd.adapter import fs
+from smaug_cmd.domain.exceptions import SmaugApiError
 from smaug_cmd.domain.operators import RepresentationOp
 from smaug_cmd.domain.smaug_types import AssetTemplate
 from smaug_cmd.domain.upload_strategies import util
@@ -15,17 +16,18 @@ class TaiwanCultureUploadStrategy(UploadStrategy):
         """上傳貼圖檔，提供基礎實作
         重新命名每個圖檔，並上傳至 OOS, 再建立資料庫資料連資料
         """
+        # 執行基本檢查
+        super().upload_textures(asset_template, user_id)
 
         # 取得必要 asset 資料
         asset_id = asset_template["id"]
-        if asset_id is None:
-            raise ValueError("Asset id is None")
+        assert asset_id is not None, "Asset id is None"
         asset_name = asset_template["name"]
 
         # 整理貼圖檔案
         tex_key = ["textures", "texture_jpg"]
         group_textures = group_texture_files(tex_key, asset_template["textures"])
-        
+
         # 建立資料庫資料
         for text_key, files in group_textures.items():
             # make texture zip file
@@ -43,8 +45,9 @@ class TaiwanCultureUploadStrategy(UploadStrategy):
             moved_zip_file = fs.collect_to_smaug(
                 asset_template["basedir"], ziped_texture
             )
-            
-            RepresentationOp.create( {
+
+            RepresentationOp.create(
+                {
                     "assetId": asset_id,
                     "name": zip_file_name,
                     "type": "TEXTURE",
@@ -61,8 +64,8 @@ class TaiwanCultureUploadStrategy(UploadStrategy):
 def group_texture_files(tex_key, group_files):
     """將貼圖檔案分組, 並重新命名鍵值"""
     mapping = {
-        'textures': 'basic',
-        'texture_jpg': 'jpg',
+        "textures": "basic",
+        "texture_jpg": "jpg",
     }
     re = {}
     group_files = util.filter_by_keywors(tex_key, group_files)

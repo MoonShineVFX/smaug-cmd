@@ -4,6 +4,7 @@ from typing import Dict, List
 from smaug_cmd.adapter import fs
 from smaug_cmd.domain.operators import RepresentationOp
 from smaug_cmd.domain.smaug_types import AssetTemplate
+from smaug_cmd.domain.exceptions import SmaugApiError
 from smaug_cmd.domain.upload_strategies.upload_strategy import UploadStrategy
 from smaug_cmd.services import remote_fs as rfs
 
@@ -12,10 +13,13 @@ logger = logging.getLogger("smaug_cmd.domain.upload_strategy")
 
 class AvalonResourceUploader(UploadStrategy):
     def upload_textures(self, asset_template: AssetTemplate, user_id: str):
+        # 執行基本檢查
+        super().upload_textures(asset_template, user_id)
+        
         asset_id = asset_template["id"]
+        assert asset_id is not None, "Asset id is None"
         asset_name = asset_template["name"]
-        if asset_id is None:
-            raise ValueError("Asset id is None")
+
 
         keyword_group = ["_AvalonSource/texture", "_AvalonSource/texture_low"]
         group_files = _group_files_by_directory(asset_template["textures"])
