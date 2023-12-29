@@ -1,3 +1,4 @@
+import os
 from smaug_cmd.domain.folder_parsing import util
 from smaug_cmd.domain.folder_parsing.base_folder import BaseFolder
 from smaug_cmd.domain.folder_parsing.folder_typing import FolderType
@@ -12,6 +13,22 @@ class ThreedMaxResourceFolder(BaseFolder):
     def is_applicable(cls, folderpath: str) -> bool:
         return is_3dmax_model_folder(folderpath)
 
+    def is_preview(self, file_path: str) -> bool:
+        if not util.validate_tex_extension(file_path):
+            return False
+        return os.path.dirname(file_path).lower() == self._path.lower()
+
+    def is_render_image(self, file_path: str) -> bool:
+        """目前沒有渲染圖"""
+        return False
+
+    def is_model(self, file_path: str) -> bool:
+        return util.validate_model_extension(file_path)
+
+    def is_texture(self, file_path: str) -> bool:
+        if not util.validate_tex_extension(file_path):
+            return False
+        return os.path.basename(os.path.dirname(file_path)).lower() == "texture"
 
 def is_3dmax_model_folder(folder_path: str):
     """判斷是否為 3ds max 資料夾
