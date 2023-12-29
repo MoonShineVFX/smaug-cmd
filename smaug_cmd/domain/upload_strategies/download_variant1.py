@@ -10,5 +10,5 @@ from smaug_cmd.services import remote_fs as rfs
 logger = logging.getLogger("smaug_cmd.domain.upload_strategy")
 
 
-class DownloadVariant1UploadStrategy(UploadStrategy):
+class DownloadVariant1Uploader(UploadStrategy):
     pass
