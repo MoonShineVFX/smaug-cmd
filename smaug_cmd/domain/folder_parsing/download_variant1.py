@@ -1,17 +1,42 @@
+import os
 import re
 from smaug_cmd.domain.folder_parsing import util
 from smaug_cmd.domain.folder_parsing.base_folder import BaseFolder
+from smaug_cmd.domain.folder_parsing.folder_typing import FolderType
+from smaug_cmd.domain.upload_strategies import DownloadVariant1UploadStrategy
 
 
 
 
-class DownloadVariant1ResourceModelFolder(BaseFolder):
-    def __init__(self, path: str):
-        super().__init__(path)
+class DownloadVariant1Folder(BaseFolder):
+    def __init__(self, path: str, upload_strategy:DownloadVariant1UploadStrategy):
+        super().__init__(path, upload_strategy)
+        self.set_folder_type(FolderType.DOWNLOAD_VARIANT1_MODEL)
 
     @classmethod
     def is_applicable(cls, folderpath: str) -> bool:
         return is_download_variant1_model_folder(folderpath)
+
+    def is_preview(self, file_path: str) -> bool:
+        # 確認是否是圖檔
+        if not util.validate_tex_extension(file_path):
+            return False
+        # 是否在主目錄下
+        return os.path.dirname(file_path) == self._path
+
+    def is_render_image(self, file_path: str) -> bool:
+        """目前沒有渲染圖"""
+        return False
+
+    def is_model(self, file_path: str) -> bool:
+        if not util.validate_model_extension(file_path):
+            return False
+        return True
+
+    def is_texture(self, file_path: str) -> bool:
+        if not util.validate_tex_extension(file_path):
+            return False
+        return True
 
 
 def is_download_variant1_model_folder(folder_path: str):

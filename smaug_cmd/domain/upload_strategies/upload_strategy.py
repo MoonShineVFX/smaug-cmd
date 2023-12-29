@@ -149,7 +149,7 @@ class UploadStrategy(BaseUploadStrategy):
         if asset_id is None:
             raise SmaugApiError("Asset id is None")
 
-            # 重新命名檔案
+        # 重新命名檔案
         asset_name = asset_template["name"]
         file_extension = os.path.splitext(preview_file)[-1].lower()
         if idx:

@@ -33,7 +33,7 @@ class FolderType(Enum):
     #     _Asset\MoonshineProject_2019\BundleProject_TheBeltAndRoad\TheBeltAndRoad\Environment\ChangAnGate
     #     _Asset\MoonshineProject_2020_Obsidian\202003_AdventureLemon\jianguo
 
-    DOWNLOAD_VARIANT1_MODEL = "DVM"
+    # DOWNLOAD_VARIANT1_MODEL = "DVM"
     # 資料夾下數個以 `uploads_files_` 開頭的資料夾，內含貼圖跟 dcc 檔，該資料夾的名稱 `+` 替代 ` `(空白)
     # 資料夾下也有 preview 圖片
 

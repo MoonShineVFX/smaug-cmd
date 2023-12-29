@@ -1,7 +1,6 @@
-import os
 import logging
 from typing import Optional
-from smaug_cmd.services.auth import log_in
+from smaug_cmd.services.auth import current_user
 from smaug_cmd.domain.smaug_types import CategoryCreateResponse, MdJson, MdAsset
 from smaug_cmd.domain.exceptions import SmaugError
 from smaug_cmd.domain.operators import CategoryOp, MenuOp
@@ -23,9 +22,7 @@ def md_uploader(md_json: MdJson):
         raise SmaugError("Can't find Resources menu.")
 
     # 依照 md_json 的 categories 建立分類，並保留最後一個建立的分類
-    uploader_id = os.environ.get("UPLOADER_ID", "")
-    uploader_pw = os.environ.get("UPLOADER_PW", "")
-    user = log_in(uploader_id, uploader_pw)
+    user = current_user()
     last_category = None
     for category in md_json["categories"]:
         # 確定是不是已有分類
@@ -52,13 +49,13 @@ def md_uploader(md_json: MdJson):
 
     # 依照 md_json 的 assets 建立資產
     for md_assets in  md_json["assets"]:
-        # if (md_assets["data"]) == 1:
-        #     for md_asset in md_assets["data"]:
-        #         md_asset_uploader(md_asset, None, last_category, user["id"])
-        # else:
-        for idx, md_asset in enumerate(md_assets["data"]):
-            md_asset_uploader(md_asset, None, last_category, user["id"])
-
+        logger.info("Uploading column %s", md_assets["asset_name"])
+        md_assets_list = md_assets["data"]
+        for idx, md_asset in enumerate(md_assets_list):
+            try:
+                md_asset_uploader(md_asset, None, last_category, user["id"])
+            except SmaugError as e:
+                logger.warning("Failed to upload asset. Reason: %s", e)
 
 def md_asset_uploader(md_asset: MdAsset, idx: Optional[int], category: CategoryCreateResponse, user_id: str):
     folder_obj = FolderClassFactory(md_asset["folder"]).create()

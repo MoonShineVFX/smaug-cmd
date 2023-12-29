@@ -1,15 +1,17 @@
 import os
 from pathlib import PureWindowsPath
+from smaug_cmd.domain.folder_parsing.folder_typing import FolderType
 from smaug_cmd.domain.folder_parsing import util
 from smaug_cmd.domain.folder_parsing.base_folder import BaseFolder
 from smaug_cmd.domain.upload_strategies import AvalonResourceUploader
 
 
-class AvalonResourceModelFolder(BaseFolder):
+class AvalonResourceFolder(BaseFolder):
     ava_folder = "_AvalonSource"
 
     def __init__(self, path: str, upload_strategies: AvalonResourceUploader):
         super().__init__(path, upload_strategies)
+        self.set_folder_type(FolderType.AVALON_SOURCE_MODEL)
 
     @classmethod
     def is_applicable(cls, folderpath: str) -> bool:

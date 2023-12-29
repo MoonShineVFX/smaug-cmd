@@ -1,10 +1,12 @@
 from smaug_cmd.domain.folder_parsing import util
 from smaug_cmd.domain.folder_parsing.base_folder import BaseFolder
+from smaug_cmd.domain.folder_parsing.folder_typing import FolderType
 
 
-class ThreedMaxResourceModelFolder(BaseFolder):
-    def __init__(self, path: str):
-        super().__init__(path)
+class ThreedMaxResourceFolder(BaseFolder):
+    def __init__(self, path: str, upload_strategy):
+        super().__init__(path, upload_strategy)
+        self.set_folder_type(FolderType.THREE_MAX_MODEL)
 
     @classmethod
     def is_applicable(cls, folderpath: str) -> bool:

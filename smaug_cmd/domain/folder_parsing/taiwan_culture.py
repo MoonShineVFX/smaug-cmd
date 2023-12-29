@@ -7,10 +7,10 @@ from smaug_cmd.domain.upload_strategies.taiwan_culture import (
 )
 
 
-class TaiwanCultureResourceModelFolder(BaseFolder):
+class TaiwanCultureResourceFolder(BaseFolder):
     def __init__(self, path: str, upload_strategy: TaiwanCultureUploadStrategy):
         super().__init__(path, upload_strategy)
-        self._folder_type = FolderType.TAIWAN_CULTURE_MODEL
+        self.set_folder_type(FolderType.TAIWAN_CULTURE_MODEL)
 
     @classmethod
     def is_applicable(cls, folderpath: str) -> bool:

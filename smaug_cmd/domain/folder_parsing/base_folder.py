@@ -30,7 +30,7 @@ class BaseFolder:
     ):
         self.upload_strategy = upload_strategy
         self._folder_type = FolderType.UNKNOWN
-        self._path = path
+        self._path = path.replace("\\", "/")
         self._rawfilepaths: List[str] = []
         asset_name = ""
         if path and path[-1] == "/":
@@ -52,6 +52,7 @@ class BaseFolder:
             "basedir": self._path,  # 資料夾路徑
             "createAt": None,
             "updateAt": None,
+            "folderType": self._folder_type.value,
         }
         self._parsing()
         self._init_from_smaug()
@@ -84,6 +85,9 @@ class BaseFolder:
                     self._at["preview_model"] = file
                     self._at["models"].remove(file)
                     break
+            
+            # 排序一下預覽圖
+            self._at["previews"] = sorted(self._at["previews"])
 
     def is_preview(self, file_path: str) -> bool:
         raise NotImplementedError
@@ -119,6 +123,10 @@ class BaseFolder:
     def folder_type(self) -> FolderType:
         return self._folder_type
 
+    def set_folder_type(self, folder_type: FolderType):
+        self._folder_type = folder_type
+        self._at["folderType"] = folder_type.value
+
     def upload_asset(self, asset_template, uploader_id: str):
         """上傳模板"""
         assert_resp = AssetOp.create(asset_template)
@@ -128,31 +136,31 @@ class BaseFolder:
         asset_template["id"] = asset_id
         asset_name = asset_template["name"]
 
-        logger.info("%s: preview Uploading", asset_name)
+        logger.info("Asset %s: preview Uploading", asset_name)
         try:
             self.upload_strategy.upload_previews(asset_template, uploader_id)
         except SmaugApiError as e:
             logger.warning("Failed to upload previews. Reason: %s", e)
 
-        logger.info("%s: texture Uploading", asset_name)
+        logger.info("Asset %s: texture Uploading", asset_name)
         try:
             self.upload_strategy.upload_textures(asset_template, uploader_id)
         except SmaugApiError as e:
             logger.warning("Failed to upload textures. Reason: %s", e)
 
-        logger.info("%s: render Uploading", asset_name)
+        logger.info("Asset %s: render Uploading", asset_name)
         try:
             self.upload_strategy.upload_renders(asset_template, uploader_id)
         except SmaugApiError as e:
             logger.warning("Failed to upload renders. Reason: %s", e)
 
-        logger.info("%s: model Uploading", asset_name)
+        logger.info("Asset %s: model Uploading", asset_name)
         try:
             self.upload_strategy.upload_models(asset_template, uploader_id)
         except SmaugApiError as e:
             logger.warning("Failed to upload models. Reason: %s", e)
 
-        logger.info("%s: 3d preview Uploading", asset_name)
+        logger.info("Asset %s: 3d preview Uploading", asset_name)
         try:
             self.upload_strategy.upload_3d_preview(asset_template, uploader_id)
         except SmaugApiError as e:
@@ -162,7 +170,10 @@ class BaseFolder:
         sm_json = SmaugJson(asset_template["basedir"])
         sm_json["id"] = asset_id
         sm_json["createAt"] = assert_resp["createAt"]
-        sm_json.serialize()
-        logger.info("Write Asset: %s(%s) info to .smaug", asset_name, asset_id)
+        sm_json["folderType"] = asset_template["folderType"]
+        if assert_resp["updateAt"]:
+            sm_json["updateAt"] = assert_resp["updateAt"]
 
-        logger.debug("Asset: %s(%s) Upload is Done", asset_name, asset_id)
+        sm_json.serialize()
+        logger.info("Write info to .smaug")
+        logger.info("Asset: %s(%s) Upload is Done", asset_name, asset_id)
