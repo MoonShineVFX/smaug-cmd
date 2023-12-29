@@ -6,6 +6,7 @@ from smaug_cmd.domain.folder_parsing import (
     TaiwanCultureResourceFolder,
     NormalResourceFolder,
     # DownloadVariant1Folder
+    ThreedMaxResourceFolder
 )
 from smaug_cmd.domain.upload_strategies import (
     UploadStrategy,
@@ -14,6 +15,7 @@ from smaug_cmd.domain.upload_strategies import (
     TaiwanCultureUploader,
     NormalResourceUploader,
     # DownloadVariant1UploadStrategy,
+    ThreeDMaxUploader
 )
 
 
@@ -26,6 +28,7 @@ class FolderClassFactory:
             AvalonResourceFolder: AvalonResourceUploader,
             NormalResourceFolder: NormalResourceUploader,
             # DownloadVariant1Folder: DownloadVariant1UploadStrategy
+            ThreedMaxResourceFolder: ThreeDMaxUploader,
         }
 
     def create(self) -> Optional[BaseFolder]:
