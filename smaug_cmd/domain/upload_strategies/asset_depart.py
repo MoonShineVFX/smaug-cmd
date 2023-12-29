@@ -13,7 +13,7 @@ from smaug_cmd.services import remote_fs as rfs
 logger = logging.getLogger("smaug_cmd.domain.upload_strategy")
 
 
-class AssetDepartUploadStrategy(UploadStrategy):
+class AssetDepartUploader(UploadStrategy):
     def upload_previews(self, asset_template: AssetTemplate, user_id: str):
         for idx, preview_file in enumerate(asset_template["previews"]):
             asset_id = asset_template["id"]

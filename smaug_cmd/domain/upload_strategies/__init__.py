@@ -1,6 +1,6 @@
 from .upload_strategy import UploadStrategy
-from .asset_depart import AssetDepartUploadStrategy
+from .asset_depart import AssetDepartUploader
 from .avalon_source import AvalonResourceUploader
-from .taiwan_culture import TaiwanCultureUploadStrategy
-from .normal_resource import NormalResourceUploadStrategy
+from .taiwan_culture import TaiwanCultureUploader
+from .normal_resource import NormalResourceUploader
 # from .download_variant1 import DownloadVariant1UploadStrategy

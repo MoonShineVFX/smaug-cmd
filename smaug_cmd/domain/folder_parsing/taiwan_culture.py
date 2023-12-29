@@ -3,12 +3,12 @@ from smaug_cmd.domain.folder_parsing import util
 from smaug_cmd.domain.folder_parsing.base_folder import BaseFolder
 from smaug_cmd.domain.folder_parsing.folder_typing import FolderType
 from smaug_cmd.domain.upload_strategies.taiwan_culture import (
-    TaiwanCultureUploadStrategy,
+    TaiwanCultureUploader,
 )
 
 
 class TaiwanCultureResourceFolder(BaseFolder):
-    def __init__(self, path: str, upload_strategy: TaiwanCultureUploadStrategy):
+    def __init__(self, path: str, upload_strategy: TaiwanCultureUploader):
         super().__init__(path, upload_strategy)
         self.set_folder_type(FolderType.TAIWAN_CULTURE_MODEL)
 

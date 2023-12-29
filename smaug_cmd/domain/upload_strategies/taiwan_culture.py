@@ -1,7 +1,6 @@
 import logging
 import os
 from smaug_cmd.adapter import fs
-from smaug_cmd.domain.exceptions import SmaugApiError
 from smaug_cmd.domain.operators import RepresentationOp
 from smaug_cmd.domain.smaug_types import AssetTemplate
 from smaug_cmd.domain.upload_strategies import util
@@ -11,7 +10,7 @@ from smaug_cmd.services import remote_fs as rfs
 logger = logging.getLogger("smaug_cmd.domain.upload_strategy")
 
 
-class TaiwanCultureUploadStrategy(UploadStrategy):
+class TaiwanCultureUploader(UploadStrategy):
     def upload_textures(self, asset_template: AssetTemplate, user_id: str):
         """上傳貼圖檔，提供基礎實作
         重新命名每個圖檔，並上傳至 OOS, 再建立資料庫資料連資料

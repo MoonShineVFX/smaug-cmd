@@ -4,7 +4,7 @@ import unittest
 from unittest.mock import patch
 from smaug_cmd.domain.folder_parsing import FolderType
 from smaug_cmd.domain.folder_parsing import NormalResourceFolder
-from smaug_cmd.domain.upload_strategies import NormalResourceUploadStrategy
+from smaug_cmd.domain.upload_strategies import NormalResourceUploader
 
 test_data_resource = os.environ.get("TEST_DATA_RESOURCE")
 
@@ -144,7 +144,7 @@ class TestNormalResourceFolder(unittest.TestCase):
         with patch("os.walk", return_value=walk_data):
             folder_obj = NormalResourceFolder(
                 f"{test_data_resource}/MoonshineProject_2019/BundleProject_TheBeltAndRoad/TheBeltAndRoad/Environment/ChangAnGate",
-                NormalResourceUploadStrategy(),
+                NormalResourceUploader(),
             )
 
             self.assertTrue(folder_obj.folder_type() == FolderType.NORMAL_RESOURCE_MODEL, "folder type is worng")

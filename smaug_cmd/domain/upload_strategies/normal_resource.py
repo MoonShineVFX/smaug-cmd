@@ -11,7 +11,7 @@ from smaug_cmd.services import remote_fs as rfs
 logger = logging.getLogger("smaug_cmd.domain.upload_strategy")
 
 
-class NormalResourceUploadStrategy(UploadStrategy):
+class NormalResourceUploader(UploadStrategy):
     def upload_textures(self, asset_template: AssetTemplate, user_id: str):
         super().upload_textures(asset_template, user_id)
         asset_id = asset_template["id"]
