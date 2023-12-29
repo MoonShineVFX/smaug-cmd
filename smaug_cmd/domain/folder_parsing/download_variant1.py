@@ -11,7 +11,7 @@ from smaug_cmd.domain.upload_strategies import DownloadVariant1UploadStrategy
 class DownloadVariant1Folder(BaseFolder):
     def __init__(self, path: str, upload_strategy:DownloadVariant1UploadStrategy):
         super().__init__(path, upload_strategy)
-        self._type_folder = FolderType.DOWNLOAD_VARIANT1_MODEL
+        self.set_folder_type(FolderType.DOWNLOAD_VARIANT1_MODEL)
 
     @classmethod
     def is_applicable(cls, folderpath: str) -> bool:

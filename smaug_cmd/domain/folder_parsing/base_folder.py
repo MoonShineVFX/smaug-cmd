@@ -123,6 +123,10 @@ class BaseFolder:
     def folder_type(self) -> FolderType:
         return self._folder_type
 
+    def set_folder_type(self, folder_type: FolderType):
+        self._folder_type = folder_type
+        self._at["folderType"] = folder_type.value
+
     def upload_asset(self, asset_template, uploader_id: str):
         """上傳模板"""
         assert_resp = AssetOp.create(asset_template)

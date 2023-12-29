@@ -12,7 +12,7 @@ class AssetDepartModelFolder(BaseFolder):
 
     def __init__(self, path: str, upload_strategies):
         super().__init__(path, upload_strategies)
-        self._folder_type = FolderType.ASSET_DEPART_MODEL
+        self.set_folder_type(FolderType.ASSET_DEPART_MODEL)
 
     def is_preview(self, file_path: str):
         """是否為預覽圖

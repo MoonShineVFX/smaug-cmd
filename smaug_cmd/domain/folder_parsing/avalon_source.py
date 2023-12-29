@@ -11,7 +11,7 @@ class AvalonResourceFolder(BaseFolder):
 
     def __init__(self, path: str, upload_strategies: AvalonResourceUploader):
         super().__init__(path, upload_strategies)
-        self._type_folder = FolderType.AVALON_SOURCE_MODEL
+        self.set_folder_type(FolderType.AVALON_SOURCE_MODEL)
 
     @classmethod
     def is_applicable(cls, folderpath: str) -> bool:
