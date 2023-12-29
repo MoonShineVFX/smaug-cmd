@@ -5,7 +5,7 @@ from smaug_cmd.domain.folder_parsing import (
     AvalonResourceFolder,
     TaiwanCultureResourceFolder,
     NormalResourceFolder,
-    DownloadVariant1ResourceModelFolder
+    # DownloadVariant1Folder
 )
 from smaug_cmd.domain.upload_strategies import (
     UploadStrategy,
@@ -13,7 +13,7 @@ from smaug_cmd.domain.upload_strategies import (
     AvalonResourceUploader,
     TaiwanCultureUploadStrategy,
     NormalResourceUploadStrategy,
-    DownloadVariant1UploadStrategy,
+    # DownloadVariant1UploadStrategy,
 )
 
 
@@ -25,7 +25,7 @@ class FolderClassFactory:
             TaiwanCultureResourceFolder: TaiwanCultureUploadStrategy,
             AvalonResourceFolder: AvalonResourceUploader,
             NormalResourceFolder: NormalResourceUploadStrategy,
-            Dow
+            # DownloadVariant1Folder: DownloadVariant1UploadStrategy
         }
 
     def create(self) -> Optional[BaseFolder]:

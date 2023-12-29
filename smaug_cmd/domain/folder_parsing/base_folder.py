@@ -85,6 +85,9 @@ class BaseFolder:
                     self._at["preview_model"] = file
                     self._at["models"].remove(file)
                     break
+            
+            # 排序一下預覽圖
+            self._at["previews"] = sorted(self._at["previews"])
 
     def is_preview(self, file_path: str) -> bool:
         raise NotImplementedError

@@ -54,7 +54,7 @@ class AssetTemplate(TypedDict):
     basedir: str  # 資料夾路徑
     createAt: Optional[str]
     updateAt: Optional[str]
-    folderType: Optional[str]
+    folderType: str
 
 class AssetDBTemplate(TypedDict):
     id: Optional[int]
