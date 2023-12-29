@@ -30,7 +30,7 @@ class BaseFolder:
     ):
         self.upload_strategy = upload_strategy
         self._folder_type = FolderType.UNKNOWN
-        self._path = path
+        self._path = path.replace("\\", "/")
         self._rawfilepaths: List[str] = []
         asset_name = ""
         if path and path[-1] == "/":
