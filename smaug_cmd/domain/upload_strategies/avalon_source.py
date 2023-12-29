@@ -1,8 +1,8 @@
 import logging
 import os
-from typing import Dict, List
 from smaug_cmd.adapter import fs
 from smaug_cmd.domain.operators import RepresentationOp
+from smaug_cmd.domain.upload_strategies import util
 from smaug_cmd.domain.smaug_types import AssetTemplate, RepresentationCreateParams
 from smaug_cmd.domain.upload_strategies.upload_strategy import UploadStrategy
 from smaug_cmd.services import remote_fs as rfs
@@ -20,7 +20,7 @@ class AvalonResourceUploader(UploadStrategy):
         asset_name = asset_template["name"]
 
         keyword_group = ["_AvalonSource/texture", "_AvalonSource/texture_low"]
-        group_files = _group_files_by_directory(asset_template["textures"])
+        group_files = util.group_files_by_directory(asset_template["textures"])
         filter_group_files = _filter_by_keywors(keyword_group, group_files)
         texture_groups = {os.path.basename(k): v for k, v in filter_group_files.items()}
         for text_key, files in texture_groups.items():
@@ -111,21 +111,6 @@ def _filter_by_keywors(keyword_group, group_files):
 # for root, _, files in os.walk(r"Y:\resource\_Asset\MoonshineProject_2019_Obsidian\201903_Jdb\Prop\Bag"):
 #     for file in files:
 #         pprint(os.path.join(root, file).replace("\\", "/"))
-
-
-def _group_files_by_directory(files: List) -> Dict[str, List[str]]:
-    """Group files by directory.
-
-    :param files: A list of files.
-    :return: A dict of files.
-    """
-    result: Dict[str, List[str]] = {}
-    for file in files:
-        dir_name = os.path.dirname(file)
-        if dir_name not in result:
-            result[dir_name] = []
-        result[dir_name].append(file)
-    return result
 
 
 def exclude_key_from_dict(original_dict, key_to_exclude: str):

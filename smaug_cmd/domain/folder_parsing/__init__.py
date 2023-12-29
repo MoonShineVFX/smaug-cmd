@@ -5,4 +5,4 @@ from .taiwan_culture import TaiwanCultureResourceFolder, is_taiwan_culture_model
 from .avalon_source import AvalonResourceFolder, is_avalon_source_model_folder
 from .normal_resource import NormalResourceFolder, is_normal_resource_model_folder
 # from .download_variant1 import DownloadVariant1Folder, is_download_variant1_model_folder
-from .threedmax import ThreedMaxResourceFolder, is_3dmax_model_folder
+from .threed_max import ThreedMaxResourceFolder, is_3dmax_model_folder
