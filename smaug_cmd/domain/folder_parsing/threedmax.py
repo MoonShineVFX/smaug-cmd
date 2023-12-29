@@ -2,7 +2,7 @@ from smaug_cmd.domain.folder_parsing import util
 from smaug_cmd.domain.folder_parsing.base_folder import BaseFolder
 
 
-class ThreedMaxResourceModelFolder(BaseFolder):
+class ThreedMaxResourceFolder(BaseFolder):
     def __init__(self, path: str):
         super().__init__(path)
 

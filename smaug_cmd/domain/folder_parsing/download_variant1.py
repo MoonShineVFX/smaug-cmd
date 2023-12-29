@@ -1,13 +1,14 @@
 import re
 from smaug_cmd.domain.folder_parsing import util
 from smaug_cmd.domain.folder_parsing.base_folder import BaseFolder
+from smaug_cmd.domain.upload_strategies import DownloadVariant1UploadStrategy
 
 
 
 
 class DownloadVariant1ResourceModelFolder(BaseFolder):
-    def __init__(self, path: str):
-        super().__init__(path)
+    def __init__(self, path: str, upload_strategy:DownloadVariant1UploadStrategy):
+        super().__init__(path, upload_strategy)
 
     @classmethod
     def is_applicable(cls, folderpath: str) -> bool:

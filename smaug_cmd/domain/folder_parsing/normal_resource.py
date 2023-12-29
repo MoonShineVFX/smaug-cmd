@@ -11,7 +11,7 @@ from smaug_cmd.domain.upload_strategies.normal_resource import (
 )
 
 
-class NormalResourceModelFolder(BaseFolder):
+class NormalResourceFolder(BaseFolder):
     def __init__(self, path: str, upload_strategy: NormalResourceUploadStrategy):
         super().__init__(path, upload_strategy)
         self._folder_type = FolderType.NORMAL_RESOURCE_MODEL

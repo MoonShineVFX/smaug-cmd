@@ -3,7 +3,7 @@ from pprint import pprint
 import unittest
 from unittest.mock import patch
 from smaug_cmd.domain.folder_parsing import FolderType
-from smaug_cmd.domain.folder_parsing import NormalResourceModelFolder
+from smaug_cmd.domain.folder_parsing import NormalResourceFolder
 from smaug_cmd.domain.upload_strategies import NormalResourceUploadStrategy
 
 test_data_resource = os.environ.get("TEST_DATA_RESOURCE")
@@ -142,7 +142,7 @@ class TestNormalResourceFolder(unittest.TestCase):
 
     def test_create_folder_folder(self):
         with patch("os.walk", return_value=walk_data):
-            folder_obj = NormalResourceModelFolder(
+            folder_obj = NormalResourceFolder(
                 f"{test_data_resource}/MoonshineProject_2019/BundleProject_TheBeltAndRoad/TheBeltAndRoad/Environment/ChangAnGate",
                 NormalResourceUploadStrategy(),
             )

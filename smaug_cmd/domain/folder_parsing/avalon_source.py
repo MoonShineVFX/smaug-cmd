@@ -6,7 +6,7 @@ from smaug_cmd.domain.folder_parsing.base_folder import BaseFolder
 from smaug_cmd.domain.upload_strategies import AvalonResourceUploader
 
 
-class AvalonResourceModelFolder(BaseFolder):
+class AvalonResourceFolder(BaseFolder):
     ava_folder = "_AvalonSource"
 
     def __init__(self, path: str, upload_strategies: AvalonResourceUploader):

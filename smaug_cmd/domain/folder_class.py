@@ -2,16 +2,18 @@ from typing import Dict, Type, Optional
 from smaug_cmd.domain.folder_parsing import (
     BaseFolder,
     AssetDepartModelFolder,
-    AvalonResourceModelFolder,
-    TaiwanCultureResourceModelFolder,
-    NormalResourceModelFolder,
+    AvalonResourceFolder,
+    TaiwanCultureResourceFolder,
+    NormalResourceFolder,
+    DownloadVariant1ResourceModelFolder
 )
 from smaug_cmd.domain.upload_strategies import (
     UploadStrategy,
     AssetDepartUploadStrategy,
     AvalonResourceUploader,
     TaiwanCultureUploadStrategy,
-    NormalResourceUploadStrategy
+    NormalResourceUploadStrategy,
+    DownloadVariant1UploadStrategy,
 )
 
 
@@ -20,9 +22,10 @@ class FolderClassFactory:
         self._path = path
         self._mapping: Dict[Type[BaseFolder], Type[UploadStrategy]] = {
             AssetDepartModelFolder: AssetDepartUploadStrategy,
-            TaiwanCultureResourceModelFolder: TaiwanCultureUploadStrategy,
-            AvalonResourceModelFolder: AvalonResourceUploader,
-            NormalResourceModelFolder: NormalResourceUploadStrategy,
+            TaiwanCultureResourceFolder: TaiwanCultureUploadStrategy,
+            AvalonResourceFolder: AvalonResourceUploader,
+            NormalResourceFolder: NormalResourceUploadStrategy,
+            Dow
         }
 
     def create(self) -> Optional[BaseFolder]:
