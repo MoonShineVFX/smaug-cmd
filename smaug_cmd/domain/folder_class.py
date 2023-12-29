@@ -4,13 +4,14 @@ from smaug_cmd.domain.folder_parsing import (
     AssetDepartModelFolder,
     AvalonResourceModelFolder,
     TaiwanCultureResourceModelFolder,
+    NormalResourceModelFolder,
 )
 from smaug_cmd.domain.upload_strategies import (
     UploadStrategy,
     AssetDepartUploadStrategy,
     AvalonResourceUploader,
-    TaiwanCultureUploadStrategy
-    
+    TaiwanCultureUploadStrategy,
+    NormalResourceUploadStrategy
 )
 
 
@@ -20,8 +21,8 @@ class FolderClassFactory:
         self._mapping: Dict[Type[BaseFolder], Type[UploadStrategy]] = {
             AssetDepartModelFolder: AssetDepartUploadStrategy,
             TaiwanCultureResourceModelFolder: TaiwanCultureUploadStrategy,
-            AvalonResourceModelFolder: AvalonResourceUploader
-            # NormalResourceModelFolder: BaseUploadStrategy,
+            AvalonResourceModelFolder: AvalonResourceUploader,
+            NormalResourceModelFolder: NormalResourceUploadStrategy,
         }
 
     def create(self) -> Optional[BaseFolder]:

@@ -1,8 +1,8 @@
 import os
-from typing import Dict, List
+from typing import Dict, List, Optional
 import logging
 from smaug_cmd.adapter import fs
-from smaug_cmd.domain.smaug_types import AssetTemplate
+from smaug_cmd.domain.smaug_types import AssetTemplate, RepresentationCreateParams
 from smaug_cmd.domain.upload_strategies.upload_strategy import UploadStrategy
 from smaug_cmd.domain.upload_strategies import util
 from smaug_cmd.domain.operators import RepresentationOp
@@ -39,22 +39,61 @@ class NormalResourceUploadStrategy(UploadStrategy):
                 asset_template["basedir"], ziped_texture
             )
 
-            RepresentationOp.create(
-                {
-                    "assetId": asset_id,
-                    "name": zip_file_name,
-                    "type": "TEXTURE",
-                    "format": "IMG",
-                    "fileSize": os.path.getsize(moved_zip_file),
-                    "uploaderId": user_id,
-                    "path": upload_zip_object_name,
-                    "meta": {},
-                }
-            )
+            RepresentationOp.create({
+                "assetId": asset_id,
+                "name": zip_file_name,
+                "type": "TEXTURE",
+                "format": "IMG",
+                "fileSize": os.path.getsize(moved_zip_file),
+                "uploaderId": user_id,
+                "path": upload_zip_object_name,
+                "meta": {},
+            })
             logger.debug("Create DB record for Asset(%s): %s", asset_id, zip_file_name)
 
     def upload_renders(self, asset_template: AssetTemplate, user_id: str):
-        pass
+        """上傳渲染檔案，拿 preview来上傳"""
+        super().upload_renders(asset_template, user_id)
+        asset_id = asset_template["id"]
+        assert asset_id is not None, "Asset id is None"
+        asset_name = asset_template["name"]
+
+        previews = asset_template["previews"]
+        for idx, render_file in enumerate(previews):
+            # 重新命名 preview
+            file_extension = os.path.splitext(render_file)[-1].lower()
+            if idx:
+                file_name = f"preview-{idx}{file_extension}"
+            else:
+                file_name = f"preview{file_extension}"
+            new_name = f"{asset_name}_{file_name}"
+
+            # 上傳到 SSO. 這樣才能拿到 id 寫至 db
+            upload_object_name = rfs.put_representation1(
+                asset_id, new_name, render_file
+            )
+
+            logger.debug(
+                "Upload Asset(%s)previes files: %s as %s",
+                asset_template["name"],
+                render_file,
+                new_name,
+            )
+
+            # 建立資料庫資料
+            render_create_represent_payload: RepresentationCreateParams = {
+                "assetId": asset_id,
+                "name": new_name,
+                "type": "RENDER",
+                "format": "IMG",
+                "fileSize": os.path.getsize(render_file),
+                "uploaderId": user_id,
+                "path": upload_object_name,
+                "meta": {},
+            }
+            RepresentationOp.create(render_create_represent_payload)
+
+        logger.debug("Create DB record for Asset(%s): %s", asset_id, file_name)
 
 
 def group_files_by_directory(files):
