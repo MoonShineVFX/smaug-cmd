@@ -4,10 +4,12 @@ from typing import Generator
 from smaug_cmd.bootstrap import bootstrap
 from smaug_cmd.domain.exceptions import SmaugError
 from smaug_cmd.domain import parsing as ps
+from smaug_cmd.services.auth import log_in
 from smaug_cmd.services.logic.resource_upload_logic import md_uploader
 from smaug_cmd import setting
 
 logging.basicConfig(level=logging.INFO)
+logging.getLogger('urllib3').setLevel(logging.WARNING)
 logger = logging.getLogger("smaug_cmd.domain.resource_upload")
 
 bootstrap(setting)
@@ -19,9 +21,14 @@ def smaug_resource_uploader(folder: str):
     :param base_dir: The base directory of the resource.
     :return: The resource id.
     """
+    
+    uploader_id = os.environ.get("UPLOADER_ID", "")
+    uploader_pw = os.environ.get("UPLOADER_PW", "")
+    log_in(uploader_id, uploader_pw)
 
     # 從所有的 md 檔組合出分類結構
     for mb_file in _find_md_files(folder):
+        logger.info("PROCESSING: %s", os.path.basename(mb_file))
         md_json = ps.md_parsing(mb_file)
         try:
             md_uploader(md_json)

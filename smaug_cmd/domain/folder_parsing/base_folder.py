@@ -52,6 +52,7 @@ class BaseFolder:
             "basedir": self._path,  # 資料夾路徑
             "createAt": None,
             "updateAt": None,
+            "folderType": self._folder_type.value,
         }
         self._parsing()
         self._init_from_smaug()
@@ -128,31 +129,31 @@ class BaseFolder:
         asset_template["id"] = asset_id
         asset_name = asset_template["name"]
 
-        logger.info("%s: preview Uploading", asset_name)
+        logger.info("Asset %s: preview Uploading", asset_name)
         try:
             self.upload_strategy.upload_previews(asset_template, uploader_id)
         except SmaugApiError as e:
             logger.warning("Failed to upload previews. Reason: %s", e)
 
-        logger.info("%s: texture Uploading", asset_name)
+        logger.info("Asset %s: texture Uploading", asset_name)
         try:
             self.upload_strategy.upload_textures(asset_template, uploader_id)
         except SmaugApiError as e:
             logger.warning("Failed to upload textures. Reason: %s", e)
 
-        logger.info("%s: render Uploading", asset_name)
+        logger.info("Asset %s: render Uploading", asset_name)
         try:
             self.upload_strategy.upload_renders(asset_template, uploader_id)
         except SmaugApiError as e:
             logger.warning("Failed to upload renders. Reason: %s", e)
 
-        logger.info("%s: model Uploading", asset_name)
+        logger.info("Asset %s: model Uploading", asset_name)
         try:
             self.upload_strategy.upload_models(asset_template, uploader_id)
         except SmaugApiError as e:
             logger.warning("Failed to upload models. Reason: %s", e)
 
-        logger.info("%s: 3d preview Uploading", asset_name)
+        logger.info("Asset %s: 3d preview Uploading", asset_name)
         try:
             self.upload_strategy.upload_3d_preview(asset_template, uploader_id)
         except SmaugApiError as e:
@@ -162,7 +163,10 @@ class BaseFolder:
         sm_json = SmaugJson(asset_template["basedir"])
         sm_json["id"] = asset_id
         sm_json["createAt"] = assert_resp["createAt"]
-        sm_json.serialize()
-        logger.info("Write Asset: %s(%s) info to .smaug", asset_name, asset_id)
+        sm_json["folderType"] = asset_template["folderType"]
+        if assert_resp["updateAt"]:
+            sm_json["updateAt"] = assert_resp["updateAt"]
 
-        logger.debug("Asset: %s(%s) Upload is Done", asset_name, asset_id)
+        sm_json.serialize()
+        logger.info("Write info to .smaug")
+        logger.info("Asset: %s(%s) Upload is Done", asset_name, asset_id)

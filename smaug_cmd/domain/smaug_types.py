@@ -1,4 +1,3 @@
-from enum import Enum
 from datetime import date
 from typing import Dict, Literal, TypedDict, List, Optional
 from PySide6.QtCore import Qt
@@ -55,7 +54,7 @@ class AssetTemplate(TypedDict):
     basedir: str  # 資料夾路徑
     createAt: Optional[str]
     updateAt: Optional[str]
-
+    folderType: Optional[str]
 
 class AssetDBTemplate(TypedDict):
     id: Optional[int]
