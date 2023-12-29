@@ -58,9 +58,11 @@ def put_file(file_path, object_name) -> str:
         object_name,
         file_path,
     )
-    logger.debug(
-        "'%s' is successfully uploaded as object '%s'" % (file_path, result.object_name)
+    logger.info(
+        "'%s' is successfully uploaded as object '%s'", file_path, result.object_name
     )
+    if not result.object_name.startswith("/"):
+        return result.object_name.insert(0, "/")
     return result.object_name
 
 
