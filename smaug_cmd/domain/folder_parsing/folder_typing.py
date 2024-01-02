@@ -59,3 +59,6 @@ class FolderType(Enum):
     #     _Asset\Source_Taiwan\Culture01\BTStation_HighPoly
 
     UASSET_MODEL = "UM"
+    # Actors, Blueprints, ExampleAnimation, Decals, LevelSequence, Lut, Maps, Materials, Meshes, StaticMeshes, Sequences, Textures, Particles
+    # umap, uasset, uexp, ubluik, ini, 圖片(png, jpg, tga)跟聲音(wav, mpp3)
+     
