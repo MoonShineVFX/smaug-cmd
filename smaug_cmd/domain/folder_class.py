@@ -55,6 +55,7 @@ class FolderClassFactory:
                 #從 Key 抓到 Value
                 print ( 'cls : ', str(cls)  )
                 UploadStrategy = self._mapping[cls]
+                # 從這邊開始跑 UnrealResourceFolder: UnrealResourceUploader 這兩個函式
         
                 # Yung add
                 #  { 鍵 Key: 值 Value }

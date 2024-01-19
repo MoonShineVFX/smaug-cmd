@@ -1,12 +1,12 @@
 import os
 import logging
 from typing import Generator
-# from smaug_cmd.bootstrap import bootstrap
+from smaug_cmd.bootstrap import bootstrap
 from smaug_cmd.domain.exceptions import SmaugError
 from smaug_cmd.domain import parsing as ps
 from smaug_cmd.services.auth import log_in
 from smaug_cmd.services.logic.resource_upload_logic import md_uploader
-# from smaug_cmd import setting
+from smaug_cmd import setting
 
 import json
 
@@ -14,7 +14,7 @@ logging.basicConfig(level=logging.INFO)
 logging.getLogger('urllib3').setLevel(logging.WARNING)
 logger = logging.getLogger("smaug_cmd.domain.resource_upload")
 
-# bootstrap(setting)
+bootstrap(setting)
 
 
 def smaug_resource_uploader(folder: str):
@@ -55,6 +55,7 @@ def smaug_resource_uploader(folder: str):
         try:
             
             md_uploader(md_json)
+            pass
             # print ( "md_json", md_json )
             # from smaug_cmd.services.logic.resource_upload_logic import md_uploader
         except SmaugError as e:

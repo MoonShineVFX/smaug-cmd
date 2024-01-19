@@ -185,7 +185,7 @@ def md_parsing_categories(md_path: str) -> List[MdCategrory]:
         )
     
     # Yung add
-    print ( 'categories: ', categories )
+    # print ( 'categories: ', categories )
 
     return categories
 
