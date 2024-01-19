@@ -100,6 +100,7 @@ def get_menus():
     """取得所有的 categories"""
     minus_api = f"{setting.api_root}/menus"
     cached_value = __data[("menus",)].value()
+
     if cached_value:
         return cached_value
     try:
@@ -251,7 +252,8 @@ def get_categories_by_name_parent(name: str, parnet_name: Optional[str], menu_id
     return the_value
 
 
-# if __name__ == "__main__":
-# login_in("admin", "admin")
-# cates = get_categories_by_name("Project 2019")
-# print(cates[1][0]["id"])
+if __name__ == "__main__":
+    # login_in("admin", "admin")
+    # cates = get_categories_by_name("Project 2019")
+    # print(cates[1][0]["id"])
+    get_menus()

@@ -29,7 +29,6 @@ def create_temp_zip_from_files(file_paths: List[str], file_name:Optional[str]=No
     # 返回暫存 ZIP 檔案的路徑
     return temp_file_name
 
-
 def collect_to_smaug(asset_base_dir, file_path):
     """將檔案移動到 smaug 資料夾"""
     # 如果檔案已經在 smaug 資料夾內，就不要再移動
@@ -53,3 +52,16 @@ def create_zip(file_paths: List[str], file_name: Optional[str] = None) -> str:
     zip_file_name = f"{file_name}"
     zipped_file = fs.create_temp_zip_from_files(file_paths, zip_file_name)
     return zipped_file
+
+def create_zip_Folder(file_paths: List[str], file_name: Optional[str] = None) -> str:
+    for path in file_paths:
+        print ( "path: ", path ) 
+        print ( "file_name: ", file_name ) 
+
+        zipFile = os.path.abspath(os.path.join(path, os.pardir)) + '\\' + file_name.replace(" ", "_")
+        zipFile = zipFile.replace("\\", "/")
+        # zipFile = zipFile
+        print ( "zipFile: ", zipFile ) 
+        shutil.make_archive( zipFile, 'zip', path )
+        return zipFile
+

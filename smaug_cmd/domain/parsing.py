@@ -146,6 +146,11 @@ def generate_zip(asset_name, name_key, textures_files: List[str]) -> str:
 
 def md_parsing(md_file: str) -> MdJson:
     """解析 md 檔案，產生 md json 格式"""
+
+    #yung
+    # print ( 'md_file: ', md_file )
+
+
     md_json: MdJson = {
         "name": os.path.basename(md_file),
         "categories": md_parsing_categories(md_file),
@@ -155,8 +160,8 @@ def md_parsing(md_file: str) -> MdJson:
 
 
 def md_parsing_categories(md_path: str) -> List[MdCategrory]:
-    if "_Pic" in md_path:
-        return []
+    # if "_Pic" in md_path:
+    #     return []
 
     # Split the path into a list of directories
     dirs = md_path.split("/")
@@ -178,6 +183,9 @@ def md_parsing_categories(md_path: str) -> List[MdCategrory]:
         categories.append(
             {"cate_name": dirs[i], "parent": dirs[i - 1] if i > 0 else None}
         )
+    
+    # Yung add
+    print ( 'categories: ', categories )
 
     return categories
 
@@ -241,19 +249,36 @@ def md_parse_kanban_to_json(file_content: str) -> List[MdAssets]:
             # Start new asset
             current_asset_name = line[3:].strip()
 
+            # Yung Add
+            print ( 'current_asset_name: ', current_asset_name )
+
         elif line.startswith("- [ ]"):
             folder_match = re.search(r"\[Open Folder\]\(file://([^)]+)\)", line)
-            previews = preview_pattern.findall(line)
+            # previews = preview_pattern.findall(line)
+
+            # print ( 'folder_match: ', folder_match )
+            # print ( 'previews: ', previews )
+            
 
             # Match the description by looking from the end of the line backwards to the first '<br>'
             description_match = re.search(r"<br>([^<]+)$", line)
 
+            
             if folder_match and description_match:
                 folder = folder_match.group(1)
                 # 用 TEST_DATA_RESOURCE 來取代 R:\_Asset
                 test_data_resource = os.environ.get("TEST_DATA_RESOURCE")
                 if test_data_resource is not None:
-                    folder = folder.replace("R:/_Asset", test_data_resource).replace("\\", "/")
+                    # folder = folder.replace("R:/_Asset", test_data_resource).replace("\\", "/")
+
+                    # # Yung add
+                    print ( 'folder: ',folder )
+
+                    image_paths = [os.path.join(folder,img) for img in  os.listdir(folder) if '.jpg' in img]
+                    previews = image_paths
+                    for img in image_paths:
+                        print ( 'img: ', img )
+                    print ( '\n' )
 
                 description = description_match.group(1).strip()
                 if description.endswith("]"):
@@ -275,7 +300,7 @@ if __name__ == "__main__":
     md_json = md_parsing(
         f"{test_data_resource}/_Obsidian/MoonShineAsset/Project 2019/Project2019_Nature 自然.md"
     )
-    pprint(md_json)
+    print(md_json)
 
 # 暫時不知道該怎麼處理的資料夾內容
 # R:\_Asset\MoonshineProject_2020_Obsidian\202001_AsusBrandVideo4\Buy\Sci+Fi+Power+Suit

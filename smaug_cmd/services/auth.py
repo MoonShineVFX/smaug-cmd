@@ -15,7 +15,9 @@ _user: Optional[UserInfo] = None
 
 def log_in(u: str, w: str) -> UserInfo:
     """登入"""
+
     login_api = f"{setting.api_root}/login"
+    print ( 'login_api: ', login_api )
 
     try:
         res = _session.post(login_api, auth=HTTPBasicAuth(u, w))

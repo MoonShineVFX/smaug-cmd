@@ -59,6 +59,7 @@ class FolderType(Enum):
     #     _Asset\Source_Taiwan\Culture01\BTStation_HighPoly
 
     UASSET_MODEL = "UM"
+    # 資料夾下有第一層為prevew圖綁、一個資料夾內包含整個 Unreal content 素材包 或 unreal project 整個專案的素材包，直接壓縮整個資料夾即可
     # Actors, Blueprints, ExampleAnimation, Decals, LevelSequence, Lut, Maps, Materials, Meshes, StaticMeshes, Sequences, Textures, Particles
     # umap, uasset, uexp, ubluik, ini, 圖片(png, jpg, tga)跟聲音(wav, mpp3)
      
