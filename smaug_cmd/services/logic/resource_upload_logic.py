@@ -13,6 +13,11 @@ logger = logging.getLogger("smaug_cmd.domain.resource_upload")
 def md_uploader(md_json: MdJson):
     # 找出 resource menu 的 id
     menus = MenuOp.all()
+
+    # Yung add
+    # from smaug_cmd.domain.operators import CategoryOp, MenuOp
+    print ( 'menus: ', menus )
+    
     resources_menu_id = None
     for menu in menus:
         if menu["name"] == "Resources":
@@ -23,11 +28,14 @@ def md_uploader(md_json: MdJson):
 
     # 依照 md_json 的 categories 建立分類，並保留最後一個建立的分類
     user = current_user()
+
+
     last_category = None
     for category in md_json["categories"]:
         # 確定是不是已有分類
         created = False
         cates = CategoryOp.getByNameAndParent(category["cate_name"], category["parent"], resources_menu_id)
+        # from smaug_cmd.domain.operators import CategoryOp, MenuOp
         if cates:
             last_category = cates[0]
             created = True
@@ -52,13 +60,32 @@ def md_uploader(md_json: MdJson):
         logger.info("Uploading column %s", md_assets["asset_name"])
         md_assets_list = md_assets["data"]
         for idx, md_asset in enumerate(md_assets_list):
+            
+            # Yung add
+            print ( '>>>> idx: ', idx )
+            print ( '>>>> md_asset: ', md_asset )
+            print ( '>>>> last_category: ', last_category )
+            print ( '>>>> user["id"]: ', user["id"] )
+            print ( "\n" ) 
             try:
                 md_asset_uploader(md_asset, None, last_category, user["id"])
+
+                # yung add
+                print ( "\n" ) 
+
             except SmaugError as e:
                 logger.warning("Failed to upload asset. Reason: %s", e)
 
 def md_asset_uploader(md_asset: MdAsset, idx: Optional[int], category: CategoryCreateResponse, user_id: str):
-    folder_obj = FolderClassFactory(md_asset["folder"]).create()
+    factory = FolderClassFactory(md_asset["folder"])
+    # from smaug_cmd.domain.folder_class import FolderClassFactory 
+    # EX : "R:/_Asset/Game_Unreal/AncientEast/AsianTemple/"
+
+    folder_obj = factory.create()
+
+    # Yung add
+    # print ( 'folder_obj: ', folder_obj )
+
     if folder_obj is None:
         raise SmaugError(f"Can't find folder class for {md_asset['folder']}")
 
@@ -73,6 +100,9 @@ def md_asset_uploader(md_asset: MdAsset, idx: Optional[int], category: CategoryC
     
     if md_asset["folder"]:
         asset_template["basedir"] = md_asset["folder"]
+
+    # Yung add
+    print ( 'asset_template: ', asset_template )
     
     # todo: 看要不要拿 description 去當 asset 的 tag
 
@@ -80,3 +110,13 @@ def md_asset_uploader(md_asset: MdAsset, idx: Optional[int], category: CategoryC
         raise SmaugError("Can't get current user.")
 
     folder_obj.upload_asset(asset_template, user_id)
+
+if __name__=='__main__':
+    # print ( "Check" )
+    # md_json = r'E:\Repos\smaug-cmd\test_Yung\Unreal_AncientEast 古代東方場景.json'
+    # md_uploader(md_json)
+
+    folder = "R:/_Asset/Game_Unreal/AncientEast/AsianTemple/"
+    factory = FolderClassFactory(folder)
+    folder_obj = factory.create()
+    print ( 'folder_obj: ', folder_obj )

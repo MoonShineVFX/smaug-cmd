@@ -4,5 +4,6 @@ from .asset_depart import AssetDepartModelFolder, is_asset_depart_model_folder
 from .taiwan_culture import TaiwanCultureResourceFolder, is_taiwan_culture_model_folder
 from .avalon_source import AvalonResourceFolder, is_avalon_source_model_folder
 from .normal_resource import NormalResourceFolder, is_normal_resource_model_folder
+from .Unreal_Parsing import UnrealResourceFolder, is_Unreal_source_model_folder
 # from .download_variant1 import DownloadVariant1Folder, is_download_variant1_model_folder
 from .threed_max import ThreedMaxResourceFolder, is_3dmax_model_folder

@@ -29,7 +29,6 @@ def create_temp_zip_from_files(file_paths: List[str], file_name:Optional[str]=No
     # 返回暫存 ZIP 檔案的路徑
     return temp_file_name
 
-
 def collect_to_smaug(asset_base_dir, file_path):
     """將檔案移動到 smaug 資料夾"""
     # 如果檔案已經在 smaug 資料夾內，就不要再移動
@@ -53,3 +52,27 @@ def create_zip(file_paths: List[str], file_name: Optional[str] = None) -> str:
     zip_file_name = f"{file_name}"
     zipped_file = fs.create_temp_zip_from_files(file_paths, zip_file_name)
     return zipped_file
+
+def create_zip_Folder(file_paths: List[str], file_name: Optional[str] = None) -> str:
+    for path in file_paths:
+        # print ( "path: ", path )   R:/_Asset/Game_Unreal/AncientEast/AsianTemple/AsianTemple
+        # print ( "file_name: ", file_name )    AsianTemple_AsianTemple
+
+        zipTargetFolder  = os.path.abspath(os.path.join(path, os.pardir)) + '/.smaug/'
+        if not os.path.exists(zipTargetFolder):
+            os.mkdir(zipTargetFolder)
+
+        zipFile = zipTargetFolder + file_name.replace(" ", "_") 
+        zipFile.replace("\\", "/")
+        # zipFile = zipFile
+        
+        zipFileEX = zipFile + '.zip'
+        # shutil.make_archive  不包含副檔名，但 os.path.exists 包含副檔名，區別一下才不會壓到重複的檔案
+        if not os.path.exists(zipFileEX):
+            print ( "creating zipFile: ", zipFileEX ) 
+            # shutil.make_archive( zipFile, 'zip', path )  # 先關掉壓縮的指令
+        else:
+            print ( "zipFile exist: ", zipFileEX )
+
+        return zipFileEX
+    

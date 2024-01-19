@@ -84,6 +84,7 @@ class MenuOp(QObject):
     @classmethod
     def all(cls):
         re = ds.get_menus()
+        # from smaug_cmd.model import data as ds
         if str(re[0])[0] != "2":
             logger.error(re[1]["message"])
             raise SmaugOperaterError(re[1]["message"])
@@ -91,4 +92,5 @@ class MenuOp(QObject):
 
 
 if __name__ == "__main__":
-    print(CategoryOp.getByName("Project 2019"))
+    # print(CategoryOp.getByName("Project 2019"))
+    print( MenuOp.all() )
