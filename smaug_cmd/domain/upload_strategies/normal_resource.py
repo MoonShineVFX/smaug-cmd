@@ -1,5 +1,5 @@
 import os
-from typing import Dict, List, Optional
+from typing import Dict, List
 import logging
 from smaug_cmd.adapter import fs
 from smaug_cmd.domain.smaug_types import AssetTemplate, RepresentationCreateParams
@@ -44,6 +44,7 @@ class NormalResourceUploader(UploadStrategy):
                 "name": zip_file_name,
                 "type": "TEXTURE",
                 "format": "IMG",
+                "usage": "DOWNLOAD",
                 "fileSize": os.path.getsize(moved_zip_file),
                 "uploaderId": user_id,
                 "path": upload_zip_object_name,
@@ -86,6 +87,7 @@ class NormalResourceUploader(UploadStrategy):
                 "name": new_name,
                 "type": "RENDER",
                 "format": "IMG",
+                "usage": "PREVIEW",
                 "fileSize": os.path.getsize(render_file),
                 "uploaderId": user_id,
                 "path": upload_object_name,

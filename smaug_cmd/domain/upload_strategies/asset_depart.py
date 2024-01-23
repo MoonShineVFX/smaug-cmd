@@ -15,6 +15,9 @@ logger = logging.getLogger("smaug_cmd.domain.upload_strategy")
 
 class AssetDepartUploader(UploadStrategy):
     def upload_previews(self, asset_template: AssetTemplate, user_id: str):
+        # 利用父物件的方法來上傳 thumbnail
+        super().upload_previews(asset_template, user_id)
+
         for idx, preview_file in enumerate(asset_template["previews"]):
             asset_id = asset_template["id"]
             if asset_id is None:
@@ -42,8 +45,9 @@ class AssetDepartUploader(UploadStrategy):
             preview_create_represent_payload: RepresentationCreateParams = {
                 "assetId": asset_id,
                 "name": new_name,
-                "type": "PREVIEW",
+                "type": "RENDER",
                 "format": "IMG",
+                "usage": "PREVIEW",
                 "fileSize": os.path.getsize(preview_file),
                 "uploaderId": user_id,
                 "path": upload_object_name,
@@ -80,6 +84,7 @@ class AssetDepartUploader(UploadStrategy):
                 "name": new_name,
                 "type": "RENDER",
                 "format": "IMG",
+                "usage": "PREVIEW",
                 "fileSize": os.path.getsize(render_file),
                 "uploaderId": upload_user,
                 "path": upload_object_name,
@@ -118,6 +123,7 @@ class AssetDepartUploader(UploadStrategy):
                     "name": zip_file_name,
                     "type": "TEXTURE",
                     "format": "IMG",
+                    "usage": "DOWNLOAD",
                     "fileSize": os.path.getsize(moved_zip_file),
                     "uploaderId": user_id,
                     "path": upload_zip_object_name,
@@ -154,6 +160,7 @@ class AssetDepartUploader(UploadStrategy):
                     "name": zip_file_name,
                     "type": "MODEL",
                     "format": pre_format,
+                    "usage": "DOWNLOAD",
                     "fileSize": os.path.getsize(moved_zip_file),
                     "uploaderId": user_id,
                     "path": upload_model_object_name,
@@ -182,8 +189,9 @@ class AssetDepartUploader(UploadStrategy):
             {
                 "assetId": asset_id,
                 "name": preview_glb_name,
-                "type": "PREVIEW",
+                "type": "MODEL",
                 "format": "GLB",
+                "usage": "PREVIEW",
                 "fileSize": os.path.getsize(preview_glb),
                 "uploaderId": user_id,
                 "path": upload_preview_glb_object_name,

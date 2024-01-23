@@ -34,9 +34,16 @@ REVERSE_SOFTWARE_CATEGORIRS = {
 }
 
 
-RepresentationType = Literal["MODEL", "PREVIEW", "RENDER", "TEXTURE"]
+RepresentationType = Literal["MODEL", "RENDER", "TEXTURE"]
 RepresentationFormat = Literal[
     "IMG", "FBX", "GLB", "MAX", "MB", "OBJ", "C4D", "UNREAL", "BLEND", "USD", "MIX"
+]
+RepresentationUsage = Literal[
+    "THUMBNAIL",  # 表列的縮圖
+    "PREVIEW",  # 呈現在詳細頁的圖
+    "RENDER",  # 先不要用
+    "DOWNLOAD",  # 可以下載的資源
+    "DETAIL_BG",  # 詳細頁的背景圖，目前還沒用到
 ]
 
 
@@ -55,6 +62,7 @@ class AssetTemplate(TypedDict):
     createAt: Optional[str]
     updateAt: Optional[str]
     folderType: str
+
 
 class AssetDBTemplate(TypedDict):
     id: Optional[int]
@@ -116,6 +124,7 @@ class Representation(TypedDict):
     name: str
     type: RepresentationType
     format: RepresentationFormat
+    usage: RepresentationUsage
     path: str
     fileSize: int
     uploaderId: str
@@ -139,6 +148,7 @@ class RepresentationCreateParams(TypedDict):
     name: str
     type: RepresentationType
     format: RepresentationFormat
+    usage: RepresentationUsage
     path: str
     fileSize: int
     uploaderId: str
@@ -153,6 +163,7 @@ class RepresentationCreateResponse(TypedDict):
     name: str
     type: RepresentationType
     format: RepresentationFormat
+    usage: RepresentationUsage
     path: str
     fileSize: int
     uploaderId: str
@@ -165,8 +176,7 @@ class UserInfo(TypedDict):
     email: str
     picture: str
     account: str
-    roleId: str
-    roleName: str
+    roles: List[Dict[str, str]]
     type: str
     updateAt: Optional[date]
     createAt: date
@@ -206,7 +216,7 @@ class MdAsset(TypedDict):
 
 class MdAssets(TypedDict):
     asset_name: str
-    data:List[MdAsset] 
+    data: List[MdAsset]
 
 
 class MdJson(TypedDict):

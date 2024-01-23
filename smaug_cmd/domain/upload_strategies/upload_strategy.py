@@ -12,6 +12,9 @@ logger = logging.getLogger("smaug_cmd.domain.upload_strategy")
 
 
 class UploadStrategy(BaseUploadStrategy):
+    """上傳策略，提供基礎實作
+    preview 的第一張圖會被當作 thumbnail 用途"""
+
     def upload_previews(self, asset_template: AssetTemplate, user_id: str):
         """上傳預覽圖，提供基礎實作
         重新命名每個圖檔，並上傳至 OOS, 再建立資料庫資料連資料
@@ -23,7 +26,7 @@ class UploadStrategy(BaseUploadStrategy):
         if not asset_template["previews"]:
             raise SmaugApiError("Asset previews is empty")
 
-        self._upload_pic(asset_template, user_id, None, asset_template["previews"][0])
+        self._upload_thumbnail(asset_template, user_id, asset_template["previews"][0])
 
     def upload_renders(self, asset_template: AssetTemplate, upload_user: str):
         """上傳算圖檔，提供基礎實作
@@ -56,6 +59,7 @@ class UploadStrategy(BaseUploadStrategy):
                 "name": new_name,
                 "type": "RENDER",
                 "format": "IMG",
+                "usage": "PREVIEW",
                 "fileSize": os.path.getsize(render_file),
                 "uploaderId": upload_user,
                 "path": upload_object_name,
@@ -95,6 +99,7 @@ class UploadStrategy(BaseUploadStrategy):
                     "name": zip_file_name,
                     "type": "MODEL",
                     "format": pre_format,
+                    "usage": "DOWNLOAD",
                     "fileSize": os.path.getsize(moved_zip_file),
                     "uploaderId": user_id,
                     "path": upload_model_object_name,
@@ -134,8 +139,9 @@ class UploadStrategy(BaseUploadStrategy):
             {
                 "assetId": asset_id,
                 "name": preview_glb_name,
-                "type": "PREVIEW",
+                "type": "MODEL",
                 "format": "GLB",
+                "usage": "PREVIEW",
                 "fileSize": os.path.getsize(preview_glb),
                 "uploaderId": user_id,
                 "path": upload_preview_glb_object_name,
@@ -172,8 +178,46 @@ class UploadStrategy(BaseUploadStrategy):
         preview_create_represent_payload: RepresentationCreateParams = {
             "assetId": asset_id,
             "name": new_name,
-            "type": "PREVIEW",
+            "type": "RENDER",
             "format": "IMG",
+            "usage": "PREVIEW",
+            "fileSize": os.path.getsize(preview_file),
+            "uploaderId": user_id,
+            "path": upload_object_name,
+            "meta": {},
+        }
+        RepresentationOp.create(preview_create_represent_payload)
+        logger.debug("Create DB record for Asset(%s): %s", asset_id, file_name)
+
+    def _upload_thumbnail(self, asset_template, user_id, preview_file):
+        asset_id = asset_template["id"]
+        if asset_id is None:
+            raise SmaugApiError("Asset id is None")
+
+        # 重新命名檔案
+        asset_name = asset_template["name"]
+        file_extension = os.path.splitext(preview_file)[-1].lower()
+
+        file_name = f"thumb-{file_extension}"
+        new_name = f"{asset_name}_{file_name}"
+
+        # 上傳至 OOS，這樣才能拿到 id 寫至 db
+        upload_object_name = rfs.put_representation1(asset_id, new_name, preview_file)
+
+        logger.debug(
+            "Upload Asset(%s)previes files: %s as %s",
+            asset_template["name"],
+            preview_file,
+            new_name,
+        )
+
+        # 建立資料庫資料
+        preview_create_represent_payload: RepresentationCreateParams = {
+            "assetId": asset_id,
+            "name": new_name,
+            "type": "RENDER",
+            "format": "IMG",
+            "usage": "THUMBNAIL",
             "fileSize": os.path.getsize(preview_file),
             "uploaderId": user_id,
             "path": upload_object_name,

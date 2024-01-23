@@ -51,6 +51,7 @@ class TaiwanCultureUploader(UploadStrategy):
                     "name": zip_file_name,
                     "type": "TEXTURE",
                     "format": "IMG",
+                    "usage": "DOWNLOAD",
                     "fileSize": os.path.getsize(moved_zip_file),
                     "uploaderId": user_id,
                     "path": upload_zip_object_name,

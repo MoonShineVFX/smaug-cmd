@@ -1,6 +1,6 @@
 import os
 import re
-from typing import Any, List, Dict, Optional
+from typing import List, Dict
 
 from smaug_cmd.adapter import fs
 from smaug_cmd.domain.exceptions import SmaugApiError
@@ -235,10 +235,10 @@ def md_parse_kanban_to_json(file_content: str) -> List[MdAssets]:
     Returns:
     - List[Dict[str, Any]]: A list of assets with their details in structured format.
     """
-    assets = []
+    assets: List[MdAssets] = []
     current_asset_name = None
     asset_data: List[MdAsset] = []
-    preview_pattern = re.compile(r"!\[\[([^]]+)\]\]")
+    # preview_pattern = re.compile(r"!\[\[([^]]+)\]\]")
 
     for line in file_content.split("\n"):
         if line.startswith("## "):
@@ -266,7 +266,7 @@ def md_parse_kanban_to_json(file_content: str) -> List[MdAssets]:
             
             if folder_match and description_match:
                 folder = folder_match.group(1)
-                # 用 TEST_DATA_RESOURCE 來取代 R:\_Asset
+                # 如果有 TEST_DATA_RESOURCE ，則用來取代 R:\_Asset
                 test_data_resource = os.environ.get("TEST_DATA_RESOURCE")
                 if test_data_resource is not None:
                     # folder = folder.replace("R:/_Asset", test_data_resource).replace("\\", "/")
@@ -300,7 +300,7 @@ if __name__ == "__main__":
     md_json = md_parsing(
         f"{test_data_resource}/_Obsidian/MoonShineAsset/Project 2019/Project2019_Nature 自然.md"
     )
-    print(md_json)
+    pprint(md_json)
 
 # 暫時不知道該怎麼處理的資料夾內容
 # R:\_Asset\MoonshineProject_2020_Obsidian\202001_AsusBrandVideo4\Buy\Sci+Fi+Power+Suit

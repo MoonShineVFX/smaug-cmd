@@ -2,12 +2,11 @@ import logging
 import os
 from smaug_cmd.adapter import fs
 from smaug_cmd.domain.operators import RepresentationOp
-from smaug_cmd.domain.upload_strategies import util
 from smaug_cmd.domain.smaug_types import AssetTemplate, RepresentationCreateParams
 from smaug_cmd.domain.upload_strategies.upload_strategy import UploadStrategy
 from smaug_cmd.services import remote_fs as rfs
 
-import json
+# import json
 
 logger = logging.getLogger("smaug_cmd.domain.upload_strategy")
 
@@ -112,6 +111,7 @@ class UnrealResourceUploader(UploadStrategy):
                 "name": new_name,
                 "type": "RENDER",
                 "format": "IMG",
+                "usage": "PREVIEW",
                 "fileSize": os.path.getsize(render_file),
                 "uploaderId": upload_user,
                 "path": upload_object_name,
@@ -184,7 +184,7 @@ class UnrealResourceUploader(UploadStrategy):
                     # check
                     "type": "MODEL",
                     "format": "UNREAL",
-
+                    "usage": "DOWNLOAD",
                     # "fileSize": os.path.getsize(moved_zip_file),
                     "fileSize": os.path.getsize(ziped_Model),
                     "uploaderId": upload_user,
