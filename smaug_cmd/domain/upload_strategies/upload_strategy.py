@@ -198,7 +198,7 @@ class UploadStrategy(BaseUploadStrategy):
         asset_name = asset_template["name"]
         file_extension = os.path.splitext(preview_file)[-1].lower()
 
-        file_name = f"thumb-{file_extension}"
+        file_name = f"thumbnail{file_extension}"
         new_name = f"{asset_name}_{file_name}"
 
         # 上傳至 OOS，這樣才能拿到 id 寫至 db
