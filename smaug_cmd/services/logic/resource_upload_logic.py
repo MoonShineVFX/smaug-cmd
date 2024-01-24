@@ -5,6 +5,7 @@ from smaug_cmd.domain.smaug_types import CategoryCreateResponse, MdJson, MdAsset
 from smaug_cmd.domain.exceptions import SmaugError
 from smaug_cmd.domain.operators import CategoryOp, MenuOp
 from smaug_cmd.domain.folder_class import FolderClassFactory 
+import json
 
 
 logger = logging.getLogger("smaug_cmd.domain.resource_upload")
@@ -16,7 +17,7 @@ def md_uploader(md_json: MdJson):
 
     # Yung add
     # from smaug_cmd.domain.operators import CategoryOp, MenuOp
-    print ( 'menus: ', menus )
+    # print ( 'menus: ', menus )
     
     resources_menu_id = None
     for menu in menus:
@@ -53,10 +54,11 @@ def md_uploader(md_json: MdJson):
         )
     if last_category is None:
         raise SmaugError("Can't find last category.")
-    logger.info("%s is Created.", last_category['name'])
+    # logger.info("%s is Created.", last_category['name'])
 
     # 依照 md_json 的 assets 建立資產
     for md_assets in  md_json["assets"]:
+        print ( '---------------------------------------------------------------------------' )
         logger.info("Uploading column %s", md_assets["asset_name"])
         md_assets_list = md_assets["data"]
         for idx, md_asset in enumerate(md_assets_list):
@@ -82,6 +84,7 @@ def md_asset_uploader(md_asset: MdAsset, idx: Optional[int], category: CategoryC
     # EX : "R:/_Asset/Game_Unreal/AncientEast/AsianTemple/"
 
     folder_obj = factory.create()
+    #from smaug_cmd.domain.folder_class import FolderClassFactory 
 
     # Yung add
     # print ( 'folder_obj: ', folder_obj )
@@ -89,7 +92,9 @@ def md_asset_uploader(md_asset: MdAsset, idx: Optional[int], category: CategoryC
     if folder_obj is None:
         raise SmaugError(f"Can't find folder class for {md_asset['folder']}")
 
+    # 從這邊去抓資料夾內的物件
     asset_template = folder_obj.asset_template()
+
     asset_template["categoryId"] = category["id"]
     if idx is not None:
         asset_template["name"] = f"{asset_template['name']} {idx}"
@@ -102,8 +107,13 @@ def md_asset_uploader(md_asset: MdAsset, idx: Optional[int], category: CategoryC
         asset_template["basedir"] = md_asset["folder"]
 
     # Yung add
-    print ( 'asset_template: ', asset_template )
-    
+    # print ( 'asset_template: ', asset_template )
+    assetName = asset_template["name"]
+    md_json_path = 'E:/Repos/smaug-cmd/test_Yung/culture01/' + assetName  + '.json'
+    md_json_object = json.dumps(asset_template, indent=4, ensure_ascii=False)
+    with open( md_json_path, "w", encoding='UTF-8' ) as outfile:
+        outfile.write(md_json_object)
+
     # todo: 看要不要拿 description 去當 asset 的 tag
 
     if user_id is None:

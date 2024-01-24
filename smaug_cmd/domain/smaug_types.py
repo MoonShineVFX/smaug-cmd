@@ -206,6 +206,7 @@ class MdAsset(TypedDict):
 
 class MdAssets(TypedDict):
     asset_name: str
+    aseet_description: str
     data:List[MdAsset] 
 
 

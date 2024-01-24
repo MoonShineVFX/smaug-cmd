@@ -75,8 +75,9 @@ def _find_md_files(md_file_folder) -> Generator[str, None, None]:
 
 if __name__ == "__main__":
     # UEAssetPath = 'R:/_Asset/_Obsidian/MoonShineAsset/Unreal Asset/'
-    UEAssetPath = 'C:/repos/smaugs/resource/_Asset/_Obsidian/MoonShineAsset/Unreal Asset/'
-    smaug_resource_uploader(UEAssetPath)
+    # UEAssetPath = 'C:/repos/smaugs/resource/_Asset/_Obsidian/MoonShineAsset/Unreal Asset/'
+    AssetPath = 'C:/repos/smaugs/resource/_Asset/_Obsidian/MoonShineAsset/Taiwan/'
+    smaug_resource_uploader(AssetPath)
     # smaug_resource_uploader(
     #     f"{os.environ.get('TEST_DATA_RESOURCE')}/_Obsidian/MoonShineAsset".replace("\\", "/")
     # )

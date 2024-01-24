@@ -24,11 +24,14 @@ class TaiwanCultureResourceFolder(BaseFolder):
         return file_path.lower().split()[0].endswith("preview")
 
     def is_render_image(self, file_path: str) -> bool:
-        if not util.validate_tex_extension(file_path):
-            return False
-        if os.path.basename(os.path.dirname(file_path)) != "Render":
-            return False
-        return True
+        # if not util.validate_tex_extension(file_path):
+        #     return False
+        # if os.path.basename(os.path.dirname(file_path)) != "Render":
+        #     return False
+        # return True
+        
+        # render 圖就是 Preview
+        return False
 
     def is_model(self, file_path: str) -> bool:
         if not util.validate_model_extension(file_path):
@@ -54,12 +57,20 @@ def is_taiwan_culture_model_folder(folder_path: str) -> bool:
     # 有 texture 目錄 (有時會有 Texture_JPG 目錄)
     # 有 Preview 目錄
     # 有 Render 目錄
-    folder_required = ["3D", "Texture", "Preview", "Render"]
+    # folder_required = ["3D", "Texture", "Preview", "Render"]
 
-    items = util.list_dir(folder_path)
-    items = [i.lower() for i in items]
-    for folder in folder_required:
-        if folder.lower() not in items:
-            return False
+    # items = util.list_dir(folder_path)
+    # items = [i.lower() for i in items]
+    # for folder in folder_required:
+    #     if folder.lower() not in items:
+    #         return False
 
-    return True
+    # Yung add
+    print ( 'folder_path: ', folder_path )
+    folder_required = ["Culture01", "Culture02", "Culture03", "Culture04"]
+    if any([  x in folder_path for x in folder_required ]):
+        return True
+    else:
+        return False
+    
+    

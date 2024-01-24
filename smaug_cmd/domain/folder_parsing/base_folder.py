@@ -64,6 +64,7 @@ class BaseFolder:
         for root, folders, files in os.walk(self._path):
             if os.path.basename(root) in exclude_folders:
                 continue
+            
             for file in files:
                 if file in exclude_files:
                     continue

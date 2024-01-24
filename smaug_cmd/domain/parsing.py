@@ -237,20 +237,34 @@ def md_parse_kanban_to_json(file_content: str) -> List[MdAssets]:
     """
     assets = []
     current_asset_name = None
+    aseet_description = None
     asset_data: List[MdAsset] = []
     preview_pattern = re.compile(r"!\[\[([^]]+)\]\]")
+
+    noDescript = []
 
     for line in file_content.split("\n"):
         if line.startswith("## "):
             # Save previous asset data if any
             if current_asset_name:
-                assets.append({"asset_name": current_asset_name, "data": asset_data})
+                assets.append({"asset_name": current_asset_name, "aseet_description": aseet_description  ,"data": asset_data})
                 asset_data = []
+
             # Start new asset
-            current_asset_name = line[3:].strip()
+            asset_name = line[3:].strip()
+            if '<br>' in asset_name :
+                current_asset_name = asset_name.split('<br>')[0]
+                aseet_description = asset_name.split('<br>')[1]
+            else:
+                print ( 'asset name has no description: ', current_asset_name )
+                current_asset_name = asset_name
+                aseet_description = ''
+
+                noDescript.append(asset_name)
 
             # Yung Add
             print ( 'current_asset_name: ', current_asset_name )
+            print ( 'aseet_description: ', aseet_description )
 
         elif line.startswith("- [ ]"):
             folder_match = re.search(r"\[Open Folder\]\(file://([^)]+)\)", line)
@@ -287,6 +301,9 @@ def md_parse_kanban_to_json(file_content: str) -> List[MdAssets]:
                     {"folder": folder, "previews": previews, "description": description}
                 )
 
+    #Yung add
+    print ( '>>>> noDescript:', noDescript )
+    
     # Append last asset
     if current_asset_name:
         assets.append({"asset_name": current_asset_name, "data": asset_data})
