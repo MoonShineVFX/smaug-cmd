@@ -212,14 +212,15 @@ class MdAsset(TypedDict):
     description: str
     folder: str
     previews: List[str]
+    tags:List[str]
 
 
-class MdAssets(TypedDict):
-    asset_name: str
+class MdKanban(TypedDict):
+    kanbon_name: str
     data: List[MdAsset]
 
 
 class MdJson(TypedDict):
     categories: List[MdCategrory]
-    assets: List[MdAssets]
+    assets: List[MdKanban]
     name: str

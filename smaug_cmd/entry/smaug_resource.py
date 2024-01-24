@@ -58,7 +58,7 @@ def smaug_resource_uploader(folder: str):
         except SmaugError as e:
             logger.info(e)
 
-        print("upload Finish")
+        logger.info("Upload Finish")
 
 
 def _find_md_files(md_file_folder) -> Generator[str, None, None]:

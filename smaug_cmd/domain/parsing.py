@@ -9,7 +9,7 @@ from smaug_cmd.domain.exceptions import SmaugApiError
 from smaug_cmd.domain.smaug_types import (
     AssetTemplate,
     MdAsset,
-    MdAssets,
+    MdKanban,
     MdCategrory,
     MdJson,
     RepresentationFormat,
@@ -225,7 +225,7 @@ def md_parsing_asset(md_file):
     return asset_json
 
 
-def md_parse_kanban_to_json(file_content: str) -> List[MdAssets]:
+def md_parse_kanban_to_json(file_content: str) -> List[MdKanban]:
     """
     Parse the kanban file content to a structured JSON format.
 
@@ -235,8 +235,8 @@ def md_parse_kanban_to_json(file_content: str) -> List[MdAssets]:
     Returns:
     - List[Dict[str, Any]]: A list of assets with their details in structured format.
     """
-    assets: List[MdAssets] = []
-    current_asset_name = None
+    assets: List[MdKanban] = []
+    current_asset_name = ""
     asset_data: List[MdAsset] = []
     preview_pattern = re.compile(r"!\[\[([^]]+)\]\]")
 
@@ -244,7 +244,9 @@ def md_parse_kanban_to_json(file_content: str) -> List[MdAssets]:
         if line.startswith("## "):
             # Save previous asset data if any
             if current_asset_name:
-                assets.append({"asset_name": current_asset_name, "data": asset_data})
+                asset_name, description = current_asset_name.split("<br>")
+                asset_data[0]['description'] = description
+                assets.append({"kanbon_name": asset_name.replace("_", " "), "data": asset_data})
                 asset_data = []
             # Start new asset
             current_asset_name = line[3:].strip()
@@ -261,10 +263,10 @@ def md_parse_kanban_to_json(file_content: str) -> List[MdAssets]:
             
 
             # Match the description by looking from the end of the line backwards to the first '<br>'
-            description_match = re.search(r"<br>([^<]+)$", line)
+            tags_match = re.search(r"<br>([^<]+)$", line)
 
             
-            if folder_match and description_match:
+            if folder_match and tags_match:
                 folder = folder_match.group(1)
                 # 如果有 TEST_DATA_RESOURCE ，則用來取代 R:\_Asset
                 test_data_resource = os.environ.get("TEST_DATA_RESOURCE")
@@ -280,16 +282,21 @@ def md_parse_kanban_to_json(file_content: str) -> List[MdAssets]:
                     #     print ( 'img: ', img )
                     # print ( '\n' )
 
-                description = description_match.group(1).strip()
-                if description.endswith("]"):
-                    description = ""
+                origin_tags = tags_match.group(1).strip()
+                if origin_tags.endswith("]"):
+                    origin_tags = ""
+                if origin_tags:
+                    tags_list = origin_tags.split("、")
+
                 asset_data.append(
-                    {"folder": folder, "previews": previews, "description": description}
+                    {"folder": folder, "previews": previews, "tags": tags_list, "description": ""}
                 )
 
     # Append last asset
     if current_asset_name:
-        assets.append({"asset_name": current_asset_name, "data": asset_data})
+        asset_name, description = current_asset_name.split("<br>")
+        asset_data[0]['description'] = description
+        assets.append({"kanbon_name": asset_name.replace("_", " "), "data": asset_data})
 
     return assets
 

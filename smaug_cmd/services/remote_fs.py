@@ -67,7 +67,7 @@ def put_file(file_path, object_name) -> str:
 
 
 @check_client
-def put_representation(asset_id: str, file_path: str, object_name: str = None):
+def put_representation(asset_id: str, file_path: str, object_name: str = ""):
     file_name = os.path.basename(file_path)
     if not object_name:
         object_name = f"/{asset_id}/{file_name}"

@@ -57,7 +57,7 @@ def md_uploader(md_json: MdJson):
 
     # 依照 md_json 的 assets 建立資產
     for md_assets in  md_json["assets"]:
-        logger.info("Uploading column %s", md_assets["asset_name"])
+        logger.info("Uploading column %s", md_assets["kanbon_name"])
         md_assets_list = md_assets["data"]
         for idx, md_asset in enumerate(md_assets_list):
             
