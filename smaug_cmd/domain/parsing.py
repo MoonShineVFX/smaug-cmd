@@ -238,7 +238,7 @@ def md_parse_kanban_to_json(file_content: str) -> List[MdAssets]:
     assets: List[MdAssets] = []
     current_asset_name = None
     asset_data: List[MdAsset] = []
-    # preview_pattern = re.compile(r"!\[\[([^]]+)\]\]")
+    preview_pattern = re.compile(r"!\[\[([^]]+)\]\]")
 
     for line in file_content.split("\n"):
         if line.startswith("## "):
@@ -250,11 +250,11 @@ def md_parse_kanban_to_json(file_content: str) -> List[MdAssets]:
             current_asset_name = line[3:].strip()
 
             # Yung Add
-            print ( 'current_asset_name: ', current_asset_name )
+            # print ( 'current_asset_name: ', current_asset_name )
 
         elif line.startswith("- [ ]"):
             folder_match = re.search(r"\[Open Folder\]\(file://([^)]+)\)", line)
-            # previews = preview_pattern.findall(line)
+            previews = preview_pattern.findall(line)
 
             # print ( 'folder_match: ', folder_match )
             # print ( 'previews: ', previews )
@@ -269,16 +269,16 @@ def md_parse_kanban_to_json(file_content: str) -> List[MdAssets]:
                 # 如果有 TEST_DATA_RESOURCE ，則用來取代 R:\_Asset
                 test_data_resource = os.environ.get("TEST_DATA_RESOURCE")
                 if test_data_resource is not None:
-                    # folder = folder.replace("R:/_Asset", test_data_resource).replace("\\", "/")
+                    folder = folder.replace("R:/_Asset", test_data_resource).replace("\\", "/")
 
                     # # Yung add
-                    print ( 'folder: ',folder )
+                    # print ( 'folder: ',folder )
 
-                    image_paths = [os.path.join(folder,img) for img in  os.listdir(folder) if '.jpg' in img]
-                    previews = image_paths
-                    for img in image_paths:
-                        print ( 'img: ', img )
-                    print ( '\n' )
+                    # image_paths = [os.path.join(folder,img) for img in  os.listdir(folder) if '.jpg' in img]
+                    # previews = image_paths
+                    # for img in image_paths:
+                    #     print ( 'img: ', img )
+                    # print ( '\n' )
 
                 description = description_match.group(1).strip()
                 if description.endswith("]"):

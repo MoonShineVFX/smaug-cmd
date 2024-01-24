@@ -16,7 +16,7 @@ def md_uploader(md_json: MdJson):
 
     # Yung add
     # from smaug_cmd.domain.operators import CategoryOp, MenuOp
-    print ( 'menus: ', menus )
+    logger.debug ( 'menus: %s', menus)
     
     resources_menu_id = None
     for menu in menus:
@@ -62,16 +62,15 @@ def md_uploader(md_json: MdJson):
         for idx, md_asset in enumerate(md_assets_list):
             
             # Yung add
-            print ( '>>>> idx: ', idx )
-            print ( '>>>> md_asset: ', md_asset )
-            print ( '>>>> last_category: ', last_category )
-            print ( '>>>> user["id"]: ', user["id"] )
-            print ( "\n" ) 
+            logger.debug( '>>>> idx: %s', idx )
+            logger.debug( '>>>> md_asset: %s', md_asset )
+            logger.debug( '>>>> last_category: %s', last_category )
+            logger.debug( '>>>> user["id"]: %s\n', user["id"] )
             try:
                 md_asset_uploader(md_asset, None, last_category, user["id"])
 
                 # yung add
-                print ( "\n" ) 
+                # print ( "\n" ) 
 
             except SmaugError as e:
                 logger.warning("Failed to upload asset. Reason: %s", e)
@@ -102,7 +101,7 @@ def md_asset_uploader(md_asset: MdAsset, idx: Optional[int], category: CategoryC
         asset_template["basedir"] = md_asset["folder"]
 
     # Yung add
-    print ( 'asset_template: ', asset_template )
+    # print ( 'asset_template: ', asset_template )
     
     # todo: 看要不要拿 description 去當 asset 的 tag
 
