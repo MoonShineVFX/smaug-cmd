@@ -100,6 +100,9 @@ def md_asset_uploader(md_asset: MdAsset, idx: Optional[int], category: CategoryC
     if md_asset["folder"]:
         asset_template["basedir"] = md_asset["folder"]
 
+    if md_asset["tags"]:
+        asset_template["tags"] = md_asset["tags"]
+
     # Yung add
     # print ( 'asset_template: ', asset_template )
     
