@@ -26,6 +26,7 @@ class AssetOp(QObject):
             raise SmaugOperaterError("Asset category id is None")
         param_payload: AssetCreateParams = {
             "name": asset_template["name"],
+            "description": asset_template["description"],
             "categoryId": asset_template["categoryId"],
             "tags": asset_template["tags"],
         }

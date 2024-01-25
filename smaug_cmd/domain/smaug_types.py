@@ -51,6 +51,7 @@ RepresentationUsage = Literal[
 class AssetTemplate(TypedDict):
     id: Optional[str]
     name: str
+    description: str
     categoryId: Optional[int]
     previews: List[str]  # 預覽圖
     preview_model: str  # 預覽模型
@@ -141,6 +142,7 @@ class Asset(TypedDict):
 class AssetCreateParams(TypedDict):
     name: str
     categoryId: int
+    description: str
     tags: List[str]
 
 
