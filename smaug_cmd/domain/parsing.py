@@ -147,10 +147,6 @@ def generate_zip(asset_name, name_key, textures_files: List[str]) -> str:
 def md_parsing(md_file: str) -> MdJson:
     """解析 md 檔案，產生 md json 格式"""
 
-    #yung
-    # print ( 'md_file: ', md_file )
-
-
     md_json: MdJson = {
         "name": os.path.basename(md_file),
         "categories": md_parsing_categories(md_file),
@@ -183,9 +179,6 @@ def md_parsing_categories(md_path: str) -> List[MdCategrory]:
         categories.append(
             {"cate_name": dirs[i], "parent": dirs[i - 1] if i > 0 else None}
         )
-    
-    # Yung add
-    # print ( 'categories: ', categories )
 
     return categories
 
@@ -214,6 +207,11 @@ def md_parsing_asset(md_file):
 
     base_dir = os.path.dirname(md_file)
     base_dir = os.path.join(base_dir, "_Pic").replace("\\", "/")
+
+    # yung add
+    # 更改去抓取 R 的 '_Pic' 路徑
+    base_dir = base_dir.replace( os.environ.get('TEST_DATA_RESOURCE'), 'R:/_Asset/' )
+
     # update all preview path
     for asset in asset_json:
         for data in asset["data"]:
@@ -251,16 +249,9 @@ def md_parse_kanban_to_json(file_content: str) -> List[MdKanban]:
             # Start new asset
             current_asset_name = line[3:].strip()
 
-            # Yung Add
-            # print ( 'current_asset_name: ', current_asset_name )
-
         elif line.startswith("- [ ]"):
             folder_match = re.search(r"\[Open Folder\]\(file://([^)]+)\)", line)
             previews = preview_pattern.findall(line)
-
-            # print ( 'folder_match: ', folder_match )
-            # print ( 'previews: ', previews )
-            
 
             # Match the description by looking from the end of the line backwards to the first '<br>'
             tags_match = re.search(r"<br>([^<]+)$", line)
@@ -268,19 +259,14 @@ def md_parse_kanban_to_json(file_content: str) -> List[MdKanban]:
             
             if folder_match and tags_match:
                 folder = folder_match.group(1)
+
                 # 如果有 TEST_DATA_RESOURCE ，則用來取代 R:\_Asset
-                test_data_resource = os.environ.get("TEST_DATA_RESOURCE")
-                if test_data_resource is not None:
-                    folder = folder.replace("R:/_Asset", test_data_resource).replace("\\", "/")
-
-                    # # Yung add
-                    # print ( 'folder: ',folder )
-
-                    # image_paths = [os.path.join(folder,img) for img in  os.listdir(folder) if '.jpg' in img]
-                    # previews = image_paths
-                    # for img in image_paths:
-                    #     print ( 'img: ', img )
-                    # print ( '\n' )
+                # yung add
+                # 不太懂為什麼指定回去C槽的路徑? 先槓掉
+                # test_data_resource = os.environ.get("TEST_DATA_RESOURCE")
+                # if test_data_resource is not None:
+                #     folder = folder.replace("R:/_Asset", test_data_resource).replace("\\", "/")
+                folder = folder.replace("\\", "/")
 
                 origin_tags = tags_match.group(1).strip()
                 if origin_tags.endswith("]"):

@@ -130,7 +130,7 @@ class BaseFolder:
     def upload_asset(self, asset_template, uploader_id: str):
         """上傳模板"""
         assert_resp = AssetOp.create(asset_template)
-        logger.info("Asset: %s Created", asset_template["name"])
+        logger.info("Asset: %s Created", asset_template["name"]) 
         asset_id = assert_resp["id"]
         self._at["id"] = asset_id
         asset_template["id"] = asset_id

@@ -55,16 +55,12 @@ def create_zip(file_paths: List[str], file_name: Optional[str] = None) -> str:
 
 def create_zip_Folder(file_paths: List[str], file_name: Optional[str] = None) -> str:
     for path in file_paths:
-        # print ( "path: ", path )   R:/_Asset/Game_Unreal/AncientEast/AsianTemple/AsianTemple
-        # print ( "file_name: ", file_name )    AsianTemple_AsianTemple
-
         zipTargetFolder  = os.path.abspath(os.path.join(path, os.pardir)) + '/.smaug/'
         if not os.path.exists(zipTargetFolder):
             os.mkdir(zipTargetFolder)
 
         zipFile = zipTargetFolder + file_name.replace(" ", "_") 
         zipFile.replace("\\", "/")
-        # zipFile = zipFile
         
         zipFileEX = zipFile + '.zip'
         # shutil.make_archive  不包含副檔名，但 os.path.exists 包含副檔名，區別一下才不會壓到重複的檔案

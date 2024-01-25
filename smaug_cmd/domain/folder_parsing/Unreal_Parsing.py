@@ -14,8 +14,6 @@ class UnrealResourceFolder(BaseFolder):
         super().__init__(path, upload_strategies)
         self.set_folder_type(FolderType.UASSET_MODEL)
 
-        print ( 'self.set_folder_type:', self.set_folder_type )
-
     @classmethod
     def is_applicable(cls, folderpath: str) -> bool:
         # return is_avalon_source_model_folder(folderpath)
@@ -59,35 +57,14 @@ class UnrealResourceFolder(BaseFolder):
         return False
 
 def is_Unreal_source_model_folder(folder_path: str):
-    # """判是否為 ResourceFolderType.AVALON_SOURCE_MODEL 資料夾"""
+    """判是否為 Unreal 資料夾"""
     
     # yung add 
-    print ( 'folder_path: ', folder_path )
     folders = folder_path
     folder_required = "Game_Unreal"
 
     if folder_required in folders:
         return True
-    # for folder in util.list_dir(folder_path):
-    #     # print ( 'folder: ', folder )
-    #     if folder_required in folder:
-    #     # if not os.path.isfile(folder):
-    #         print ( 'folder: ', folder )
-    #     # if folder.lower() == folder_required:
-    #     #     return True
-    # return False
-
-
-# def is_avalon_source_model_folder(folder_path: str):
-#     """判是否為 ResourceFolderType.AVALON_SOURCE_MODEL 資料夾"""
-
-#     # 要有 _AvalonSource
-#     folder_required = "_avalonsource"
-#     for folder in util.list_dir(folder_path):
-#         if folder.lower() == folder_required:
-#             return True
-#     return False
-
 
 if __name__=='__main__':
     folder = "R:/_Asset/Game_Unreal/AncientEast/AsianTemple/"
