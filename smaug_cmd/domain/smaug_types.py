@@ -18,6 +18,7 @@ SOFTWARE_CATEGORIRS = {
     "obj": ["obj", "mtl"],
     "unreal": ["uasset"],
     "usd": ["usd"],
+    "unity": ["unity"],
 }
 
 REVERSE_SOFTWARE_CATEGORIRS = {
@@ -31,17 +32,17 @@ REVERSE_SOFTWARE_CATEGORIRS = {
     "obj": "obj",
     "uasset": "unreal",
     "usd": "usd",
+    "unity": "unity",
 }
 
 
-RepresentationType = Literal["MODEL", "RENDER", "TEXTURE"]
+RepresentationType = Literal["MODEL", "RENDER", "TEXTURE", "GAME_ASSET"]
 RepresentationFormat = Literal[
-    "IMG", "FBX", "GLB", "MAX", "MB", "OBJ", "C4D", "UNREAL", "BLEND", "USD", "MIX"
+    "IMG", "FBX", "GLB", "MAX", "MB", "OBJ", "C4D", "UNREAL", "BLEND", "USD", "UNITY"
 ]
 RepresentationUsage = Literal[
     "THUMBNAIL",  # 表列的縮圖
     "PREVIEW",  # 呈現在詳細頁的圖
-    "RENDER",  # 先不要用
     "DOWNLOAD",  # 可以下載的資源
     "DETAIL_BG",  # 詳細頁的背景圖，目前還沒用到
 ]
