@@ -13,8 +13,8 @@ logger = logging.getLogger("smaug_cmd.domain.upload_strategy")
 
 class UnrealResourceUploader(UploadStrategy):
     def upload_previews(self, asset_template: AssetTemplate, user_id: str):
-        # previews 就是 render
-        pass
+        super()._upload_thumbnail(asset_template, user_id, asset_template['previews'][0])
+
 
     def upload_textures(self, asset_template: AssetTemplate, user_id: str):
         # UE 素材沒有材質 只有整包素材包
