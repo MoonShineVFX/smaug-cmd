@@ -60,13 +60,13 @@ def create_zip_Folder(file_paths: List[str], file_name: Optional[str] = None) ->
             os.mkdir(zipTargetFolder)
 
         zipFile = zipTargetFolder + file_name.replace(" ", "_") 
-        zipFile.replace("\\", "/")
+        zipFile = zipFile.replace("\\", "/")
         
         zipFileEX = zipFile + '.zip'
         # shutil.make_archive  不包含副檔名，但 os.path.exists 包含副檔名，區別一下才不會壓到重複的檔案
         if not os.path.exists(zipFileEX):
             print ( "creating zipFile: ", zipFileEX ) 
-            # shutil.make_archive( zipFile, 'zip', path )  # 先關掉壓縮的指令
+            shutil.make_archive( zipFile, 'zip', path )  # 先關掉壓縮的指令
         else:
             print ( "zipFile exist: ", zipFileEX )
 

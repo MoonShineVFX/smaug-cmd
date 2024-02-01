@@ -6,14 +6,22 @@ from smaug_cmd.domain.smaug_types import AssetTemplate, RepresentationCreatePara
 from smaug_cmd.domain.upload_strategies.upload_strategy import UploadStrategy
 from smaug_cmd.services import remote_fs as rfs
 
-from pprint import pprint
-
 logger = logging.getLogger("smaug_cmd.domain.upload_strategy")
 
 
 class UnrealResourceUploader(UploadStrategy):
     def upload_previews(self, asset_template: AssetTemplate, user_id: str):
-        super()._upload_thumbnail(asset_template, user_id, asset_template['previews'][0])
+        thumb =''
+        thumbList = []        
+        baseFolder = asset_template["basedir"]
+        for preview in  asset_template['previews']:
+            if '_thumbnail' in preview:
+                thumb = preview
+                thumbList.append(thumb)
+        if len(thumbList) == 0:
+            print ( 'error >> no thumbnail: ', baseFolder )
+
+        super()._upload_thumbnail(asset_template, user_id, thumb)
 
 
     def upload_textures(self, asset_template: AssetTemplate, user_id: str):
@@ -26,6 +34,7 @@ class UnrealResourceUploader(UploadStrategy):
         # yung add
         print ( '\n' )
         logger.info(">>>>> upload_renders")
+        # pprint ( asset_template )
 
         previews = asset_template["previews"]
         if len(previews) == 0:
@@ -37,12 +46,19 @@ class UnrealResourceUploader(UploadStrategy):
         for idx, render_file in enumerate(previews):
             
             # yung add
-            # 因為是從 "_Pic" 去抓圖檔的路徑，還是先確認圖片存在，再做上傳動作比較保險 
+            baseFolder = asset_template["basedir"]
+            render_file_Fix = baseFolder + '/' +  os.path.basename(render_file)
+
+            # 如果路徑不存在去素材資料夾找 圖片在資料夾一定會有
             if os.path.exists(render_file):
                 file_extension = os.path.splitext(render_file)[-1].lower()
                 file_name = f"render-{idx}{file_extension}"
                 new_name = f"{asset_name}_{file_name}"
+            else:
+                render_file = render_file_Fix
 
+            # 因為是從 "_Pic" 去抓圖檔的路徑，還是先確認圖片存在，再做上傳動作比較保險 
+            if os.path.exists(render_file):
                 # 上傳到 SSO. 這樣才能拿到 id 寫至 db
                 upload_object_name = rfs.put_representation1(
                     asset_id, new_name, render_file
@@ -97,6 +113,7 @@ class UnrealResourceUploader(UploadStrategy):
         ]
         for folder in subfolders:
             if not any([x in folder for x in noMatchSring]):
+                folder = folder.replace("\\", "/")
                 UEfolder.append(folder)
 
         logger.info("UEfolder: %s", UEfolder)
