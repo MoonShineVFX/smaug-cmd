@@ -18,6 +18,10 @@ class UnrealResourceUploader(UploadStrategy):
             if '_thumbnail' in preview:
                 thumb = preview
                 thumbList.append(thumb)
+            else:
+                if '_All' not in preview:
+                    thumb = preview
+              
         if len(thumbList) == 0:
             print ( 'error >> no thumbnail: ', baseFolder )
 
@@ -86,7 +90,7 @@ class UnrealResourceUploader(UploadStrategy):
                 logger.debug("Create DB record for Asset(%s): %s", asset_id, file_name)
 
     def upload_models(self, asset_template: AssetTemplate, upload_user: str):
-        super().upload_models(asset_template, upload_user)
+        # super().upload_models(asset_template, upload_user)
 
         # yung add
         print ( '\n' )

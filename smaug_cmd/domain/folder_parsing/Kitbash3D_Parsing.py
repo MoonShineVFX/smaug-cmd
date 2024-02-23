@@ -7,14 +7,14 @@ from smaug_cmd.domain.upload_strategies.taiwan_culture import (
 )
 
 
-class TaiwanCultureResourceFolder(BaseFolder):
+class Kitbash3DResourceFolder(BaseFolder):
     def __init__(self, path: str, upload_strategy: TaiwanCultureUploader):
         super().__init__(path, upload_strategy)
         self.set_folder_type(FolderType.TAIWAN_CULTURE_MODEL)
 
     @classmethod
     def is_applicable(cls, folderpath: str) -> bool:
-        return is_taiwan_culture_model_folder(folderpath)
+        return is_Kitbash3D_model_folder(folderpath)
 
     def is_preview(self, file_path: str) -> bool:
         if not util.validate_tex_extension(file_path):
@@ -48,8 +48,8 @@ class TaiwanCultureResourceFolder(BaseFolder):
         return True
 
 
-def is_taiwan_culture_model_folder(folder_path: str) -> bool:
-    """判斷是否為 ResourceFolderType.TAIWAN_CULTURE_MODEL 資料夾"""
+def is_Kitbash3D_model_folder(folder_path: str) -> bool:
+    """判斷是否為 kitbash3D 資料夾"""
     # 有 3D 目錄
     # 有 texture 目錄 (有時會有 Texture_JPG 目錄)
     # 有 Preview 目錄
@@ -57,22 +57,17 @@ def is_taiwan_culture_model_folder(folder_path: str) -> bool:
     # folder_required = ["3D", "Texture", "Preview", "Render"]
 
     # items = util.list_dir(folder_path)
-    # items = [i.lower() for i in items]
+    # items = [i.lower() for i in items]s
     # for folder in folder_required:
     #     if folder.lower() not in items:
     #         return False
 
     # yung add 
     folders = folder_path
-    folder_String = [   "Source_Taiwan", 
-                        '202012_Taiwan3', 
-                        'BundleProject_TeaGold', 
-                        'ChungHuaMarket', 
-                        'BundleProject_TeaGold', 
-                        'WanNianBuilding'   ]
-    
-    for string in folder_String:
-        if string in folders:
-            return True
+    folder_String = "Kitbash3D_UploadObsidian"
+                          
+    if folder_String in folders:
+        return True
+            
 
 

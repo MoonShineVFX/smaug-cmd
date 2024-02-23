@@ -7,7 +7,8 @@ from smaug_cmd.domain.folder_parsing import (
     NormalResourceFolder,
     UnrealResourceFolder,
     # DownloadVariant1Folder
-    ThreedMaxResourceFolder
+    ThreedMaxResourceFolder,
+    Kitbash3DResourceFolder
 )
 from smaug_cmd.domain.upload_strategies import (
     UploadStrategy,
@@ -17,7 +18,8 @@ from smaug_cmd.domain.upload_strategies import (
     NormalResourceUploader,
     UnrealResourceUploader,
     # DownloadVariant1UploadStrategy,
-    ThreeDMaxUploader
+    ThreeDMaxUploader,
+    Kitbash3DUploader
 )
 
 
@@ -33,6 +35,7 @@ class FolderClassFactory:
             UnrealResourceFolder: UnrealResourceUploader,
             # DownloadVariant1Folder: DownloadVariant1UploadStrategy
             ThreedMaxResourceFolder: ThreeDMaxUploader,
+            Kitbash3DResourceFolder: Kitbash3DUploader,
         }
 
     def create(self) -> Optional[BaseFolder]:
@@ -41,7 +44,8 @@ class FolderClassFactory:
 
             if cls.is_applicable(self._path):
                 UploadStrategy = self._mapping[cls]
-        
+
+                print ( 'cls: ', cls )
                 return cls( self._path, UploadStrategy() )
             
         return None

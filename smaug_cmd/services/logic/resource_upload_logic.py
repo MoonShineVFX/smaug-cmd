@@ -6,6 +6,9 @@ from smaug_cmd.domain.exceptions import SmaugError
 from smaug_cmd.domain.operators import CategoryOp, MenuOp
 from smaug_cmd.domain.folder_class import FolderClassFactory 
 
+#yung add
+from pprint import pprint
+
 
 logger = logging.getLogger("smaug_cmd.domain.resource_upload")
 
@@ -26,9 +29,19 @@ def md_uploader(md_json: MdJson):
     # 依照 md_json 的 categories 建立分類，並保留最後一個建立的分類
     user = current_user()
 
+   
+
     last_category = None
     for category in md_json["categories"]:
         # 確定是不是已有分類
+
+        # Yung add
+        # 因為 Taiwan大項目 與 Unreal 目錄下的 Taiwany子項目相衝 所以更名一下
+        if category['cate_name'] == 'Taiwan':
+             category["cate_name"] = 'Taiwan Asset'   
+        if category["parent"] == 'Taiwan':
+             category["parent"] = 'Taiwan Asset' 
+
         created = False
         cates = CategoryOp.getByNameAndParent(category["cate_name"], category["parent"], resources_menu_id)
         if cates:

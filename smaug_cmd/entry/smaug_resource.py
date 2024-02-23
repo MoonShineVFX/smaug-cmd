@@ -33,7 +33,6 @@ def smaug_resource_uploader(folder: str):
     for md_file in _find_md_files(folder):
         logger.info("PROCESSING: %s", os.path.basename(md_file))
         md_json = ps.md_parsing(md_file)
-        # from smaug_cmd.domain import parsing as ps
 
         try:
             # yung add
@@ -51,10 +50,12 @@ def _find_md_files(md_file_folder) -> Generator[str, None, None]:
     for root, _, files in os.walk(md_file_folder):
         for file in files:
             if file.endswith(".md"):
+                # 抓取指定資料夾內的md 檔案
                 md_file = os.path.join(root, file).replace("\\", "/")
+
                 yield md_file
 
-                # print ( 'md_file: ', md_file )
+                
 
 
 if __name__ == "__main__":
